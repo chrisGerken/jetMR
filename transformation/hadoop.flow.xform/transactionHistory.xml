@@ -1,0 +1,50 @@
+
+<root>
+
+    <artifact  artifactID="transaction.history"  version="0.0.1"  groupID="com.fredco">
+
+        <dataloc  name="TransactionsText" 	kind="ftext"  default="file:///home/chrisgerken/workspaces/Helios/hadoop/transaction.history/src/main/resources/documents/tweets" />
+        <dataloc  name="Transactions"  		kind="cass"   columnFamily="Transactions" />
+        <dataloc  name="Report"  			kind="ftext"  default="file:///home/chrisgerken/workspaces/Helios/hadoop/transaction.history/src/main/resources/documents/report" />
+
+        <flow  name="UpdateDB">
+            <job  name="UpdateTransactions"  keyType="Text"  valueType="Transaction"  desc="Loads text into Cassandra" >
+                <input  name="ParseText"  	source="TransactionsText"/>
+                <output  name="LoadDB"  	target="Transactions"/>
+            </job>
+        </flow>
+
+        <flow  name="ReadDB">
+            <job  name="DumpTransactions"  keyType="Text"  valueType="Transaction"  desc="Dumps the Cassandra data">
+                <input   name="DumpDB"  	source="Transactions"/>
+                <output  name="ReportData"  target="Report" />
+            </job>
+        </flow>
+
+        <writable  name="Transaction"  comparable="true">
+            <property  name="personID" 	type="String"  sort="true" />
+            <nested	   name="transID"  	type="TransactionID"  />
+            <property  name="amount"  	type="double"  />
+            <property  name="approved"  type="boolean" />
+            <nested    name="counterParty"  type="CounterParty"  />
+        </writable>
+
+        <writable  name="TransactionID"  comparable="true">
+            <property  name="timestamp" type="long"    sort="true" group="true" />
+            <property  name="kind"  	type="String"  sort="true" group="true" />
+            <property  name="endpoint" 	type="String"  sort="true" />
+        </writable>
+
+        <writable  name="CounterParty"  comparable="false">
+            <property  name="name" 		type="String"  />
+            <property  name="email"  	type="String"  />
+            <property  name="phone" 	type="String"  />
+            <property  name="address" 	type="String"  />
+            <property  name="person" 	type="boolean"  />
+        </writable>
+
+        <columnFamily  name="Transactions"  type="Transaction"  usage="dynamic"  rowKey="personID"  columnKey="transID" keyspace="Financial" host="localhost" port="9160" />
+
+    </artifact>
+
+</root>

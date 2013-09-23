@@ -1,0 +1,11 @@
+connect <c:get select="$columnFamily/@host" />/<c:get select="$columnFamily/@port" />;
+
+create keyspace <c:get select="$columnFamily/@keyspace" />;
+
+use <c:get select="$columnFamily/@keyspace" />;
+
+drop column family <c:get select="$columnFamily/@name" />;
+
+  
+
+   

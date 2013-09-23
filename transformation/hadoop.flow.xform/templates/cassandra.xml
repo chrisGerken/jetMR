@@ -1,0 +1,107 @@
+
+<root>
+
+    <artifact  artifactID="cassandra.example"  version="0.0.1"  groupID="com.fredco">
+
+        <dataloc  name="TweetsText" 	kind="ftext"  default="file:///home/chrisgerken/workspaces/Helios/hadoop/cassandra.example/src/main/resources/documents/tweets" />
+        <dataloc  name="UsersText" 		kind="ftext"  default="file:///home/chrisgerken/workspaces/Helios/hadoop/cassandra.example/src/main/resources/documents/users" />
+        <dataloc  name="Tweets"  		kind="cass"   columnFamily="Tweets" />
+        <dataloc  name="Users"  		kind="cass"   columnFamily="Users" />
+        <dataloc  name="Followers"  	kind="cass"   columnFamily="Followers" />
+        <dataloc  name="TweetReport"  	kind="ftext"  default="file:///home/chrisgerken/workspaces/Helios/hadoop/cassandra.example/src/main/resources/documents/report/tweets" />
+        <dataloc  name="UserReport"  	kind="ftext"  default="file:///home/chrisgerken/workspaces/Helios/hadoop/cassandra.example/src/main/resources/documents/report/users" />
+        <dataloc  name="FollowersReport" kind="ftext"  default="file:///home/chrisgerken/workspaces/Helios/hadoop/cassandra.example/src/main/resources/documents/report/followers" />
+        
+        <flow  name="UpdateDB">
+            <job  name="UpdateTweets"  keyType="Text"  valueType="Tweet"  desc="Loads Tweets text into Cassandra" >
+                <input  name="ParseText"  	source="TweetsText"/>
+                <output  name="LoadDB"  	target="Tweets"/>
+            </job>
+            <job  name="UpdateUsers"  keyType="Text"  valueType="User"  desc="Loads Users text into Cassandra" >
+                <input  name="ParseText"  	source="UsersText"/>
+                <output  name="LoadDB"  	target="Users"/>
+            </job>
+        </flow>
+
+        <flow  name="ReadDB">
+            <job  name="DumpTweets"  keyType="Text"  valueType="Tweet"  desc="Dumps the Cassandra Tweets data">
+                <input   name="DumpDB"  	source="Tweets"/>
+                <output  name="ReportData"  target="TweetReport" />
+            </job>
+            <job  name="DumpUsers"  keyType="Text"  valueType="User"  desc="Dumps the Cassandra Users data">
+                <input   name="DumpDB"  	source="Users"/>
+                <output  name="ReportData"  target="UserReport" />
+            </job>
+            <job  name="DumpFollowers"  keyType="Text"  valueType="Follower"  desc="Dumps the Cassandra Followers data">
+                <input   name="DumpDB"  	source="Followers"/>
+                <output  name="ReportData"  target="FollowersReport" />
+            </job>
+        </flow>
+
+        <writable  name="Fred"  		comparable="true">
+            <property  name="id"  type="String" sort="true" group="true" />
+            <property  name="aaa"	  type="boolean"   />
+            <property  name="ccc"	  type="char"   />
+            <property  name="ddd"	  type="Date"   />
+            <property  name="eee"	  type="double"   />
+            <property  name="fff"	  type="int"   />
+            <property  name="ggg"	  type="short"   />
+            <property  name="hhh"	  type="String"   />
+            <nested    name="iii"	  type="Tweet"   />
+            <property  name="jjj"	  type="boolean"   array="true" />
+            <property  name="lll"	  type="char"   array="true" />
+            <property  name="mmm"	  type="Date"   array="true" />
+            <property  name="nnn"	  type="double"   array="true" />
+            <property  name="ooo"	  type="int"   array="true" />
+            <property  name="ppp"	  type="short"   array="true" />
+            <property  name="qqq"	  type="String"   array="true" />
+            <nested    name="rrr"	  type="Tweet"   array="true" />
+        </writable>
+
+        <writable  name="Tweet"  		comparable="true">
+            <property  name="userName"  type="String" sort="true" group="true" />
+            <property  name="timestamp"	type="long"   group="true" />
+            <property  name="text"  	type="String"  />
+            <property  name="flagged"   type="boolean" />
+            <property  name="retweets"  type="int"  />
+        </writable>
+
+        <writable  name="User"  		comparable="true">
+            <property  name="name"  	type="String" sort="true" group="true" />
+            <property  name="first"  	type="String"  />
+            <property  name="last"  	type="String"  />
+            <property  name="email"    	type="String" />
+            <property  name="over18"  	type="boolean"  />
+        </writable>
+
+        <writable  name="Follower"  	comparable="true">
+            <property  name="name"  	type="String" sort="true" group="true" />
+            <nested    name="action"  	type="FollowAction"  />
+            <property  name="flagged"  	type="boolean"  />
+            <property  name="approved"  type="boolean" />
+            <nested    name="audit"  	type="Audit"  />
+        </writable>
+
+        <writable  name="FollowAction"  comparable="true">
+            <property  name="userName"  type="String" sort="true" />
+            <property  name="timestamp" type="long"   sort="true" />
+            <property  name="action"	type="String"  />
+        </writable>
+
+        <writable  name="Audit"  		comparable="false">
+            <property  name="employee"  type="String"  />
+            <property  name="issue" 	type="String"  />
+            <property  name="reviewed"	type="boolean"  />
+            <property  name="passed"	type="boolean"  />
+            <property  name="followup"	type="boolean"  />
+        </writable>
+
+        <columnFamily  name="Tweets"  	type="Tweet"  	usage="dynamic"  rowKey="userName"  columnKey="timestamp" keyspace="Social" host="localhost" port="9160" />
+
+        <columnFamily  name="Users"  	type="User"  	usage="static"   rowKey="name"  	                      keyspace="Social" host="localhost" port="9160" />
+
+        <columnFamily  name="Followers" type="Follower" usage="dynamic"  rowKey="name"  	columnKey="action"    keyspace="Social" host="localhost" port="9160" />
+
+    </artifact>
+
+</root>

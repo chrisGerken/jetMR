@@ -1,0 +1,30 @@
+digraph G { 
+rankdir=LR;
+node [style=filled, fillcolor=plum1 ,shape=rectangle, fontsize=20, color=black];
+edge [fontsize=10, color=green4, fontcolor=green4];
+
+Legalese [style=filled, fillcolor=floralwhite ,fontsize=20,color=black,label="<c:get select="$artifact/@label" />|(c) 2013 <c:get select="$artifact/@provider"/>", shape=record];
+
+<c:iterate select="$artifact/*/job" var="job">
+"<c:get select="$job/@workflowId" />" [style=filled, fillcolor=mintcream ,fontsize=12,color=<c:get select="$job/../@color"/>,label="Flow: <c:get select="$job/../@name"/>|Job: <c:get select="$job/@name"/>|{{<c:iterate select="$job/input" var="input" delimiter="|"><<c:get select="$input/@name"/>><c:get select="$input/@name"/></c:iterate>}|{Key: <c:get select="$job/@keyType" />\l<c:if test="$artifact/writable[@name=$job/@keyType]" var="writable"><c:iterate select="$writable/*[@isProperty='true']" var="prop">|<c:get select="$prop/@name"/>\r</c:iterate></c:if>|Value: <c:get select="$job/@valueType" />\l<c:if test="$artifact/writable[@name=$job/@valueType]" var="writable"><c:iterate select="$writable/*[@isProperty='true']" var="prop">|<c:get select="$prop/@name"/>\r</c:iterate></c:if>}|{<c:iterate select="$job/output" var="output" delimiter="|"><<c:get select="$output/@name"/>><c:get select="$output/@name"/></c:iterate>}}", shape=Mrecord];
+</c:iterate>
+
+<c:iterate select="$artifact/dataloc" var="dataloc" >
+"<c:get select="$dataloc/@workflowId" />" [style=filled, fillcolor=mintcream ,fontsize=12,color=black, fillcolor=lavender,label="Data Loc: <c:get select="$dataloc/@workflowLabel"/>|<c:get select="$datalocKinds/kind[@name=$dataloc/@kind]/@desc"/><c:if test="$dataloc/@keyType">|Key: <c:get select="$dataloc/@keyType" />\l<c:if test="$artifact/writable[@name=$dataloc/@keyType]" var="writable"><c:iterate select="$writable/*[@isProperty='true']" var="prop">|<c:get select="$prop/@name"/>\r</c:iterate></c:if></c:if><c:if test="$dataloc/@valueType">|Value: <c:get select="$dataloc/@valueType" />\l<c:if test="$artifact/writable[@name=$dataloc/@valueType]" var="writable"><c:iterate select="$writable/*[@isProperty='true']" var="prop">|<c:get select="$prop/@name"/>\r</c:iterate></c:if></c:if>", shape=record];
+</c:iterate>
+
+<c:iterate select="$artifact/*/job/input" var="input" >
+"<c:get select="$artifact/dataloc[@name=$input/@source]/@workflowId"/>" -> "<c:get select="$input/../@workflowId" />":<c:get select="$input/@name"/>  [penwidth=10, color=<c:get select="$input/../../@color"/>];
+</c:iterate>
+
+<c:iterate select="$artifact/*/job/output" var="output" >
+"<c:get select="$output/../@workflowId" />":<c:get select="$output/@name"/> -> "<c:get select="$artifact/dataloc[@name=$output/@target]/@workflowId"/>"  [penwidth=10, color=<c:get select="$output/../../@color"/>];
+</c:iterate>
+
+
+
+}
+
+
+
+ 

@@ -1,0 +1,1 @@
+			row.<c:get select="$property/@setter" />FromBytes(CharSerializer.get().toBytes(buffer).charValue());

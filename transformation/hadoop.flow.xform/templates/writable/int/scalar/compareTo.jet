@@ -1,0 +1,5 @@
+		
+					// Read <c:get select="$property/@dclType" /> <c:get select="$property/@varName" /> properties
+				
+				if (<c:get select="$property/@getter" />() < other.<c:get select="$property/@getter" />()) { return -1; }
+				if (<c:get select="$property/@getter" />() > other.<c:get select="$property/@getter" />()) { return  1; }

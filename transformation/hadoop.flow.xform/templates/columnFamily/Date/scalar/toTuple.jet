@@ -1,0 +1,5 @@
+		if (<c:get select="$property/@getter" />() == null) {
+        	tuple.set(<c:get select="$property/@index" />, (Long) null);
+		} else {
+        	tuple.set(<c:get select="$property/@index" />, new Long(<c:get select="$property/@getter" />().getTime()));
+		}

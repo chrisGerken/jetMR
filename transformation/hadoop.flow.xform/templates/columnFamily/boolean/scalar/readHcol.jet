@@ -1,0 +1,1 @@
+			row.<c:get select="$property/@setter" />(BooleanSerializer.get().fromByteBuffer(buffer).booleanValue());

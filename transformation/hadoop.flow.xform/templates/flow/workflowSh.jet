@@ -1,0 +1,20 @@
+
+function setup() {
+
+	export JOB_JAR=/home/chrisgerken/workspaces/Helios/hadoop/cassandra.example/target/<c:get select="$artifact/@jar" />;
+
+}
+
+function run_workflow () {
+
+	/home/chrisgerken/Downloads/hadoop-0.20.2/bin/hadoop jar $JOB_JAR <c:get select="$flow/@flowPkg" />.Workflow;
+
+}
+
+function run_entire_flow () {
+
+	setup;
+
+	run_workflow;
+
+}

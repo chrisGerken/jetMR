@@ -1,0 +1,4 @@
+type=command
+dependencies= ReadTweets
+command=hadoop jar tweet.groking-1.0.0-SNAPSHOT-jar-with-dependencies.jar com.gerkenip.main.FilterByTerm.FilterByTermJob  "file:///home/") "file:///home/") "file:///home/"	
+ 

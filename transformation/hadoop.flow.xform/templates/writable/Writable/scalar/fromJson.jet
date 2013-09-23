@@ -1,0 +1,3 @@
+			if (jsonObj.has("<c:get select="$property/@name" />")) {
+				obj.<c:get select="$property/@setter" />(<c:get select="$property/@type" />.fromJson(jsonObj.getJSONObject("<c:get select="$property/@name" />")));
+			}

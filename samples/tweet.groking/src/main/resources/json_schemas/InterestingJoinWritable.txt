@@ -1,0 +1,8 @@
+
+Json schema for writable type InterestingJoinWritable:
+
+{isFromTweet:  <boolean> , token:  <String> , weight:  <double> , isLink:  <boolean> , isHashtag:  <boolean> , isTerm:  <boolean> , handle:  <String> , tweetId:  <String> , timestamp:  <Date> }
+
+
+Note: <Date> values are represented as longs (milliseconds)
+      <short> and <char> values are represented as integers

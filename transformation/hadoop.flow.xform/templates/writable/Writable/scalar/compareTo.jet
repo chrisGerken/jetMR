@@ -1,0 +1,5 @@
+		
+					// Read <c:get select="$property/@dclType" /> <c:get select="$property/@varName" /> properties
+				
+				test = <c:get select="$property/@getter" />().compareTo(other.<c:get select="$property/@getter" />());
+				if (test != 0) { return test; }

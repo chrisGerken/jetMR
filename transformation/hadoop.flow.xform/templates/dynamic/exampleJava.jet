@@ -1,0 +1,34 @@
+package <c:get select="$artifact/@cassandraExamplesPkg" />;
+
+import java.util.*;
+
+import <c:get select="$artifact/@cassandraPkg" />.*;
+import <c:get select="$artifact/@writablesPkg" />.*;
+
+public class <c:get select="$columnFamily/@exampleJava" /> {
+
+	public static void main(String[] args) {
+
+		<c:get select="$columnFamily/@accessJava" /> access = new <c:get select="$columnFamily/@accessJava" />("<c:get select="$columnFamily/@host" />:<c:get select="$columnFamily/@port" />","Test Cluster","<c:get select="$columnFamily/@keyspace" />");	
+	
+		access.insert( new <c:get select="$columnFamily/@type" />() );
+		access.insert( new <c:get select="$columnFamily/@type" />() );
+		access.insert( new <c:get select="$columnFamily/@type" />() );
+
+		// Iterate over all of the keys in the column family
+		
+		Iterator<<c:get select="$keyProperty/@cassandraPersistedType" />> keys = access.getKeys();
+		while (keys.hasNext()) {
+			<c:get select="$keyProperty/@cassandraPersistedType" /> key = keys.next();
+		
+			// Iterate over all of the objects stored in the row
+			Iterator<<c:get select="$columnFamily/@type" />> objs = access.get(key,null,null);
+			while (objs.hasNext()) {
+				<c:get select="$columnFamily/@type" /> obj = objs.next();
+				
+				// Do something with the object obj
+				
+			}
+		}
+	}
+}

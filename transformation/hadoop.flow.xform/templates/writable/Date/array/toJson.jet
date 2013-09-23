@@ -1,0 +1,7 @@
+			jsonArray = new JSONArray();
+			for (int i = 0; i < <c:get select="$property/@getter" />().length; i++) {
+				if (<c:get select="$property/@getter" />()[i] != null) {
+					jsonArray.put(<c:get select="$property/@getter" />()[i].getTime());
+				}
+			}
+			jsonObj.put("<c:get select="$property/@name" />", jsonArray);

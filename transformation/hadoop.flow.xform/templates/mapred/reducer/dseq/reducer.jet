@@ -1,0 +1,17 @@
+
+		try {
+
+			<c:get select="$output/@outKeyType" /> outKey;
+			<c:get select="$output/@outValueType" /> outValue;		
+			
+			while (values.hasNext()) {
+				
+				<c:get select="$job/@valueType" /> value = values.next();
+				
+//				collector.collect(outKey, outValue);
+				
+			}
+
+		} catch (Exception e) {
+			reporter.getCounter("Error", e.getClass().getName()).increment(1);
+		}

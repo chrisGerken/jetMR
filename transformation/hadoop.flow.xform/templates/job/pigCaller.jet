@@ -1,0 +1,24 @@
+<%-- This code copyright Gerken Intellectual Properties LLC --%>
+<c:include template="templates/common/javaHeader.jet"/>
+package <c:get select="$job/@jobPkg" />;
+
+import org.apache.pig.PigServer;
+
+public class <c:get select="$job/@pigCallerJava" /> {
+
+	public static void main(String[] args) {
+
+		try {
+			
+			PigServer pigServer = new PigServer("local");
+			
+			pigServer.registerScript("<c:get select="$workspaceLocation" />/<c:get select="$artifact/@srcProject" />/src/main/resources/<c:get select="$flow/@pigDir" />/<c:get select="$job/@pigScript" />");
+			
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		
+		
+	}
+
+}

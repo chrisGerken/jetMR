@@ -1,0 +1,102 @@
+<%-- This code copyright Gerken Intellectual Properties LLC --%>
+<c:include template="templates/common/javaHeader.jet"/>
+package <c:get select="$artifact/@writablesPkg" />;
+
+<c:userRegion>// Begin imports<c:initialCode>
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInput;
+import java.io.DataInputStream;
+import java.io.DataOutput;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.util.Date;
+
+import org.apache.hadoop.io.*;
+
+import org.junit.Test;
+
+import junit.framework.TestCase;
+
+</c:initialCode>// End imports</c:userRegion>
+
+public class <c:get select="$writable/@testJava" /> extends TestCase {
+<c:iterate select="$writable/testcase" var="testcase">
+
+	@Test
+	public void <c:get select="$testcase/@testMethod" />() {
+
+		<c:userRegion>// Begin <c:get select="$testcase/@testMethod" /> logic<c:initialCode>
+
+		try {
+				
+				// Remove the next line or the test case will fail
+			fail("<c:get select="$writable/@writableJava" /> (Writable) : <c:get select="$testcase/@testMethod" />() not yet implemented.");
+	
+			<c:get select="$writable/@writableJava" /> beforeSerialization = new <c:get select="$writable/@writableJava" />();
+
+/*			
+<c:iterate select="$writable/*[@isProperty='true']" var="property">
+			beforeSerialization.<c:get select="$property/@setter" />();      // <c:get select="$property/@dclType" />
+</c:iterate>
+*/
+	
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			DataOutput out = new DataOutputStream(baos);
+			beforeSerialization.write(out);
+			beforeSerialization.write(out);
+			beforeSerialization.write(out);
+			DataInput in = new DataInputStream(new ByteArrayInputStream(baos.toByteArray()));
+
+			<c:get select="$writable/@writableJava" /> afterSerialization = new <c:get select="$writable/@writableJava" />();
+			afterSerialization.readFields(in);
+			afterSerialization.readFields(in);
+			afterSerialization.readFields(in);
+
+		} catch (IOException e) {
+			fail("<c:get select="$writable/@writableJava" /> (Writable) : <c:get select="$testcase/@testMethod" />() failed with exception: "+e.getMessage());
+		}
+	
+		</c:initialCode>// End <c:get select="$testcase/@testMethod" /> logic</c:userRegion>
+					  		
+	}
+</c:iterate>
+<c:if test="$writable[@comparable='true']">
+
+	@Test
+	public void testComparable() {
+
+		<c:userRegion>// Begin testComparable logic<c:initialCode>
+
+		try {
+				
+				// Remove the next line or the test case will fail
+			fail("<c:get select="$writable/@writableJava" /> (Writable) : testComparable() not yet implemented.");
+	
+			<c:get select="$writable/@writableJava" /> equal1 = new <c:get select="$writable/@writableJava" />();
+			<c:get select="$writable/@writableJava" /> equal2 = new <c:get select="$writable/@writableJava" />();
+			<c:get select="$writable/@writableJava" /> lesser = new <c:get select="$writable/@writableJava" />();
+			
+			if (equal1.compareTo(equal2) != 0) {
+				fail("<c:get select="$writable/@writableJava" /> (Writable) : testComparable() failed equals comparison.");
+			}
+			
+			if (lesser.compareTo(equal2) >= 0) {
+				fail("<c:get select="$writable/@writableJava" /> (Writable) : testComparable() failed less than comparison.");
+			}
+			
+			if (equal1.compareTo(lesser) < 0) {
+				fail("<c:get select="$writable/@writableJava" /> (Writable) : testComparable() failed greater than comparison.");
+			}
+			
+
+		} catch (Exception e) {
+			fail("<c:get select="$writable/@writableJava" /> (Writable) : testComparable() failed with exception: "+e.getMessage());
+		}
+	
+		</c:initialCode>// End testComparable logic</c:userRegion>
+					  		
+	}
+</c:if>
+}

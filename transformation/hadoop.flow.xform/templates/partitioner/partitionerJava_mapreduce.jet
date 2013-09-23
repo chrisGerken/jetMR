@@ -1,0 +1,76 @@
+<%-- This code copyright Gerken Intellectual Properties LLC --%>
+<c:include template="templates/common/javaHeader.jet"/>
+package <c:get select="$job/@jobPkg" />;
+
+import java.util.Arrays;
+
+import org.apache.hadoop.io.*;
+import org.apache.hadoop.mapreduce.Partitioner;
+
+import <c:get select="$artifact/@writablesPkg" />.*;
+
+public class <c:get select="$job/@partitionerJava" /> extends Partitioner<<c:get select="$job/@keyType" />, <c:get select="$job/@valueType" />> {
+		
+		<c:userRegion>// Begin declarations<c:initialCode>
+			
+	private <c:get select="$job/@keyType" /> splits[]; 
+	private <c:get select="$artifact/writable[@name=$job/@keyType]/@groupingComparator" /> comparator = new <c:get select="$artifact/writable[@name=$job/@keyType]/@groupingComparator" />();
+
+	private	int _partition = 0;
+			
+		</c:initialCode>// End declarations</c:userRegion>
+		
+	
+	public <c:get select="$job/@partitionerJava" />() {
+	}
+	
+	@Override
+	public int getPartition(<c:get select="$job/@keyType" /> key, <c:get select="$job/@valueType" /> value, int partitions) {
+		
+			<c:userRegion>// Begin getPartition logic<c:initialCode>
+			
+		return nextPartition(partitions);
+			
+			</c:initialCode>// End getPartition logic</c:userRegion>
+		
+	}
+
+		<c:userRegion>// Begin custom methods<c:initialCode>
+
+	private int nextPartition(int partitions) {
+		_partition++;
+		if (_partition >= partitions) {
+			_partition = 0;
+		}
+		return _partition;
+	}			
+
+	private void loadSplits(int partitions) {
+		splits = new <c:get select="$job/@keyType" />[partitions-1];
+		
+			<c:userRegion>// Begin loadSplits logic<c:initialCode>
+			
+		splits = new <c:get select="$job/@keyType" />[partitions];
+		for (int i = 0; i < partitions; i++) {
+			splits[i] = new <c:get select="$job/@keyType" />();
+		}
+			
+			</c:initialCode>// End loadSplits logic</c:userRegion>
+		
+	}
+
+	private int lookupPartition(<c:get select="$job/@keyType" /> key, <c:get select="$job/@valueType" /> value, int partitions) {
+
+		if (splits == null) {
+			loadSplits(partitions);
+		}
+		 
+		final int pos = Arrays.binarySearch(splits, key, comparator);		
+		
+		return (pos < 0) ? -pos : pos;
+
+	}
+	
+		</c:initialCode>// End custom methods</c:userRegion>
+
+}

@@ -1,0 +1,3 @@
+			if (jsonObj.has("<c:get select="$property/@name" />")) {
+				obj.<c:get select="$property/@setter" />(new Date(jsonObj.getLong("<c:get select="$property/@name" />")));
+			}

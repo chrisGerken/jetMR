@@ -1,0 +1,1311 @@
+<%@taglib prefix="ws" id="org.eclipse.jet.workspaceTags" %>
+
+<c:if test="not(isVariableDefined(root))">
+    <c:setVariable select="/*" var="root" />
+</c:if>
+
+*******************************
+
+
+
+*** Begin custom model updates for root (3)
+
+<c:load url="/"  urlContext="workspace" loader="org.eclipse.jet.resource"   var="workspaceRoot" />
+
+<c:setVariable select="$workspaceRoot/@location" var="workspaceLocation" /> 
+
+<c:loadContent var="colors">
+<colors>
+	<color name="forestgreen"/>
+	<color name="darkorchid1"/>
+	<color name="blue"/>
+	<color name="firebrick"/>
+	<color name="goldenrod"/>
+	<color name="darkorange"/>
+	<color name="lightsteelblue4"/>
+	<color name="aquamarine2"/>
+	<color name="azure4"/>
+	<color name="darksalmon"/>
+	<color name="deeppink"/>
+	<color name="coral"/>
+	<color name="greenyellow"/>
+	<color name="chartreuse1"/>
+	<color name="blueviolet"/>
+	<color name="dodgerblue"/>
+</colors>
+</c:loadContent>
+
+<c:setVariable select="$colors/colors" var="colors" />
+
+<c:loadContent var="datalocKinds">
+<datalocKinds>
+	<kind name="ftext"  desc="Local Text Files" />
+	<kind name="dtext"  desc="Dist. Text Files" />
+	<kind name="dseq"   desc="HDFS Seq. Files" />
+	<kind name="cass"   desc="Cassandra CF" />
+</datalocKinds>
+</c:loadContent>
+
+<c:setVariable select="$datalocKinds/datalocKinds" var="datalocKinds" />
+
+*** End custom model updates for root (3)
+
+
+<c:iterate select="$root/artifact" var="artifact">
+    <c:set select="$artifact" name="srcProject"><c:get select="$artifact/@artifactID" /></c:set>
+    <c:set select="$artifact" name="jar"><c:get select="$artifact/@artifactID" />-<c:get select="$artifact/@version" />-SNAPSHOT-jar-with-dependencies.jar</c:set>
+    <c:set select="$artifact" name="writablesPkg"><c:get select="$artifact/@groupID" />.writable</c:set>
+    <c:set select="$artifact" name="writablesDir"><c:get select="translate($artifact/@writablesPkg,'.','/')" /></c:set>
+    <c:set select="$artifact" name="cassandraPkg"><c:get select="$artifact/@groupID" />.cassandra</c:set>
+    <c:set select="$artifact" name="cassandraDir"><c:get select="translate($artifact/@cassandraPkg,'.','/')" /></c:set>
+    <c:set select="$artifact" name="cassandraPlatformPkg"><c:get select="$artifact/@cassandraPkg" />.platform</c:set>
+    <c:set select="$artifact" name="cassandraPlatformDir"><c:get select="translate($artifact/@cassandraPlatformPkg,'.','/')" /></c:set>
+    <c:set select="$artifact" name="cassandraExamplesPkg"><c:get select="$artifact/@cassandraPkg" />.examples</c:set>
+    <c:set select="$artifact" name="cassandraExamplesDir"><c:get select="translate($artifact/@cassandraExamplesPkg,'.','/')" /></c:set>
+    <c:set select="$artifact" name="hadoopPlatformPkg"><c:get select="$artifact/@groupID" />.hadoop.platform</c:set>
+    <c:set select="$artifact" name="hadoopPlatformDir"><c:get select="translate($artifact/@hadoopPlatformPkg,'.','/')" /></c:set>
+    <c:if test="not($artifact/@provider)">
+        <c:set select="$artifact" name="provider">Gerken Intellectual Properties, LLC</c:set>
+    </c:if>
+    <c:if test="not($artifact/@label)">
+        <c:set select="$artifact" name="label"><c:get select="$artifact/@artifactID" /></c:set>
+    </c:if>
+
+    *** Begin custom model updates for artifact (140)
+
+	<c:if test="not($artifact/@cassandraVersion)" >
+	    <c:set select="$artifact" name="cassandraVersion">1.1.3</c:set>
+	</c:if>
+	<c:if test="not($artifact/@hadoopVersion)" >
+	    <c:set select="$artifact" name="hadoopVersion">1.0.3</c:set>
+	</c:if>
+	<c:if test="not($artifact/@pigVersion)" >
+	    <c:set select="$artifact" name="pigVersion">0.10.0</c:set>
+	</c:if>
+	<c:if test="not($artifact/@multipleOutputs)" >
+	    <c:set select="$artifact" name="multipleOutputs">true</c:set>
+	</c:if>
+	
+	
+    *** End custom model updates for artifact (140)
+
+
+    <c:iterate select="$artifact/flow" var="flow">
+        <c:set select="$flow" name="workflowSh"><c:get select="lower-case($flow/@name)" /></c:set>
+        <c:set select="$flow" name="flowPkg"><c:get select="$artifact/@groupID" />.<c:get select="lower-case($flow/@name)" /></c:set>
+        <c:set select="$flow" name="flowDir"><c:get select="translate($flow/@flowPkg,'.','/')" /></c:set>
+        <c:set select="$flow" name="pigDir">pig/<c:get select="lower-case($flow/@name)" /></c:set>
+        <c:set select="$flow" name="workflowClass"><c:get select="uppercaseFirst($flow/@name)" />Workflow</c:set>
+
+        *** Begin custom model updates for flow (4)
+
+
+            <c:set select="$flow" name="color">black</c:set>
+            <c:if test="$colors/color[not(@assigned)]" var="color" >
+	            <c:set select="$flow" name="color"><c:get select="$color/@name" /></c:set>
+	            <c:set select="$color" name="assigned">true</c:set>
+            </c:if>
+
+	    *** End custom model updates for flow (4)
+
+
+        <c:iterate select="$flow/job" var="job">
+            <c:set select="$job" name="version">mapreduce</c:set>
+            <c:set select="$job" name="jobConfigJava"><c:get select="$job/@name" />Job</c:set>
+            <c:set select="$job" name="jobPkg"><c:get select="$artifact/@groupID" />.<c:get select="lower-case($flow/@name)" />.<c:get select="$job/@name" /></c:set>
+            <c:set select="$job" name="jobDir"><c:get select="translate($job/@jobPkg,'.','/')" /></c:set>
+            <c:set select="$job" name="argsArray"><c:get select="lowercaseFirst($job/@name)" />Args</c:set>
+            <c:set select="$job" name="partitionerJava"><c:get select="uppercaseFirst($job/@name)" />Partitioner</c:set>
+            <c:set select="$job" name="pigScript"><c:get select="lower-case($job/@name)" />.pig</c:set>
+            <c:set select="$job" name="pigCallerJava"><c:get select="$job/@name" />Pig</c:set>
+            <c:set select="$job" name="workflowLabel"><c:get select="$job/@name" /></c:set>
+            <c:set select="$job" name="workflowId">job.<c:get select="$flow/@name" />.<c:get select="$job/@name" /></c:set>
+
+            *** Begin custom model updates for job (118)
+
+			<c:if test="$job/@sort">
+            	<c:addElement select="$job" name="partitioner" />
+			</c:if>
+
+			<c:if test="not($job/@reducers)">
+            	<c:set select="$job" name="reducers">1</c:set>
+			</c:if>
+			
+        *** End custom model updates for job (118)
+
+            <c:addElement select="$job" name="{$job/@version}" />
+
+
+            <c:iterate select="$job/input" var="input">
+                <c:set select="$input" name="version"><c:get select="$job/@version" /></c:set>
+                <c:set select="$input" name="mapperJava"><c:get select="$input/@name" />Mapper</c:set>
+                <c:set select="$input" name="mapperTestJava"><c:get select="$input/@name" />MapperTest</c:set>
+                <c:set select="$input" name="inKeyType">Text</c:set>
+                <c:set select="$input" name="inValueType">Text</c:set>
+                <c:set select="$input" name="inputFormat">UnknownInputFormat</c:set>
+                <c:set select="$input" name="parmName"><c:get select="lowercaseFirst($input/@source)" />Source</c:set>
+                <c:set select="$input" name="propertyKey"><c:get select="$job/@name" />.input.<c:get select="$input/@name" /></c:set>
+                <c:set select="$input" name="constantName"><c:get select="translate(upper-case($input/@propertyKey),'.','_')" /></c:set>
+                <c:set select="$input" name="variableName"><c:get select="lower-case($input/@constantName)" /></c:set>
+
+                *** Begin custom model updates for input (119)
+
+				<c:setVariable select="$artifact/dataloc[@name=$input/@source]" var="dataloc" />
+				<c:choose select="$dataloc/@kind" >   The kind of data location: fsdir = file system directory; dsdir = distributed system directory
+			
+					<c:when test=" 'ftext' ">
+						<c:set select="$input" name="inputFormat">TextInputFormat</c:set>
+						<c:set select="$input" name="inKeyType">LongWritable</c:set>
+						<c:set select="$input" name="inValueType">Text</c:set>
+					</c:when>
+			
+					<c:when test=" 'dtext' ">
+						<c:set select="$input" name="inputFormat">TextInputFormat</c:set>
+						<c:set select="$input" name="inKeyType">LongWritable</c:set>
+						<c:set select="$input" name="inValueType">Text</c:set>
+					</c:when>
+			
+					<c:when test=" 'dseq' ">
+						<c:set select="$input" name="inputFormat">SequenceFileInputFormat</c:set>
+						<c:set select="$input" name="inKeyType"><c:get select="$dataloc/@keyType"/></c:set>
+						<c:set select="$input" name="inValueType"><c:get select="$dataloc/@valueType"/></c:set>
+					</c:when>
+			
+					<c:when test=" 'cass' ">
+						<c:set select="$input" name="inputFormat">ColumnFamilyInputFormat</c:set>
+						<c:set select="$input" name="inKeyType">ByteBuffer</c:set>
+						<c:set select="$input" name="inValueType">SortedMap<ByteBuffer, IColumn></c:set>
+					</c:when>
+				
+					<c:otherwise>
+						<c:log severity="error">Data location <c:get select="$dataloc/@name"/> for input <c:get select="$input/@name"/> has an invalid kind: '<c:get select="$dataloc/@kind"/>'</c:log>
+					</c:otherwise>
+							
+				</c:choose>
+
+            *** End custom model updates for input (119)
+
+                <c:addElement select="$input" name="{$input/@version}" />
+
+
+                <c:iterate select="$input/mapred" var="mapred">
+
+                    *** Begin custom model updates for mapred (122)
+
+                *** End custom model updates for mapred (122)
+
+
+                    *** Begin custom model post updates for mapred (122)
+
+                *** End custom model post updates for mapred (122)
+
+
+                </c:iterate> 
+
+                <c:iterate select="$input/mapreduce" var="mapreduce">
+
+                    *** Begin custom model updates for mapreduce (123)
+
+                *** End custom model updates for mapreduce (123)
+
+
+                    *** Begin custom model post updates for mapreduce (123)
+
+                *** End custom model post updates for mapreduce (123)
+
+
+                </c:iterate> 
+
+                <c:iterate select="$input/testcase" var="testcase">
+                    <c:set select="$testcase" name="testMethod">test<c:get select="uppercaseFirst($testcase/@name)" /></c:set>
+
+                    *** Begin custom model updates for testcase (127)
+
+                *** End custom model updates for testcase (127)
+
+
+                    *** Begin custom model post updates for testcase (127)
+
+                *** End custom model post updates for testcase (127)
+
+
+                </c:iterate> 
+
+                *** Begin custom model post updates for input (119)
+
+            *** End custom model post updates for input (119)
+
+
+            </c:iterate> 
+
+            <c:iterate select="$job/output" var="output">
+                <c:set select="$output" name="version"><c:get select="$job/@version" /></c:set>
+                <c:set select="$output" name="reducerJava"><c:get select="$output/@name" />Reducer</c:set>
+                <c:set select="$output" name="reducerTestJava"><c:get select="$output/@name" />ReducerTest</c:set>
+                <c:set select="$output" name="outKeyType">Text</c:set>
+                <c:set select="$output" name="outValueType">Text</c:set>
+                <c:set select="$output" name="outputFormat">UnknownOutputFormat</c:set>
+                <c:set select="$output" name="parmName"><c:get select="lowercaseFirst($output/@target)" />Target</c:set>
+                <c:set select="$output" name="propertyKey"><c:get select="$job/@name" />.output.<c:get select="$output/@name" /></c:set>
+                <c:set select="$output" name="constantName"><c:get select="translate(upper-case($output/@propertyKey),'.','_')" /></c:set>
+                <c:set select="$output" name="variableName"><c:get select="lower-case($output/@constantName)" /></c:set>
+                <c:set select="$output" name="concurrentOutputFormatJava"><c:get select="uppercaseFirst($output/@name)" />ConcurrentOutputFormat</c:set>
+                <c:set select="$output" name="counterName">counter<c:get select="$output/@name" /></c:set>
+
+                *** Begin custom model updates for output (120)
+
+				<c:setVariable select="$artifact/dataloc[@name=$output/@target]" var="dataloc" />
+				<c:choose select="$dataloc/@kind" >   The kind of data location: fsdir = file system directory; dsdir = distributed system directory
+			
+					<c:when test=" 'ftext' ">
+						<c:set select="$output" name="outputFormat">TextOutputFormat</c:set>
+						<c:set select="$output" name="outputFormatExtends">ConcurrentTextOutputFormat</c:set>
+						<c:set select="$output" name="outKeyType">Text</c:set>
+						<c:set select="$output" name="outValueType">Text</c:set>
+						<c:set select="$output" name="outputExtendsTemplate">true</c:set>
+					</c:when>
+			
+					<c:when test=" 'dtext' ">
+						<c:set select="$output" name="outputFormat">TextOutputFormat</c:set>
+						<c:set select="$output" name="outputFormatExtends">ConcurrentTextOutputFormat</c:set>
+						<c:set select="$output" name="outKeyType">Text</c:set>
+						<c:set select="$output" name="outValueType">Text</c:set>
+						<c:set select="$output" name="outputExtendsTemplate">true</c:set>
+					</c:when>
+			
+					<c:when test=" 'dseq' ">
+						<c:set select="$output" name="outputFormat">SequenceFileOutputFormat</c:set>
+						<c:set select="$output" name="outputFormatExtends">ConcurrentSequenceFileOutputFormat</c:set>
+						<c:set select="$output" name="outKeyType"><c:get select="$dataloc/@keyType"/></c:set>
+						<c:set select="$output" name="outValueType"><c:get select="$dataloc/@valueType"/></c:set>
+						<c:set select="$output" name="outputExtendsTemplate">true</c:set>
+					</c:when>
+			
+					<c:when test=" 'cass' ">
+						<c:set select="$output" name="outputFormat">ColumnFamilyOutputFormat</c:set>
+						<c:set select="$output" name="outputFormatExtends">ConcurrentColumnFamilyOutputFormat</c:set>
+						<c:set select="$output" name="outKeyType">ByteBuffer</c:set>
+						<c:set select="$output" name="outValueType">List</c:set>
+						<c:set select="$output" name="outputExtendsTemplate">false</c:set>
+					</c:when>
+				
+					<c:otherwise>
+						<c:log severity="error">Data location <c:get select="$dataloc/@name"/> for output <c:get select="$output/@name"/> has an invalid kind: '<c:get select="$dataloc/@kind"/>'</c:log>
+					</c:otherwise>
+							
+				</c:choose>
+
+            *** End custom model updates for output (120)
+
+                <c:addElement select="$output" name="{$output/@version}" />
+
+
+                <c:iterate select="$output/mapred" var="mapred">
+
+                    *** Begin custom model updates for mapred (124)
+
+                *** End custom model updates for mapred (124)
+
+
+                    *** Begin custom model post updates for mapred (124)
+
+                *** End custom model post updates for mapred (124)
+
+
+                </c:iterate> 
+
+                <c:iterate select="$output/mapreduce" var="mapreduce">
+
+                    *** Begin custom model updates for mapreduce (125)
+
+                *** End custom model updates for mapreduce (125)
+
+
+                    *** Begin custom model post updates for mapreduce (125)
+
+                *** End custom model post updates for mapreduce (125)
+
+
+                </c:iterate> 
+
+                <c:iterate select="$output/testcase" var="testcase">
+                    <c:set select="$testcase" name="testMethod">test<c:get select="uppercaseFirst($testcase/@name)" /></c:set>
+
+                    *** Begin custom model updates for testcase (128)
+
+                *** End custom model updates for testcase (128)
+
+
+                    *** Begin custom model post updates for testcase (128)
+
+                *** End custom model post updates for testcase (128)
+
+
+                </c:iterate> 
+
+                *** Begin custom model post updates for output (120)
+
+            *** End custom model post updates for output (120)
+
+
+            </c:iterate> 
+
+            <c:iterate select="$job/mapred" var="mapred">
+
+                *** Begin custom model updates for mapred (121)
+
+            *** End custom model updates for mapred (121)
+
+
+                *** Begin custom model post updates for mapred (121)
+
+            *** End custom model post updates for mapred (121)
+
+
+            </c:iterate> 
+
+            <c:iterate select="$job/mapreduce" var="mapreduce">
+                <c:set select="$mapreduce" name="jobConfigJava">CounterMR</c:set>
+
+                *** Begin custom model updates for mapreduce (126)
+
+            *** End custom model updates for mapreduce (126)
+
+
+                *** Begin custom model post updates for mapreduce (126)
+
+            *** End custom model post updates for mapreduce (126)
+
+
+            </c:iterate> 
+
+            <c:iterate select="$job/parm" var="parm">
+                <c:set select="$parm" name="propertyKey"><c:get select="$job/@name" />.input.<c:get select="$parm/@name" /></c:set>
+                <c:set select="$parm" name="constantName"><c:get select="translate(upper-case($parm/@propertyKey),'.','_')" /></c:set>
+                <c:set select="$parm" name="variableName"><c:get select="lower-case($parm/@constantName)" /></c:set>
+
+                *** Begin custom model updates for parm (131)
+
+            *** End custom model updates for parm (131)
+
+
+                *** Begin custom model post updates for parm (131)
+
+            *** End custom model post updates for parm (131)
+
+
+            </c:iterate> 
+
+            <c:iterate select="$job/partitioner" var="partitioner">
+
+                *** Begin custom model updates for partitioner (151)
+
+                *** End custom model updates for partitioner (151)
+
+
+                *** Begin custom model post updates for partitioner (151)
+
+                *** End custom model post updates for partitioner (151)
+
+
+            </c:iterate> 
+
+            <c:iterate select="$job/dependency" var="dependency">
+
+                *** Begin custom model updates for dependency (163)
+
+                *** End custom model updates for dependency (163)
+
+
+                *** Begin custom model post updates for dependency (163)
+
+                *** End custom model post updates for dependency (163)
+
+
+            </c:iterate> 
+
+            *** Begin custom model post updates for job (118)
+
+			<c:iterate select="$job/input" var="input">
+			
+				<c:iterate select="$flow//output[@target=$input/@source]/.." var="dep"> 
+			
+					<c:if test="not($job/dependency/@job=$dep/@name)" >
+					
+						<c:addElement select="$job" name="dependency" var="dependency" />
+						<c:set select="$dependency" name="job"><c:get select="$dep/@name" /></c:set>
+					
+					</c:if>	
+					
+				</c:iterate>
+				
+			</c:iterate>
+
+        	*** End custom model post updates for job (118)
+
+
+        </c:iterate> 
+
+        *** Begin custom model post updates for flow (4)
+
+
+    *** End custom model post updates for flow (4)
+
+
+    </c:iterate> 
+
+    <c:iterate select="$artifact/writable" var="writable">
+        <c:set select="$writable" name="writableJava"><c:get select="$writable/@name" /></c:set>
+        <c:set select="$writable" name="testJava"><c:get select="$writable/@name" />Test</c:set>
+        <c:set select="$writable" name="sorterComparator"><c:get select="$writable/@writableJava" />SortComparator</c:set>
+        <c:set select="$writable" name="groupingComparator"><c:get select="$writable/@writableJava" />GroupingComparator</c:set>
+        <c:set select="$writable" name="cassandraCompositeSerializerType"><c:get select="$writable/@name" />CompositeSerializer</c:set>
+        <c:set select="$writable" name="cassandraSerializerType"><c:get select="$writable/@name" />Serializer</c:set>
+
+        *** Begin custom model updates for writable (117)
+
+		<c:if test="$writable/property[@group='true']" >
+			<c:addElement select="$writable" name="grouper" />
+		</c:if>
+
+		<c:if test="$writable/property[@sort='true']" >
+			<c:addElement select="$writable" name="sorter" />
+		</c:if>
+		
+        *** End custom model updates for writable (117)
+
+
+        <c:iterate select="$writable/testcase" var="testcase">
+            <c:set select="$testcase" name="testMethod">test<c:get select="uppercaseFirst($testcase/@name)" /></c:set>
+            <c:set select="$testcase" name="isProperty">false</c:set>
+
+            *** Begin custom model updates for testcase (129)
+
+            *** End custom model updates for testcase (129)
+
+
+            *** Begin custom model post updates for testcase (129)
+
+            *** End custom model post updates for testcase (129)
+
+
+        </c:iterate> 
+
+        <c:iterate select="$writable/property" var="property">
+            <c:set select="$property" name="getter">get<c:get select="uppercaseFirst($property/@name)" /></c:set>
+            <c:set select="$property" name="setter">set<c:get select="uppercaseFirst($property/@name)" /></c:set>
+            <c:set select="$property" name="varName">_<c:get select="$property/@name" /></c:set>
+            <c:set select="$property" name="readMethod">x</c:set>
+            <c:set select="$property" name="dclType"><c:get select="$property/@type" /></c:set>
+            <c:set select="$property" name="isProperty">true</c:set>
+            <c:set select="$property" name="dim">scalar</c:set>
+            <c:set select="$property" name="javaConstant">PROPERTY_<c:get select="upper-case($property/@name)" /></c:set>
+            <c:set select="$property" name="cassandraComparatorType">x</c:set>
+            <c:set select="$property" name="cassandraSerializerType">x</c:set>
+            <c:set select="$property" name="cassandraPersistedType">x</c:set>
+            <c:set select="$property" name="templateFolder"><c:get select="$property/@type" /></c:set>
+            <c:set select="$property" name="isNested">false</c:set>
+            <c:set select="$property" name="index">0</c:set>
+            <c:set select="$property" name="cassandraCompositeSerializerType">ByteBufferSerializer</c:set>
+            <c:set select="$property" name="pigType">x</c:set>
+            <c:set select="$property" name="cassandraCompositeType">ByterBuffer</c:set>
+
+            *** Begin custom model updates for property (132)
+
+			<c:if test="$property[@array='true']">
+	        	<c:set select="$property" name="dclType"><c:get select="$property/@type" />[]</c:set>
+		        <c:set select="$property" name="dim">array</c:set>
+			</c:if>
+			
+	        *** End custom model updates for property (132)
+
+
+            *** Begin custom model post updates for property (132)
+
+	        *** End custom model post updates for property (132)
+
+
+        </c:iterate> 
+
+        <c:iterate select="$writable/nested" var="nested">
+            <c:set select="$nested" name="setter">set<c:get select="uppercaseFirst($nested/@name)" /></c:set>
+            <c:set select="$nested" name="getter">get<c:get select="uppercaseFirst($nested/@name)" /></c:set>
+            <c:set select="$nested" name="varName">_<c:get select="$nested/@name" /></c:set>
+            <c:set select="$nested" name="dclType"><c:get select="$nested/@type" /></c:set>
+            <c:set select="$nested" name="isProperty">true</c:set>
+            <c:set select="$nested" name="dim">scalar</c:set>
+            <c:set select="$nested" name="javaConstant">PROPERTY_<c:get select="upper-case($nested/@name)" /></c:set>
+            <c:set select="$nested" name="cassandraComparatorType">x</c:set>
+            <c:set select="$nested" name="cassandraSerializerType">x</c:set>
+            <c:set select="$nested" name="cassandraPersistedType">x</c:set>
+            <c:set select="$nested" name="templateFolder">Writable</c:set>
+            <c:set select="$nested" name="isNested">true</c:set>
+            <c:set select="$nested" name="index">0</c:set>
+            <c:set select="$nested" name="cassandraCompositeSerializerType">ByteBufferSerializer</c:set>
+            <c:set select="$nested" name="cassandraCompositeType">CompositeType</c:set>
+
+            *** Begin custom model updates for nested (133)
+
+			<c:if test="$nested[@array='true']">
+	        	<c:set select="$nested" name="dclType"><c:get select="$nested/@type" />[]</c:set>
+		        <c:set select="$nested" name="dim">array</c:set>
+			</c:if>
+			
+	        *** End custom model updates for nested (133)
+
+
+            *** Begin custom model post updates for nested (133)
+
+        *** End custom model post updates for nested (133)
+
+
+        </c:iterate> 
+
+        <c:iterate select="$writable/grouper" var="grouper">
+
+            *** Begin custom model updates for grouper (137)
+
+            *** End custom model updates for grouper (137)
+
+
+            *** Begin custom model post updates for grouper (137)
+
+            *** End custom model post updates for grouper (137)
+
+
+        </c:iterate> 
+
+        <c:iterate select="$writable/sorter" var="sorter">
+
+            *** Begin custom model updates for sorter (138)
+
+            *** End custom model updates for sorter (138)
+
+
+            *** Begin custom model post updates for sorter (138)
+
+            *** End custom model post updates for sorter (138)
+
+
+        </c:iterate> 
+
+        *** Begin custom model post updates for writable (117)
+
+			<c:setVariable select="0" var="index" />
+			<c:iterate select="$writable/*[@isProperty='true']" var="property">
+			
+				<c:include template="templates/columnFamily/{$property/@templateFolder}/{$property/@dim}/main.jet" />			
+				<c:set select="$property" name="index"><c:get select="$index" /></c:set>
+				<c:setVariable select="$index + 1" var="index" />
+
+			</c:iterate>
+			
+    	*** End custom model post updates for writable (117)
+
+
+    </c:iterate> 
+
+    <c:iterate select="$artifact/dataloc" var="dataloc">
+        <c:set select="$dataloc" name="workflowId">dataloc.<c:get select="$dataloc/@name" /></c:set>
+        <c:set select="$dataloc" name="workflowLabel"><c:get select="$dataloc/@name" /></c:set>
+
+        *** Begin custom model updates for dataloc (130)
+			
+			<c:if test="$dataloc/@kind='cass'">
+				<c:set select="$dataloc" name="default">ignore</c:set>
+			</c:if>
+			
+        *** End custom model updates for dataloc (130)
+
+
+        *** Begin custom model post updates for dataloc (130)
+
+        *** End custom model post updates for dataloc (130)
+
+
+    </c:iterate> 
+
+    <c:iterate select="$artifact/columnFamily" var="columnFamily">
+        <c:set select="$columnFamily" name="accessJava"><c:get select="uppercaseFirst($columnFamily/@name)" />Access</c:set>
+        <c:set select="$columnFamily" name="pigAccessJava"><c:get select="uppercaseFirst($columnFamily/@name)" />Storage</c:set>
+        <c:set select="$columnFamily" name="exampleJava"><c:get select="uppercaseFirst($columnFamily/@name)" />Example</c:set>
+        <c:set select="$columnFamily" name="cassandraColumnNameSerializerType"><c:get select="uppercaseFirst($columnFamily/@name)" />ColumnNameSerializer</c:set>
+
+        *** Begin custom model updates for columnFamily (141)
+
+        *** End custom model updates for columnFamily (141)
+
+        <c:addElement select="$columnFamily" name="{$columnFamily/@usage}" />
+
+
+        <c:iterate select="$columnFamily/index" var="index">
+
+            *** Begin custom model updates for index (145)
+
+            *** End custom model updates for index (145)
+
+
+            *** Begin custom model post updates for index (145)
+
+            *** End custom model post updates for index (145)
+
+
+        </c:iterate> 
+
+        <c:iterate select="$columnFamily/static" var="static">
+
+            *** Begin custom model updates for static (146)
+
+            *** End custom model updates for static (146)
+
+
+            *** Begin custom model post updates for static (146)
+
+            *** End custom model post updates for static (146)
+
+
+        </c:iterate> 
+
+        <c:iterate select="$columnFamily/dynamic" var="dynamic">
+
+            *** Begin custom model updates for dynamic (147)
+
+            *** End custom model updates for dynamic (147)
+
+
+            *** Begin custom model post updates for dynamic (147)
+
+            *** End custom model post updates for dynamic (147)
+
+
+        </c:iterate> 
+
+        <c:iterate select="$columnFamily/cql" var="cql">
+
+            *** Begin custom model updates for cql (164)
+
+            *** End custom model updates for cql (164)
+
+
+            *** Begin custom model post updates for cql (164)
+
+            *** End custom model post updates for cql (164)
+
+
+        </c:iterate> 
+
+        <c:iterate select="$columnFamily/clusteringKey" var="clusteringKey">
+
+            *** Begin custom model updates for clusteringKey (172)
+
+            *** End custom model updates for clusteringKey (172)
+
+
+            *** Begin custom model post updates for clusteringKey (172)
+
+            *** End custom model post updates for clusteringKey (172)
+
+
+        </c:iterate> 
+
+        *** Begin custom model post updates for columnFamily (141)
+
+        *** End custom model post updates for columnFamily (141)
+
+
+    </c:iterate> 
+
+    <c:iterate select="$artifact/hiveTable" var="hiveTable">
+
+        *** Begin custom model updates for hiveTable (173)
+
+        *** End custom model updates for hiveTable (173)
+
+
+        *** Begin custom model post updates for hiveTable (173)
+
+        *** End custom model post updates for hiveTable (173)
+
+
+    </c:iterate> 
+
+    *** Begin custom model post updates for artifact (140)
+	<c:if test="not($artifact/javaHeader)">
+<c:addTextElement select="$artifact" name="javaHeader">/*
+ * 
+ * This source code and information are provided "AS-IS" without 
+ * warranty of any kind, either expressed or implied, including
+ * but not limited to the implied warranties of merchantability
+ * and/or fitness for a particular purpose.
+ * 
+ * This source code was generated using an evaluation copy 
+ * of the Cassandra/Hadoop Accelerator and may not be used for
+ * production purposes.
+ *
+ * For more information, contact Chris Gerken at
+ * chris.gerken@gerkenip.com
+ * 
+ */
+</c:addTextElement>	
+	</c:if>
+
+    *** End custom model post updates for artifact (140)
+
+
+</c:iterate> 
+
+*** Begin custom model post updates for root (3)
+
+*** End custom model post updates for root (3)
+
+
+
+*******************************
+
+
+
+*** Begin custom pre-generation actions for root (3)
+
+*** End custom pre-generation actions for root (3)
+
+
+*** Begin custom generation updates for root (3)
+
+*** End custom generation updates for root (3)
+
+
+<c:iterate select="$root/artifact" var="artifact">
+
+    *** Begin custom pre-generation actions for artifact (140)
+
+    *** End custom pre-generation actions for artifact (140)
+
+    <ws:project name="{$artifact/@srcProject}" />
+    <ws:file path="{$artifact/@srcProject}/.classpath" template="templates/artifact/classpath.jet" replace="false" />
+
+    <ws:file path="{$artifact/@srcProject}/.project" template="templates/artifact/project.jet" replace="true" />
+
+    <ws:file path="{$artifact/@srcProject}/pom.xml" template="templates/artifact/pomXml.jet" replace="false" />
+
+    <ws:file path="{$artifact/@srcProject}/.settings/org.eclipse.jdt.core.prefs" template="templates/artifact/orgEclipseJdtCorePrefs.jet" replace="false" />
+
+    <ws:file path="{$artifact/@srcProject}/.settings/org.maven.ide.eclipse.prefs" template="templates/artifact/orgMavenIdeEclipsePrefs.jet" replace="false" />
+
+    <ws:file path="{$artifact/@srcProject}/target/maven-archiver/pom.properties" template="templates/artifact/pomProperties.jet" replace="false" />
+
+    <ws:file path="{$artifact/@srcProject}/src/main/java/{$artifact/@hadoopPlatformDir}/ConcurrentTextOutputFormat.java" template="templates/artifact/concurrentTextOutputFormat.jet" replace="false" />
+
+    <ws:file path="{$artifact/@srcProject}/src/main/java/{$artifact/@hadoopPlatformDir}/ConcurrentFileOutputFormat.java" template="templates/artifact/concurrentFileOutputFormat.jet" replace="false" />
+
+    <ws:file path="{$artifact/@srcProject}/src/main/java/{$artifact/@hadoopPlatformDir}/ConcurrentSequenceFileOutputFormat.java" template="templates/artifact/concurrentSequenceFileOutputFormat.jet" replace="false" />
+
+    <ws:file path="{$artifact/@srcProject}/src/main/java/{$artifact/@hadoopPlatformDir}/ConcurrentColumnFamilyOutputFormat.java" template="templates/artifact/concurrentColumnFamilyOutputFormat.jet" replace="false" />
+
+    <ws:file path="{$artifact/@srcProject}/src/main/resources/genGraph.sh" template="templates/artifact/flowGraphvizSh.jet" replace="true" />
+
+    <ws:file path="{$artifact/@srcProject}/src/main/resources/workflow" template="templates/artifact/flowGraphvizSrc.jet" replace="true" />
+
+
+    *** Begin custom generation updates for artifact (140)
+
+		<ws:folder path="{$artifact/@srcProject}/src/test/java" />
+		<ws:folder path="{$artifact/@srcProject}/src/test/resources" />
+		<ws:folder path="{$artifact/@srcProject}/src/main/java/{$artifact/@writablesDir}" />
+
+    *** End custom generation updates for artifact (140)
+
+
+    <c:iterate select="$artifact/flow" var="flow">
+
+        *** Begin custom pre-generation actions for flow (4)
+
+        *** End custom pre-generation actions for flow (4)
+
+        <ws:file path="{$artifact/@srcProject}/src/main/java/{$flow/@flowDir}/{$flow/@workflowClass}.java" template="templates/flow/workflowJava.jet" replace="true" />
+
+        <ws:file path="{$artifact/@srcProject}/src/main/resources/{$flow/@workflowSh}.sh" template="templates/flow/workflowSh.jet" replace="true" />
+
+        <ws:file path="{$artifact/@srcProject}/src/main/resources/{$flow/@flowDir}/{$flow/@workflowClass}.properties" template="templates/flow/workflowProperties.jet" replace="true" />
+
+
+        *** Begin custom generation updates for flow (4)
+	
+    	*** End custom generation updates for flow (4)
+
+
+        <c:iterate select="$flow/job" var="job">
+
+            *** Begin custom pre-generation actions for job (118)
+
+            *** End custom pre-generation actions for job (118)
+
+            <ws:file path="{$artifact/@srcProject}/src/main/resources/{$flow/@pigDir}/{$job/@pigScript}" template="templates/job/pigScript.jet" replace="false" />
+
+            <ws:file path="{$artifact/@srcProject}/src/main/java/{$job/@jobDir}/{$job/@pigCallerJava}.java" template="templates/job/pigCaller.jet" replace="true" />
+
+            <ws:file path="{$artifact/@srcProject}/src/main/resources/azkaban/{$flow/@name}/{$job/@name}.job" template="templates/job/azkabanJob.jet" replace="true" />
+
+
+            *** Begin custom generation updates for job (118)
+
+        *** End custom generation updates for job (118)
+
+
+            <c:iterate select="$job/input" var="input">
+
+                *** Begin custom pre-generation actions for input (119)
+
+                *** End custom pre-generation actions for input (119)
+
+
+                *** Begin custom generation updates for input (119)
+
+            *** End custom generation updates for input (119)
+
+
+                <c:iterate select="$input/mapred" var="mapred">
+
+                    *** Begin custom pre-generation actions for mapred (122)
+
+                    *** End custom pre-generation actions for mapred (122)
+
+                    <ws:file path="{$artifact/@srcProject}/src/main/java/{$job/@jobDir}/{$input/@mapperJava}.java" template="templates/mapred/mapperJava.jet" replace="true" />
+
+
+                    *** Begin custom generation updates for mapred (122)
+                    
+                    <c:if test="$input/testcase">
+
+                    	<ws:file path="{$artifact/@srcProject}/src/test/java/{$job/@jobDir}/{$input/@mapperTestJava}.java" template="templates/mapred/mapperTestJava.jet" replace="true" />
+
+                    </c:if>
+
+                	*** End custom generation updates for mapred (122)
+
+                </c:iterate> 
+
+                <c:iterate select="$input/mapreduce" var="mapreduce">
+
+                    *** Begin custom pre-generation actions for mapreduce (123)
+
+                    *** End custom pre-generation actions for mapreduce (123)
+
+                    <ws:file path="{$artifact/@srcProject}/src/main/java/{$job/@jobDir}/{$input/@mapperJava}.java" template="templates/mapreduce/mapperJava.jet" replace="true" />
+
+
+                    *** Begin custom generation updates for mapreduce (123)
+                    
+                    <c:if test="$input/testcase">
+
+                    	<ws:file path="{$artifact/@srcProject}/src/test/java/{$job/@jobDir}/{$input/@mapperTestJava}.java" template="templates/mapreduce/mapperTestJava.jet" replace="true" />
+                    
+                    </c:if>
+
+                	*** End custom generation updates for mapreduce (123)
+
+                </c:iterate> 
+
+                <c:iterate select="$input/testcase" var="testcase">
+
+                    *** Begin custom pre-generation actions for testcase (127)
+
+                    *** End custom pre-generation actions for testcase (127)
+
+
+                    *** Begin custom generation updates for testcase (127)
+
+                *** End custom generation updates for testcase (127)
+
+                </c:iterate> 
+            </c:iterate> 
+
+            <c:iterate select="$job/output" var="output">
+
+                *** Begin custom pre-generation actions for output (120)
+
+                *** End custom pre-generation actions for output (120)
+
+                <ws:file path="{$artifact/@srcProject}/src/main/java/{$job/@jobDir}/{$output/@concurrentOutputFormatJava}.java" template="templates/output/concurrentOutputFormat.jet" replace="true" />
+
+
+                *** Begin custom generation updates for output (120)
+
+            *** End custom generation updates for output (120)
+
+
+                <c:iterate select="$output/mapred" var="mapred">
+
+                    *** Begin custom pre-generation actions for mapred (124)
+
+                    *** End custom pre-generation actions for mapred (124)
+
+                    <ws:file path="{$artifact/@srcProject}/src/main/java/{$job/@jobDir}/{$output/@reducerJava}.java" template="templates/mapred/reducerJava.jet" replace="true" />
+
+
+                    *** Begin custom generation updates for mapred (124)
+
+                    <c:if test="$output/testcase">
+
+	                    <ws:file path="{$artifact/@srcProject}/src/test/java/{$job/@jobDir}/{$output/@reducerTestJava}.java" template="templates/mapred/reducerTestJava.jet" replace="true" />                
+
+                    </c:if>
+                    
+                	*** End custom generation updates for mapred (124)
+
+                </c:iterate> 
+
+                <c:iterate select="$output/mapreduce" var="mapreduce">
+
+                    *** Begin custom pre-generation actions for mapreduce (125)
+
+                    *** End custom pre-generation actions for mapreduce (125)
+
+                    <ws:file path="{$artifact/@srcProject}/src/main/java/{$job/@jobDir}/{$output/@reducerJava}.java" template="templates/mapreduce/reducerJava.jet" replace="true" />
+
+
+                    *** Begin custom generation updates for mapreduce (125)
+
+                    <c:if test="$output/testcase">
+
+	                    <ws:file path="{$artifact/@srcProject}/src/test/java/{$job/@jobDir}/{$output/@reducerTestJava}.java" template="templates/mapreduce/reducerTestJava.jet" replace="true" />
+
+                    </c:if>
+                    
+                	*** End custom generation updates for mapreduce (125)
+
+                </c:iterate> 
+
+                <c:iterate select="$output/testcase" var="testcase">
+
+                    *** Begin custom pre-generation actions for testcase (128)
+
+                    *** End custom pre-generation actions for testcase (128)
+
+
+                    *** Begin custom generation updates for testcase (128)
+
+                *** End custom generation updates for testcase (128)
+
+                </c:iterate> 
+            </c:iterate> 
+
+            <c:iterate select="$job/mapred" var="mapred">
+
+                *** Begin custom pre-generation actions for mapred (121)
+
+                *** End custom pre-generation actions for mapred (121)
+
+                <ws:file path="{$artifact/@srcProject}/src/main/java/{$job/@jobDir}/{$job/@jobConfigJava}.java" template="templates/mapred/jobConfigJava.jet" replace="true" />
+
+
+                *** Begin custom generation updates for mapred (121)
+
+            *** End custom generation updates for mapred (121)
+
+            </c:iterate> 
+
+            <c:iterate select="$job/mapreduce" var="mapreduce">
+
+                *** Begin custom pre-generation actions for mapreduce (126)
+
+                *** End custom pre-generation actions for mapreduce (126)
+
+                <ws:file path="{$artifact/@srcProject}/src/main/java/{$job/@jobDir}/{$job/@jobConfigJava}.java" template="templates/mapreduce/jobConfigJava.jet" replace="true" />
+
+
+                *** Begin custom generation updates for mapreduce (126)
+
+            *** End custom generation updates for mapreduce (126)
+
+            </c:iterate> 
+
+            <c:iterate select="$job/parm" var="parm">
+
+                *** Begin custom pre-generation actions for parm (131)
+
+                *** End custom pre-generation actions for parm (131)
+
+
+                *** Begin custom generation updates for parm (131)
+
+            *** End custom generation updates for parm (131)
+
+            </c:iterate> 
+
+            <c:iterate select="$job/partitioner" var="partitioner">
+
+                *** Begin custom pre-generation actions for partitioner (151)
+
+                *** End custom pre-generation actions for partitioner (151)
+
+                <ws:file path="{$artifact/@srcProject}/src/main/java/{$job/@jobDir}/{$job/@partitionerJava}.java" template="templates/partitioner/partitionerJava.jet" replace="true" />
+
+
+                *** Begin custom generation updates for partitioner (151)
+
+                *** End custom generation updates for partitioner (151)
+
+            </c:iterate> 
+
+            <c:iterate select="$job/dependency" var="dependency">
+
+                *** Begin custom pre-generation actions for dependency (163)
+
+                *** End custom pre-generation actions for dependency (163)
+
+
+                *** Begin custom generation updates for dependency (163)
+
+                *** End custom generation updates for dependency (163)
+
+            </c:iterate> 
+        </c:iterate> 
+    </c:iterate> 
+
+    <c:iterate select="$artifact/writable" var="writable">
+
+        *** Begin custom pre-generation actions for writable (117)
+
+        *** End custom pre-generation actions for writable (117)
+
+        <ws:file path="{$artifact/@srcProject}/src/main/java/{$artifact/@writablesDir}/{$writable/@writableJava}.java" template="templates/writable/writableJava.jet" replace="true" />
+
+        <ws:file path="{$artifact/@srcProject}/src/main/java/{$artifact/@cassandraPlatformDir}/{$writable/@cassandraCompositeSerializerType}.java" template="templates/writable/compositeSerializer.jet" replace="true" />
+
+        <ws:file path="{$artifact/@srcProject}/src/main/java/{$artifact/@cassandraPlatformDir}/{$writable/@cassandraSerializerType}.java" template="templates/writable/serializer.jet" replace="true" />
+
+        <ws:file path="{$artifact/@srcProject}/src/main/resources/json_schemas/{$writable/@name}.txt" template="templates/writable/jsonSchema.jet" replace="true" />
+
+
+        *** Begin custom generation updates for writable (117)
+
+		<c:if test="$writable/testcase" >
+
+        	<ws:file path="{$artifact/@srcProject}/src/test/java/{$artifact/@writablesDir}/{$writable/@testJava}.java" template="templates/writable/testJava.jet" replace="true" />
+		
+		</c:if>
+
+    	*** End custom generation updates for writable (117)
+
+
+        <c:iterate select="$writable/testcase" var="testcase">
+
+            *** Begin custom pre-generation actions for testcase (129)
+
+            *** End custom pre-generation actions for testcase (129)
+
+
+            *** Begin custom generation updates for testcase (129)
+
+        *** End custom generation updates for testcase (129)
+
+        </c:iterate> 
+
+        <c:iterate select="$writable/property" var="property">
+
+            *** Begin custom pre-generation actions for property (132)
+
+            *** End custom pre-generation actions for property (132)
+
+
+            *** Begin custom generation updates for property (132)
+
+        *** End custom generation updates for property (132)
+
+        </c:iterate> 
+
+        <c:iterate select="$writable/nested" var="nested">
+
+            *** Begin custom pre-generation actions for nested (133)
+
+            *** End custom pre-generation actions for nested (133)
+
+
+            *** Begin custom generation updates for nested (133)
+
+        *** End custom generation updates for nested (133)
+
+        </c:iterate> 
+
+        <c:iterate select="$writable/grouper" var="grouper">
+
+            *** Begin custom pre-generation actions for grouper (137)
+
+            *** End custom pre-generation actions for grouper (137)
+
+            <ws:file path="{$artifact/@srcProject}/src/main/java/{$artifact/@writablesDir}/{$writable/@groupingComparator}.java" template="templates/grouper/groupingComparator.jet" replace="true" />
+
+
+            *** Begin custom generation updates for grouper (137)
+
+            *** End custom generation updates for grouper (137)
+
+        </c:iterate> 
+
+        <c:iterate select="$writable/sorter" var="sorter">
+
+            *** Begin custom pre-generation actions for sorter (138)
+
+            *** End custom pre-generation actions for sorter (138)
+
+            <ws:file path="{$artifact/@srcProject}/src/main/java/{$artifact/@writablesDir}/{$writable/@sorterComparator}.java" template="templates/sorter/sorterComparator.jet" replace="true" />
+
+
+            *** Begin custom generation updates for sorter (138)
+
+            *** End custom generation updates for sorter (138)
+
+        </c:iterate> 
+    </c:iterate> 
+
+    <c:iterate select="$artifact/dataloc" var="dataloc">
+
+        *** Begin custom pre-generation actions for dataloc (130)
+
+        *** End custom pre-generation actions for dataloc (130)
+
+
+        *** Begin custom generation updates for dataloc (130)
+
+        *** End custom generation updates for dataloc (130)
+
+    </c:iterate> 
+
+    <c:iterate select="$artifact/columnFamily" var="columnFamily">
+
+        *** Begin custom pre-generation actions for columnFamily (141)
+        
+        	<c:setVariable select="$artifact/writable[@name=$columnFamily/@type]" var="writable" />
+        	<c:setVariable select="$writable/*[@name=$columnFamily/@rowKey]" var="keyProperty" />
+
+        *** End custom pre-generation actions for columnFamily (141)
+
+
+        *** Begin custom generation updates for columnFamily (141)
+
+        *** End custom generation updates for columnFamily (141)
+
+
+        <c:iterate select="$columnFamily/index" var="index">
+
+            *** Begin custom pre-generation actions for index (145)
+
+            *** End custom pre-generation actions for index (145)
+
+
+            *** Begin custom generation updates for index (145)
+
+            *** End custom generation updates for index (145)
+
+        </c:iterate> 
+
+        <c:iterate select="$columnFamily/static" var="static">
+
+            *** Begin custom pre-generation actions for static (146)
+
+            *** End custom pre-generation actions for static (146)
+
+            <ws:file path="{$artifact/@srcProject}/src/main/java/{$artifact/@cassandraDir}/{$columnFamily/@accessJava}.java" template="templates/static/accessJava.jet" replace="true" />
+
+            <ws:file path="{$artifact/@srcProject}/src/main/resources/columnFamily/{$columnFamily/@name}Drop.txt" template="templates/static/dropCmds.jet" replace="true" />
+
+            <ws:file path="{$artifact/@srcProject}/src/main/resources/columnFamily/{$columnFamily/@name}Create.txt" template="templates/static/createCmds.jet" replace="true" />
+
+            <ws:file path="{$artifact/@srcProject}/src/main/java/{$artifact/@cassandraPlatformDir}/{$columnFamily/@pigAccessJava}.java" template="templates/static/pigAccessJava.jet" replace="true" />
+
+            <ws:file path="{$artifact/@srcProject}/src/main/java/{$artifact/@cassandraExamplesDir}/{$columnFamily/@exampleJava}.java" template="templates/static/exampleJava.jet" replace="false" />
+
+
+            *** Begin custom generation updates for static (146)
+
+            *** End custom generation updates for static (146)
+
+        </c:iterate> 
+
+        <c:iterate select="$columnFamily/dynamic" var="dynamic">
+
+            *** Begin custom pre-generation actions for dynamic (147)
+
+        		<c:setVariable select="$writable/*[@isProperty='true'][@name=$columnFamily/@columnKey]" var="columnProperty" />
+				
+				<c:if test="$columnProperty/@isNested='true'" >
+					<c:setVariable select="$artifact/writable[@name=$columnProperty/@type]" var="keyWritable" />
+        		</c:if>
+        		
+            *** End custom pre-generation actions for dynamic (147)
+
+            <ws:file path="{$artifact/@srcProject}/src/main/java/{$artifact/@cassandraDir}/{$columnFamily/@accessJava}.java" template="templates/dynamic/accessJava.jet" replace="true" />
+
+            <ws:file path="{$artifact/@srcProject}/src/main/resources/columnFamily/{$columnFamily/@name}Drop.txt" template="templates/dynamic/dropCmds.jet" replace="true" />
+
+            <ws:file path="{$artifact/@srcProject}/src/main/resources/columnFamily/{$columnFamily/@name}Create.txt" template="templates/dynamic/createCmds.jet" replace="true" />
+
+            <ws:file path="{$artifact/@srcProject}/src/main/java/{$artifact/@cassandraPlatformDir}/{$columnFamily/@pigAccessJava}.java" template="templates/dynamic/pigAccessJava.jet" replace="true" />
+
+            <ws:file path="{$artifact/@srcProject}/src/main/java/{$artifact/@cassandraExamplesDir}/{$columnFamily/@exampleJava}.java" template="templates/dynamic/exampleJava.jet" replace="false" />
+
+
+            *** Begin custom generation updates for dynamic (147)
+
+            *** End custom generation updates for dynamic (147)
+
+        </c:iterate> 
+
+        <c:iterate select="$columnFamily/cql" var="cql">
+
+            *** Begin custom pre-generation actions for cql (164)
+
+            *** End custom pre-generation actions for cql (164)
+
+            <ws:file path="{$artifact/@srcProject}/src/main/java/{$artifact/@cassandraDir}/{$columnFamily/@accessJava}.java" template="templates/cql/accessJava.jet" replace="true" />
+
+            <ws:file path="{$artifact/@srcProject}/src/main/resources/columnFamily/{$columnFamily/@name}Drop.txt" template="templates/cql/dropCmds.jet" replace="true" />
+
+            <ws:file path="{$artifact/@srcProject}/src/main/resources/columnFamily/{$columnFamily/@name}Create.txt" template="templates/cql/createCmds.jet" replace="true" />
+
+            <ws:file path="{$artifact/@srcProject}/src/main/java/{$artifact/@cassandraPlatformDir}/{$columnFamily/@pigAccessJava}.java" template="templates/cql/pigAccessJava.jet" replace="true" />
+
+            <ws:file path="{$artifact/@srcProject}/src/main/java/{$artifact/@cassandraExamplesDir}/{$columnFamily/@exampleJava}.java" template="templates/cql/exampleJava.jet" replace="false" />
+
+            <ws:file path="{$artifact/@srcProject}/src/main/java/{$artifact/@cassandraPlatformDir}/{$columnFamily/@cassandraColumnNameSerializerType}.java" template="templates/cql/columnNameSerializer.jet" replace="true" />
+
+
+            *** Begin custom generation updates for cql (164)
+
+            *** End custom generation updates for cql (164)
+
+        </c:iterate> 
+
+        <c:iterate select="$columnFamily/clusteringKey" var="clusteringKey">
+
+            *** Begin custom pre-generation actions for clusteringKey (172)
+
+            *** End custom pre-generation actions for clusteringKey (172)
+
+
+            *** Begin custom generation updates for clusteringKey (172)
+
+            *** End custom generation updates for clusteringKey (172)
+
+        </c:iterate> 
+    </c:iterate> 
+
+    <c:iterate select="$artifact/hiveTable" var="hiveTable">
+
+        *** Begin custom pre-generation actions for hiveTable (173)
+
+        *** End custom pre-generation actions for hiveTable (173)
+
+
+        *** Begin custom generation updates for hiveTable (173)
+
+        *** End custom generation updates for hiveTable (173)
+
+    </c:iterate> 
+</c:iterate> 
+
+*******************************
+
+<c:if test="isVariableDefined('org.eclipse.jet.resource.project.name')">
+    <ws:file template="templates/dump.jet" path="{$org.eclipse.jet.resource.project.name}/dump.xml"/>
+</c:if>

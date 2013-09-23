@@ -1,0 +1,657 @@
+
+<xform id="2" nextID="182" provider="Gerken Intellectual Properties, LLC" version="0.4.0" xformId="hadoop.flow.xform">
+	<group id="4" name="flow" parentId="140" root="false">
+		<createFile binary="false" changeableName="false" folderExpr="/src/main/java/{$flow/@flowDir}" id="11" nameExpr="{$flow/@workflowClass}.java" oPath="src/main/java/com/gerken/demo/Workflow.java" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="workflowJava" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000007">
+			<javaPkg name="com.gerken.demo" purpose="flow">
+		</javaPkg>
+			<folderExpr>/src/main/java/{$flow/@flowDir}</folderExpr>
+			</createFile>
+		<token derived="false" desc="Name of the artifact collection to be generated" formula="" id="" name="name">
+			<desc>Single-token, human-readable name of the overall hadoop flow</desc>
+			</token>
+		<createFile binary="false" changeableName="true" folderExpr="/src/main/resources" id="28" nameExpr="{$flow/@workflowSh}.sh" oPath="src/main/resources/counter.sh" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="workflowSh" purposeAsTokenName="true" replace="true" src="hadoop.flow/refimpl/art000024">
+			<javaPkg name="" purpose="">
+		</javaPkg>
+			<nameExpr>{$flow/@workflowSh}.sh</nameExpr>
+			</createFile>
+		<token derived="true" desc="variable for counter" formula="{lower-case($flow/@name)}" name="workflowSh"/>
+		<token derived="true" formula="{$artifact/@groupID}.{lower-case($flow/@name)}" name="flowPkg">
+			<formula>{$flow/@groupID}.demo</formula>
+			</token>
+		<token derived="true" formula="{translate($flow/@flowPkg,&apos;.&apos;,&apos;/&apos;)}" name="flowDir"/>
+		<token derived="true" desc="" formula="pig/{lower-case($flow/@name)}" name="pigDir"/>
+		<token derived="true" desc="" formula="{uppercaseFirst($flow/@name)}Workflow" name="workflowClass"/>
+		<createFile binary="false" changeableName="false" folderExpr="/src/main/resources/{$flow/@flowDir}" id="174" nameExpr="{$flow/@workflowClass}.properties" oPath="src/main/java/com/gerken/demo/Workflow.java" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="workflowProperties" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000007"/>
+		</group>
+	<group id="3" name="root" parentId="" root="true">
+		</group>
+	<replacement newString="{$artifact/@srcProject}" oldString="hadoop.simple">
+		</replacement>
+	<group id="117" name="writable" parentId="140">
+		<createFile binary="false" changeableName="true" folderExpr="/src/main/java/{$artifact/@writablesDir}" id="23" nameExpr="{$writable/@writableJava}.java" oPath="src/main/java/com/gerken/writable/XlatedWordCount.java" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="writableJava" purposeAsTokenName="true" replace="true" src="hadoop.flow/refimpl/art000019">
+			<javaPkg name="com.gerken.writable" purpose="writables">
+		</javaPkg>
+			<nameExpr>{$writable/@writableJava}.java</nameExpr>
+			<folderExpr>/src/main/java/{$writable/@writablesDir}</folderExpr>
+			</createFile>
+		<token derived="true" desc="variable for XlatedWordCount" formula="{$writable/@name}" name="writableJava"/>
+		<token derived="true" desc="variable for XlatedWordCountTest" formula="{$writable/@name}Test" name="testJava"/>
+		<token derived="false" desc="" formula="" name="name">
+			<desc>The Java class name of the Writable</desc>
+			</token>
+		<token derived="false" desc="" formula="" name="comparable">
+			<desc>true|false whether or not this writable implements WritableComparable</desc>
+			</token>
+		<token derived="true" desc="" formula="{$writable/@writableJava}SortComparator" name="sorterComparator"/>
+		<token derived="true" desc="" formula="{$writable/@writableJava}GroupingComparator" name="groupingComparator"/>
+		<createFile binary="false" changeableName="true" folderExpr="/src/main/java/{$artifact/@cassandraPlatformDir}" id="155" nameExpr="{$writable/@cassandraCompositeSerializerType}.java" oPath="src/main/java/com/gerken/writable/XlatedWordCount.java" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="compositeSerializer" purposeAsTokenName="true" replace="true" src="hadoop.flow/refimpl/art000019"/>
+		<token derived="true" desc="" formula="{$writable/@name}CompositeSerializer" name="cassandraCompositeSerializerType"/>
+		<token derived="true" desc="" formula="{$writable/@name}Serializer" name="cassandraSerializerType"/>
+		<createFile binary="false" changeableName="true" folderExpr="/src/main/java/{$artifact/@cassandraPlatformDir}" id="156" nameExpr="{$writable/@cassandraSerializerType}.java" oPath="src/main/java/com/gerken/writable/XlatedWordCount.java" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="serializer" purposeAsTokenName="true" replace="true" src="hadoop.flow/refimpl/art000019"/>
+		<createFile binary="false" changeableName="true" folderExpr="/src/main/resources/json_schemas" id="161" nameExpr="{$writable/@name}.txt" oPath="src/main/resources/counter.sh" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="jsonSchema" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000024"/>
+		</group>
+	<group id="118" name="job" parentId="4">
+		<token derived="true" desc="" formula="mapreduce" name="version"/>
+		<token derived="true" desc="variable for CounterMR" formula="{$job/@name}Job" name="jobConfigJava"/>
+		<token derived="true" formula="{$artifact/@groupID}.{lower-case($flow/@name)}.{$job/@name}" name="jobPkg">
+			<formula>{$flow/@groupID}.demo.report</formula>
+			</token>
+		<token derived="true" formula="{translate($job/@jobPkg,&apos;.&apos;,&apos;/&apos;)}" name="jobDir"/>
+		<token derived="false" desc="" formula="" name="name">
+			<desc>The unique, single-token name of this hadoop job</desc>
+			</token>
+		<token derived="false" desc="" formula="" name="keyType">
+			<desc>The type of the keys passed from mapper(s) to reducer(s) in this job</desc>
+			</token>
+		<token derived="false" desc="" formula="" name="valueType">
+			<desc>The type of the values passed from mapper(s) to reducer(s) in this job</desc>
+			</token>
+		<token derived="true" desc="" formula="{lowercaseFirst($job/@name)}Args" name="argsArray"/>
+		<token derived="false" desc="" formula="" name="desc">
+			<desc>Short description of what this job does</desc>
+			</token>
+		<token derived="false" desc="" formula="" name="useGrouper">
+			<desc>true|false whether the custom grouping comparators for the internal key should be used by this job</desc>
+			</token>
+		<token derived="false" desc="" formula="" name="useSorter">
+			<desc>true|false whether custom sorting comparator for the internal value should be used by this job</desc>
+			</token>
+		<token derived="false" desc="" formula="" name="reducers">
+			<desc>The number of reducers to be used by this job</desc>
+			</token>
+		<token derived="false" desc="" formula="" name="sort">
+			<desc>One of 'none', 'bytes' or 'writable'</desc>
+			</token>
+		<token derived="true" desc="" formula="{uppercaseFirst($job/@name)}Partitioner" name="partitionerJava"/>
+		<token derived="true" desc="" formula="{lower-case($job/@name)}.pig" name="pigScript"/>
+		<createFile binary="false" changeableName="true" folderExpr="/src/main/resources/{$flow/@pigDir}" id="157" nameExpr="{$job/@pigScript}" oPath="src/main/java/com/gerken/demo/report/CountsMapper.java" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="pigScript" purposeAsTokenName="false" replace="false" src="hadoop.flow/refimpl/art000011"/>
+		<createFile binary="false" changeableName="true" folderExpr="/src/main/java/{$job/@jobDir}" id="158" nameExpr="{$job/@pigCallerJava}.java" oPath="src/main/java/com/gerken/demo/counter/CounterReducer.java" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="pigCaller" purposeAsTokenName="true" replace="true" src="hadoop.flow/refimpl/art000010"/>
+		<token derived="true" desc="" formula="{$job/@name}Pig" name="pigCallerJava"/>
+		<createFile binary="false" changeableName="true" folderExpr="/src/main/resources/azkaban/{$flow/@name}" id="162" nameExpr="{$job/@name}.job" oPath="src/main/java/com/gerken/demo/counter/CounterReducer.java" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="azkabanJob" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000010"/>
+		<token derived="true" desc="" formula="{$job/@name}" name="workflowLabel"/>
+		<token derived="true" desc="" formula="job.{$flow/@name}.{$job/@name}" name="workflowId" optional="false"/>
+		</group>
+	<ignored>
+		<createFile binary="false" changeableName="true" folderExpr="target/surefire" id="58" nameExpr="surefire104346517909708710tmp" oPath="target/surefire/surefire104346517909708710tmp" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="surefire104346517909708710tmp" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000054">
+		</createFile>
+		<createFile binary="false" changeableName="true" folderExpr="target/surefire" id="59" nameExpr="surefire118833747031999791tmp" oPath="target/surefire/surefire118833747031999791tmp" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="surefire118833747031999791tmp" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000055">
+		</createFile>
+		<createFile binary="false" changeableName="true" folderExpr="target/surefire" id="60" nameExpr="surefire145075994113616024tmp" oPath="target/surefire/surefire145075994113616024tmp" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="surefire145075994113616024tmp" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000056">
+		</createFile>
+		<createFile binary="false" changeableName="true" folderExpr="target/surefire" id="61" nameExpr="surefire2208590911033409417tmp" oPath="target/surefire/surefire2208590911033409417tmp" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="surefire2208590911033409417tmp" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000057">
+		</createFile>
+		<createFile binary="false" changeableName="true" folderExpr="target/surefire" id="62" nameExpr="surefire2279984834211694363tmp" oPath="target/surefire/surefire2279984834211694363tmp" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="surefire2279984834211694363tmp" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000058">
+		</createFile>
+		<createFile binary="false" changeableName="true" folderExpr="target/surefire" id="63" nameExpr="surefire2927191959076417283tmp" oPath="target/surefire/surefire2927191959076417283tmp" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="surefire2927191959076417283tmp" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000059">
+		</createFile>
+		<createFile binary="false" changeableName="true" folderExpr="target/surefire" id="64" nameExpr="surefire3035086842310189903tmp" oPath="target/surefire/surefire3035086842310189903tmp" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="surefire3035086842310189903tmp" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000060">
+		</createFile>
+		<createFile binary="false" changeableName="true" folderExpr="target/surefire" id="65" nameExpr="surefire3168669577541079010tmp" oPath="target/surefire/surefire3168669577541079010tmp" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="surefire3168669577541079010tmp" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000061">
+		</createFile>
+		<createFile binary="false" changeableName="true" folderExpr="target/surefire" id="66" nameExpr="surefire3207284302346120754tmp" oPath="target/surefire/surefire3207284302346120754tmp" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="surefire3207284302346120754tmp" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000062">
+		</createFile>
+		<createFile binary="false" changeableName="true" folderExpr="target/surefire" id="67" nameExpr="surefire3822421183294446265tmp" oPath="target/surefire/surefire3822421183294446265tmp" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="surefire3822421183294446265tmp" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000063">
+		</createFile>
+		<createFile binary="false" changeableName="true" folderExpr="target/surefire" id="68" nameExpr="surefire4000923715012872018tmp" oPath="target/surefire/surefire4000923715012872018tmp" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="surefire4000923715012872018tmp" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000064">
+		</createFile>
+		<createFile binary="false" changeableName="true" folderExpr="target/surefire" id="69" nameExpr="surefire4124588650566334170tmp" oPath="target/surefire/surefire4124588650566334170tmp" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="surefire4124588650566334170tmp" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000065">
+		</createFile>
+		<createFile binary="false" changeableName="true" folderExpr="target/surefire" id="70" nameExpr="surefire427650155738232287tmp" oPath="target/surefire/surefire427650155738232287tmp" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="surefire427650155738232287tmp" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000066">
+		</createFile>
+		<createFile binary="false" changeableName="true" folderExpr="target/surefire" id="71" nameExpr="surefire4955477616986420398tmp" oPath="target/surefire/surefire4955477616986420398tmp" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="surefire4955477616986420398tmp" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000067">
+		</createFile>
+		<createFile binary="false" changeableName="true" folderExpr="target/surefire" id="72" nameExpr="surefire5419112173624887947tmp" oPath="target/surefire/surefire5419112173624887947tmp" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="surefire5419112173624887947tmp" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000068">
+		</createFile>
+		<createFile binary="false" changeableName="true" folderExpr="target/surefire" id="73" nameExpr="surefire5569970377901556246tmp" oPath="target/surefire/surefire5569970377901556246tmp" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="surefire5569970377901556246tmp" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000069">
+		</createFile>
+		<createFile binary="false" changeableName="true" folderExpr="target/surefire" id="74" nameExpr="surefire566766970738796344tmp" oPath="target/surefire/surefire566766970738796344tmp" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="surefire566766970738796344tmp" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000070">
+		</createFile>
+		<createFile binary="false" changeableName="true" folderExpr="target/surefire" id="75" nameExpr="surefire6338449826973613305tmp" oPath="target/surefire/surefire6338449826973613305tmp" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="surefire6338449826973613305tmp" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000071">
+		</createFile>
+		<createFile binary="false" changeableName="true" folderExpr="target/surefire" id="76" nameExpr="surefire6378489416208808171tmp" oPath="target/surefire/surefire6378489416208808171tmp" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="surefire6378489416208808171tmp" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000072">
+		</createFile>
+		<createFile binary="false" changeableName="true" folderExpr="target/surefire" id="77" nameExpr="surefire64306012336012523tmp" oPath="target/surefire/surefire64306012336012523tmp" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="surefire64306012336012523tmp" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000073">
+		</createFile>
+		<createFile binary="false" changeableName="true" folderExpr="target/surefire" id="78" nameExpr="surefire6705818586838342064tmp" oPath="target/surefire/surefire6705818586838342064tmp" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="surefire6705818586838342064tmp" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000074">
+		</createFile>
+		<createFile binary="false" changeableName="true" folderExpr="target/surefire" id="79" nameExpr="surefire704614458434612168tmp" oPath="target/surefire/surefire704614458434612168tmp" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="surefire704614458434612168tmp" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000075">
+		</createFile>
+		<createFile binary="false" changeableName="true" folderExpr="target/surefire" id="80" nameExpr="surefire7233647965506091181tmp" oPath="target/surefire/surefire7233647965506091181tmp" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="surefire7233647965506091181tmp" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000076">
+		</createFile>
+		<createFile binary="false" changeableName="true" folderExpr="target/surefire" id="81" nameExpr="surefire7335513180251326055tmp" oPath="target/surefire/surefire7335513180251326055tmp" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="surefire7335513180251326055tmp" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000077">
+		</createFile>
+		<createFile binary="false" changeableName="true" folderExpr="target/surefire" id="82" nameExpr="surefire7785658087578283236tmp" oPath="target/surefire/surefire7785658087578283236tmp" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="surefire7785658087578283236tmp" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000078">
+		</createFile>
+		<createFile binary="false" changeableName="true" folderExpr="target/surefire" id="83" nameExpr="surefire8386435886820082473tmp" oPath="target/surefire/surefire8386435886820082473tmp" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="surefire8386435886820082473tmp" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000079">
+		</createFile>
+		<createFile binary="false" changeableName="true" folderExpr="target/surefire" id="84" nameExpr="surefire857382886464969337tmp" oPath="target/surefire/surefire857382886464969337tmp" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="surefire857382886464969337tmp" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000080">
+		</createFile>
+		<createFile binary="false" changeableName="true" folderExpr="target/surefire" id="85" nameExpr="surefire8745683206916928935tmp" oPath="target/surefire/surefire8745683206916928935tmp" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="surefire8745683206916928935tmp" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000081">
+		</createFile>
+		<createFile binary="false" changeableName="true" folderExpr="target/surefire" id="86" nameExpr="surefire8886278557801192740tmp" oPath="target/surefire/surefire8886278557801192740tmp" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="surefire8886278557801192740tmp" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000082">
+		</createFile>
+		<createFile binary="false" changeableName="true" folderExpr="target/surefire" id="87" nameExpr="surefire9203380345469969487tmp" oPath="target/surefire/surefire9203380345469969487tmp" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="surefire9203380345469969487tmp" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000083">
+		</createFile>
+		<createFile binary="false" changeableName="true" folderExpr="target/surefire-reports" id="88" nameExpr="TEST-com.gerken.demo.counter.CounterMapperTest.xml" oPath="target/surefire-reports/TEST-com.gerken.demo.counter.CounterMapperTest.xml" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="test-comGerkenDemoCounterCountermappertestXml" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000084">
+		</createFile>
+		<createFile binary="false" changeableName="true" folderExpr="target/surefire-reports" id="89" nameExpr="TEST-com.gerken.demo.counter.CounterReducerTest.xml" oPath="target/surefire-reports/TEST-com.gerken.demo.counter.CounterReducerTest.xml" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="test-comGerkenDemoCounterCounterreducertestXml" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000085">
+		</createFile>
+		<createFile binary="false" changeableName="true" folderExpr="target/surefire-reports" id="90" nameExpr="TEST-com.gerken.demo.counter.TestOne.xml" oPath="target/surefire-reports/TEST-com.gerken.demo.counter.TestOne.xml" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="test-comGerkenDemoCounterTestoneXml" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000086">
+		</createFile>
+		<createFile binary="false" changeableName="true" folderExpr="target/surefire-reports" id="91" nameExpr="TEST-com.gerken.demo.report.CountsMapperTest.xml" oPath="target/surefire-reports/TEST-com.gerken.demo.report.CountsMapperTest.xml" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="test-comGerkenDemoReportCountsmappertestXml" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000087">
+		</createFile>
+		<createFile binary="false" changeableName="true" folderExpr="target/surefire-reports" id="92" nameExpr="TEST-com.gerken.demo.report.ReportReducerTest.xml" oPath="target/surefire-reports/TEST-com.gerken.demo.report.ReportReducerTest.xml" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="test-comGerkenDemoReportReportreducertestXml" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000088">
+		</createFile>
+		<createFile binary="false" changeableName="true" folderExpr="target/surefire-reports" id="93" nameExpr="com.gerken.demo.counter.CounterMapperTest.txt" oPath="target/surefire-reports/com.gerken.demo.counter.CounterMapperTest.txt" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="comGerkenDemoCounterCountermappertestTxt" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000089">
+		</createFile>
+		<createFile binary="false" changeableName="true" folderExpr="target/surefire-reports" id="94" nameExpr="com.gerken.demo.counter.CounterReducerTest.txt" oPath="target/surefire-reports/com.gerken.demo.counter.CounterReducerTest.txt" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="comGerkenDemoCounterCounterreducertestTxt" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000090">
+		</createFile>
+		<createFile binary="false" changeableName="true" folderExpr="target/surefire-reports" id="95" nameExpr="com.gerken.demo.counter.TestOne.txt" oPath="target/surefire-reports/com.gerken.demo.counter.TestOne.txt" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="comGerkenDemoCounterTestoneTxt" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000091">
+		</createFile>
+		<createFile binary="false" changeableName="true" folderExpr="target/surefire-reports" id="96" nameExpr="com.gerken.demo.report.CountsMapperTest.txt" oPath="target/surefire-reports/com.gerken.demo.report.CountsMapperTest.txt" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="comGerkenDemoReportCountsmappertestTxt" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000092">
+		</createFile>
+		<createFile binary="false" changeableName="true" folderExpr="target/surefire-reports" id="97" nameExpr="com.gerken.demo.report.ReportReducerTest.txt" oPath="target/surefire-reports/com.gerken.demo.report.ReportReducerTest.txt" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="comGerkenDemoReportReportreducertestTxt" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000093">
+		</createFile>
+		<createFile binary="false" changeableName="true" folderExpr="src/main/resources/dictionary" id="29" nameExpr="english_french.txt" oPath="src/main/resources/dictionary/english_french.txt" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="english_frenchTxt" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000025">
+			<javaPkg name="dictionary" purpose="dictionarySrcMainResourcesSrc">
+		</javaPkg>
+			</createFile>
+		<createFile binary="false" changeableName="true" folderExpr="src/main/resources/documents" id="30" nameExpr="testdata.txt" oPath="src/main/resources/documents/testdata.txt" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="testdataTxt" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000026">
+			<javaPkg name="documents" purpose="documentsSrcMainResourcesSrc">
+		</javaPkg>
+			</createFile>
+		<createFile binary="false" changeableName="true" folderExpr="src/main/java/com/gerken/hadoop/refimpl" id="22" nameExpr="RefImpl.java" oPath="src/main/java/com/gerken/hadoop/refimpl/RefImpl.java" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="refimplJava" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000018">
+			<javaPkg name="com.gerken.hadoop.refimpl" purpose="refimplSrcMainJavaSrc">
+		</javaPkg>
+			</createFile>
+		<createFile binary="false" changeableName="false" folderExpr="/src/test/resources" id="36" nameExpr="placeholder.txt" oPath="src/test/resources/placeholder.txt" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="placeholderTxt" purposeAsTokenName="false" replace="false" src="hadoop.flow/refimpl/art000032">
+			<javaPkg name="" purpose="">
+		</javaPkg>
+			</createFile>
+		<createFile binary="false" changeableName="false" folderExpr="/target/test-classes" id="98" nameExpr="placeholder.txt" oPath="target/test-classes/placeholder.txt" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="placeholderTxt" purposeAsTokenName="false" replace="false" src="hadoop.flow/refimpl/art000094">
+		</createFile>
+		<createFile binary="false" changeableName="true" folderExpr="/src/main/java/from/hdfs/to/fdfs" id="24" nameExpr="CounterMR.java" oPath="src/main/java/from/hdfs/to/fdfs/CounterMR.java" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="countermrJava" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000020">
+			<javaPkg name="from.hdfs.to.fdfs" purpose="fdfsSrcMainJavaSrc">
+		</javaPkg>
+			</createFile>
+		<createFile binary="false" changeableName="true" folderExpr="/src/main/jobs/Demo" id="27" nameExpr="Counter.job" oPath="src/main/jobs/Demo/Counter.job" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="counterJob" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000023">
+		</createFile>
+		<createFile binary="false" changeableName="true" folderExpr="/src/main/java/com/gerken/demo/report" id="18" nameExpr="XlateMapper.java" oPath="src/main/java/com/gerken/demo/report/XlateMapper.java" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="xlatemapperJava" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000014">
+			<javaPkg name="com.gerken.demo.report" purpose="job">
+		</javaPkg>
+			</createFile>
+		<createFile binary="false" changeableName="true" folderExpr="/src/main/java/com/gerken/demo/xlate" id="20" nameExpr="XlateMapper.java" oPath="src/main/java/com/gerken/demo/xlate/XlateMapper.java" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="xlatemapperJava" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000016">
+			<javaPkg name="com.gerken.demo.xlate" purpose="xlateSrcMainJavaSrc">
+		</javaPkg>
+			</createFile>
+		<createFile binary="false" changeableName="true" folderExpr="/src/main/java/from/hdfs/to/fdfs" id="25" nameExpr="CounterMapper.java" oPath="src/main/java/from/hdfs/to/fdfs/CounterMapper.java" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="countermapperJava" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000021">
+			<javaPkg name="from.hdfs.to.fdfs" purpose="fdfsSrcMainJavaSrc">
+		</javaPkg>
+			</createFile>
+		<createFile binary="false" changeableName="true" folderExpr="/src/main/java/from/hdfs/to/fdfs" id="26" nameExpr="CounterReducer.java" oPath="src/main/java/from/hdfs/to/fdfs/CounterReducer.java" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="reducerJava" purposeAsTokenName="true" replace="true" src="hadoop.flow/refimpl/art000022">
+			<javaPkg name="from.hdfs.to.fdfs" purpose="fdfsSrcMainJavaSrc">
+		</javaPkg>
+			</createFile>
+		<createFile binary="false" changeableName="true" folderExpr="/src/main/java/com/gerken/demo/xlate" id="21" nameExpr="XlateReducer.java" oPath="src/main/java/com/gerken/demo/xlate/XlateReducer.java" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="xlatereducerJava" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000017">
+			<javaPkg name="com.gerken.demo.xlate" purpose="xlateSrcMainJavaSrc">
+		</javaPkg>
+			</createFile>
+		<createFile binary="false" changeableName="true" folderExpr="/src/main/java/com/gerken/demo/xlate" id="19" nameExpr="XlateMR.java" oPath="src/main/java/com/gerken/demo/xlate/XlateMR.java" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="jobConfigJava" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000015">
+			<javaPkg name="com.gerken.demo.xlate" purpose="xlateSrcMainJavaSrc">
+		</javaPkg>
+			</createFile>
+		<token derived="true" formula="com.gerken.demo.counter" name="counterSrcMainJavaSrcPkg"/>
+		<token derived="true" formula="{translate($job/@counterSrcMainJavaSrcPkg,&apos;.&apos;,&apos;/&apos;)}" name="counterSrcMainJavaSrcDir"/>
+		<createFile binary="true" changeableName="true" folderExpr="/target" id="37" nameExpr="hadoop.simple-0.0.1-SNAPSHOT.jar" oPath="target/hadoop.simple-0.0.1-SNAPSHOT.jar" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="jar" purposeAsTokenName="true" replace="false" src="hadoop.flow/refimpl/art000033">
+		</createFile>
+		<token derived="false" desc="" formula="" name="fromLoc">
+			<desc>The name of the source data location </desc>
+			</token>
+		<token derived="true" desc="" formula="TextInputFormat" name="inputFormat">
+			<desc>The hadoop input format</desc>
+			</token>
+		<token derived="true" desc="" formula="TextOutputFormat" name="outputFormat">
+			<desc>The hadoop output format</desc>
+			</token>
+		<token derived="true" desc="" formula="x" name="writeMethod"/>
+		<token derived="false" desc="" formula="" name="tokenName"/>
+		<token derived="true" desc="" formula="1" name="position">
+			<desc>The 1-based index of the parameter</desc>
+			</token>
+		<token derived="true" desc="" formula="0" name="index">
+			<desc>The argument position occupied by this parameter </desc>
+			</token>
+		<token derived="true" desc="variable for counter" formula="counter" name="workflowSh"/>
+		<token derived="true" desc="variable for XlatedWordCountTest" formula="XlatedWordCountTest" name="testJava"/>
+		<token derived="true" desc="variable for XlatedWordCount" formula="XlatedWordCount" name="writableJava"/>
+		<token derived="false" desc="" formula="" name="useComparators">
+			<desc>true|false whether custom grouping and sorting comparators for the internal key should be used by this job</desc>
+			</token>
+		<token derived="false" desc="" formula="" name="keyspace">
+			<desc>For kind='cass"; the Cassandra keyspace name</desc>
+			</token>
+		<token derived="true" desc="variable for CounterMapper" formula="CounterMapper" name="mapperJava"/>
+		<token derived="true" desc="variable for CounterMapperTest" formula="CounterMapperTest" name="mapperTestJava"/>
+		<token derived="true" desc="variable for CounterReducerTest" formula="{$mapreduce/@reducerTestJava}" name="reducerTestJava">
+			<formula>{$mapreduce/@reducerTestJava}</formula>
+			</token>
+		<token derived="true" desc="variable for CounterReducer" formula="CounterReducer" name="reducerJava"/>
+		<createFile binary="false" changeableName="true" folderExpr="/src/test/java/{$job/@jobDir}" id="33" nameExpr="{$input/@mapperTestJava}.java" oPath="src/test/java/com/gerken/demo/report/CountsMapperTest.java" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="mapperTestJava" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000029">
+			<javaPkg name="com.gerken.demo.report" purpose="job">
+		</javaPkg>
+			<folderExpr>/src/test/java/{$job/@jobDir}</folderExpr>
+			<nameExpr>{$job/@mapperTestJava}.java</nameExpr>
+			</createFile>
+		<createFile binary="false" changeableName="true" folderExpr="/src/test/java/{$job/@jobDir}" id="31" nameExpr="{$input/@mapperTestJava}.java" oPath="src/test/java/com/gerken/demo/counter/CounterMapperTest.java" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="mapperTestJava" purposeAsTokenName="true" replace="true" src="hadoop.flow/refimpl/art000027">
+			<javaPkg name="com.gerken.demo.counter" purpose="counterSrcTestJavaSrc">
+		</javaPkg>
+			<nameExpr>{$job/@mapperTestJava}.java</nameExpr>
+			</createFile>
+		<createFile binary="false" changeableName="true" folderExpr="/src/test/java/{$job/@jobDir}" id="34" nameExpr="{$output/@reducerTestJava}.java" oPath="src/test/java/com/gerken/demo/report/ReportReducerTest.java" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="reducerTestJava" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000030">
+			<javaPkg name="com.gerken.demo.report" purpose="job">
+		</javaPkg>
+			<folderExpr>/src/test/java/{$job/@jobDir}</folderExpr>
+			<nameExpr>{$job/@reducerTestJava}.java</nameExpr>
+			</createFile>
+		<createFile binary="false" changeableName="true" folderExpr="/src/test/java/{$job/@jobDir}" id="32" nameExpr="{$output/@reducerTestJava}.java" oPath="src/test/java/com/gerken/demo/counter/CounterReducerTest.java" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="reducerTestJava" purposeAsTokenName="true" replace="true" src="hadoop.flow/refimpl/art000028">
+			<javaPkg name="com.gerken.demo.counter" purpose="counterSrcTestJavaSrc">
+		</javaPkg>
+			<nameExpr>{$job/@reducerTestJava}.java</nameExpr>
+			</createFile>
+		<createFile binary="false" changeableName="true" folderExpr="/src/test/java/{$artifact/@writablesDir}" id="35" nameExpr="{$writable/@testJava}.java" oPath="src/test/java/com/gerken/writable/XlatedWordCountTest.java" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="testJava" purposeAsTokenName="true" replace="true" src="hadoop.flow/refimpl/art000031">
+			<javaPkg name="com.gerken.writable" purpose="writables">
+		</javaPkg>
+			<nameExpr>{$writable/@testJava}.java</nameExpr>
+			<folderExpr>/src/test/java/{$writable/@writablesDir}</folderExpr>
+			</createFile>
+		<token derived="true" desc="" formula="{$writable/@name}" name="jsonSchema"/>
+		<token derived="false" desc="" formula="" name="tokenName"/>
+		<token derived="false" desc="" formula="" name="workflowLabel"/>
+		</ignored>
+	<group id="119" name="input" parentId="118">
+		<token derived="true" desc="" formula="{$job/@version}" name="version"/>
+		<token derived="false" desc="" formula="" name="name">
+			<desc>A single-token name describing the behavior of the mapper; unique to all mappers in the job</desc>
+			</token>
+		<token derived="true" desc="variable for CounterMapper" formula="{$input/@name}Mapper" name="mapperJava"/>
+		<token derived="true" desc="variable for CounterMapperTest" formula="{$input/@name}MapperTest" name="mapperTestJava"/>
+		<token derived="false" desc="" formula="" name="source">
+			<desc>The name of the data location whose data is read by this input/mapper</desc>
+			</token>
+		<token derived="true" desc="" formula="Text" name="inKeyType"/>
+		<token derived="true" desc="" formula="Text" name="inValueType"/>
+		<token derived="true" desc="" formula="UnknownInputFormat" name="inputFormat"/>
+		<token derived="true" desc="" formula="{lowercaseFirst($input/@source)}Source" name="parmName"/>
+		<token derived="true" desc="" formula="{$job/@name}.input.{$input/@name}" name="propertyKey"/>
+		<token derived="true" desc="" formula="{translate(upper-case($input/@propertyKey),&apos;.&apos;,&apos;_&apos;)}" name="constantName"/>
+		<token derived="true" desc="" formula="{lower-case($input/@constantName)}" name="variableName"/>
+		</group>
+	<group id="120" name="output" parentId="118">
+		<token derived="true" desc="" formula="{$job/@version}" name="version"/>
+		<token derived="false" desc="" formula="" name="name">
+			<desc>A single-token name describing the behavior of the reducer</desc>
+			</token>
+		<token derived="true" desc="variable for CounterReducer" formula="{$output/@name}Reducer" name="reducerJava"/>
+		<token derived="true" desc="variable for CounterReducerTest" formula="{$output/@name}ReducerTest" name="reducerTestJava"/>
+		<token derived="false" desc="" formula="" name="target">
+			<desc>The name of the data store to which this output/reducer writes</desc>
+			</token>
+		<token derived="true" desc="" formula="Text" name="outKeyType"/>
+		<token derived="true" desc="" formula="Text" name="outValueType"/>
+		<token derived="true" desc="" formula="UnknownOutputFormat" name="outputFormat"/>
+		<token derived="true" desc="" formula="{lowercaseFirst($output/@target)}Target" name="parmName"/>
+		<token derived="true" desc="" formula="{$job/@name}.output.{$output/@name}" name="propertyKey"/>
+		<token derived="true" desc="" formula="{translate(upper-case($output/@propertyKey),&apos;.&apos;,&apos;_&apos;)}" name="constantName"/>
+		<token derived="true" desc="" formula="{lower-case($output/@constantName)}" name="variableName"/>
+		<createFile binary="false" changeableName="true" folderExpr="/src/main/java/{$job/@jobDir}" id="179" nameExpr="{$output/@concurrentOutputFormatJava}.java" oPath="src/main/java/com/gerken/writable/XlatedWordCount.java" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="concurrentOutputFormat" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000019"/>
+		<token derived="true" desc="" formula="{uppercaseFirst($output/@name)}ConcurrentOutputFormat" name="concurrentOutputFormatJava"/>
+		<token derived="true" desc="" formula="counter{$output/@name}" name="counterName"/>
+		</group>
+	<group id="121" name="mapred" parentId="118" polymorphicKey="version" polymorphicSingleton="true">
+		<createFile binary="false" changeableName="true" folderExpr="/src/main/java/{$job/@jobDir}" id="16" nameExpr="{$job/@jobConfigJava}.java" oPath="src/main/java/com/gerken/demo/report/ReportMR.java" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="jobConfigJava" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000012">
+			<javaPkg name="com.gerken.demo.report" purpose="job">
+		</javaPkg>
+			<folderExpr>/src/main/java/{$job/@jobDir}</folderExpr>
+			<nameExpr>{$job/@jobConfigJava}.java</nameExpr>
+			</createFile>
+		</group>
+	<group id="122" name="mapred" parentId="119" polymorphicKey="version" polymorphicSingleton="true">
+		<createFile binary="false" changeableName="true" folderExpr="/src/main/java/{$job/@jobDir}" id="15" nameExpr="{$input/@mapperJava}.java" oPath="src/main/java/com/gerken/demo/report/CountsMapper.java" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="mapperJava" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000011">
+			<javaPkg name="com.gerken.demo.report" purpose="job">
+		</javaPkg>
+			<folderExpr>/src/main/java/{$job/@jobDir}</folderExpr>
+			<nameExpr>{$job/@mapperJava}.java</nameExpr>
+			</createFile>
+		</group>
+	<group id="123" name="mapreduce" parentId="119" polymorphicKey="version" polymorphicSingleton="true">
+		<createFile binary="false" changeableName="true" folderExpr="/src/main/java/{$job/@jobDir}" id="13" nameExpr="{$input/@mapperJava}.java" oPath="src/main/java/com/gerken/demo/counter/CounterMapper.java" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="mapperJava" purposeAsTokenName="true" replace="true" src="hadoop.flow/refimpl/art000009">
+			<javaPkg name="com.gerken.demo.counter" purpose="counterSrcMainJavaSrc">
+		</javaPkg>
+			<nameExpr>{$job/@mapperJava}.java</nameExpr>
+			</createFile>
+		</group>
+	<group id="124" name="mapred" parentId="120" polymorphicKey="version">
+		<createFile binary="false" changeableName="true" folderExpr="/src/main/java/{$job/@jobDir}" id="17" nameExpr="{$output/@reducerJava}.java" oPath="src/main/java/com/gerken/demo/report/ReportReducer.java" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="reducerJava" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000013">
+			<javaPkg name="com.gerken.demo.report" purpose="job">
+		</javaPkg>
+			<folderExpr>/src/main/java/{$job/@jobDir}</folderExpr>
+			<nameExpr>{$job/@reducerJava}.java</nameExpr>
+			</createFile>
+		</group>
+	<group id="125" name="mapreduce" parentId="120" polymorphicKey="version" polymorphicSingleton="true">
+		<createFile binary="false" changeableName="true" folderExpr="/src/main/java/{$job/@jobDir}" id="14" nameExpr="{$output/@reducerJava}.java" oPath="src/main/java/com/gerken/demo/counter/CounterReducer.java" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="reducerJava" purposeAsTokenName="true" replace="true" src="hadoop.flow/refimpl/art000010">
+			<javaPkg name="com.gerken.demo.counter" purpose="counterSrcMainJavaSrc">
+		</javaPkg>
+			<nameExpr>{$job/@reducerJava}.java</nameExpr>
+			</createFile>
+		</group>
+	<group id="126" name="mapreduce" parentId="118" polymorphicKey="version">
+		<createFile binary="false" changeableName="true" folderExpr="/src/main/java/{$job/@jobDir}" id="12" nameExpr="{$job/@jobConfigJava}.java" oPath="src/main/java/com/gerken/demo/counter/CounterMR.java" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="jobConfigJava" purposeAsTokenName="true" replace="true" src="hadoop.flow/refimpl/art000008">
+			<javaPkg name="com.gerken.demo.counter" purpose="counterSrcMainJavaSrc">
+		</javaPkg>
+			<nameExpr>{$job/@jobConfigJava}.java</nameExpr>
+			</createFile>
+		<token derived="true" desc="variable for CounterMR" formula="CounterMR" name="jobConfigJava"/>
+		</group>
+	<replacement newString="{$flow/@workflowSh}" oldString="counter"/>
+	<replacement newString="{$writable/@writableJava}" oldString="XlatedWordCount"/>
+	<replacement newString="{$writable/@testJava}" oldString="XlatedWordCountTest"/>
+	<replacement newString="{$job/@jobConfigJava}" oldString="CounterMR"/>
+	<replacement newString="{$job/@mapperJava}" oldString="CounterMapper"/>
+	<replacement newString="{$job/@mapperTestJava}" oldString="CounterMapperTest"/>
+	<replacement newString="{$job/@reducerTestJava}" oldString="CounterReducerTest"/>
+	<replacement newString="{$job/@reducerJava}" oldString="CounterReducer"/>
+	<replacement newString="{$job/@jobPkg}" oldString="com.gerken.demo.report"/>
+	<replacement newString="{$job/@jobDir}" oldString="com/gerken/demo/report"/>
+	<replacement newString="{$artifact/@writablesPkg}" oldString="com.gerken.writable"/>
+	<replacement newString="{$artifact/@writablesDir}" oldString="com/gerken/writable"/>
+	<replacement newString="{$job/@jobPkg}" oldString="com.gerken.demo.counter"/>
+	<replacement newString="{$job/@jobDir}" oldString="com/gerken/demo/counter"/>
+	<replacement newString="{$flow/@groupID}" oldString="com.gerken"/>
+	<replacement newString="{$flow/@flowPkg}" oldString="com.gerken.demo"/>
+	<replacement newString="{$flow/@flowDir}" oldString="com/gerken/demo"/>
+	<replacement newString="{$job/@mapperTestJava}" oldString="CountsMapperTest"/>
+	<replacement newString="{$job/@mapperJava}" oldString="CountsMapper"/>
+	<replacement newString="{$job/@reducerJava}" oldString="ReportReducer"/>
+	<replacement newString="{$job/@reducerTestJava}" oldString="ReportReducerTest"/>
+	<replacement newString="{$job/@jobConfigJava}" oldString="ReportMR"/>
+	<replacement newString="{$job/@jobConfigJava}" oldString="CounterMR"/>
+	<group id="127" name="testcase" parentId="119">
+		<token derived="false" desc="" formula="" name="name">
+			<desc>One-token name for the testcase; unique within the input mapper</desc>
+			</token>
+		<token derived="false" desc="" formula="" name="desc">
+			<desc>A short description of the condition the testcase checks</desc>
+			</token>
+		<token derived="true" desc="" formula="test{uppercaseFirst($testcase/@name)}" name="testMethod"/>
+		</group>
+	<group id="128" name="testcase" parentId="120">
+		<token derived="false" desc="" formula="" name="name">
+			<desc>One-token name for the testcase; unique within the output reducer</desc>
+			</token>
+		<token derived="false" desc="" formula="" name="desc">
+			<desc>A short description of the condition the testcase checks</desc>
+			</token>
+		<token derived="true" desc="" formula="test{uppercaseFirst($testcase/@name)}" name="testMethod"/>
+		</group>
+	<group id="129" name="testcase" parentId="117">
+		<token derived="false" desc="" formula="" name="name">
+			<desc>One-token name for the testcase; unique within the writable</desc>
+			</token>
+		<token derived="false" desc="" formula="" name="desc">
+			<desc>A short description of the condition the testcase checks</desc>
+			</token>
+		<token derived="true" desc="" formula="test{uppercaseFirst($testcase/@name)}" name="testMethod"/>
+		<token derived="true" desc="" formula="false" name="isProperty"/>
+		</group>
+	<group id="130" name="dataloc" parentId="140">
+		<token derived="false" desc="" formula="" name="name">
+			<desc>Name of the data location</desc>
+			</token>
+		<token derived="false" desc="" formula="" name="kind">
+			<desc>The kind of data location: ftext = text files in a directory; dtext = hdfs text files in a folder; dseq = hdfs sequence files in a folder; cass=ColumnFamily in Cassandra; hive=Table in Hive</desc>
+			</token>
+		<token derived="false" desc="" formula="" name="keyType">
+			<desc>For kind="dseq" only; The type of the keys stored in this location</desc>
+			</token>
+		<token derived="false" desc="" formula="" name="valueType">
+			<desc>For kind="dseq" only; The type of the values stored in this location</desc>
+			</token>
+		<token derived="false" desc="" formula="" name="default">
+			<desc>The default name for this location</desc>
+			</token>
+		<token derived="false" desc="" formula="" name="columnFamily">
+			<desc>For kind='cass"; the Cassandra column family name</desc>
+			</token>
+		<token derived="true" desc="" formula="dataloc.{$dataloc/@name}" name="workflowId"/>
+		<token derived="true" desc="" formula="{$dataloc/@name}" name="workflowLabel"/>
+		</group>
+	<group id="131" name="parm" parentId="118">
+		<token derived="false" desc="" formula="" name="name">
+			<desc>The single-token name of the parameter; follows java variable naming requirements</desc>
+			</token>
+		<token derived="false" desc="" formula="" name="default">
+			<desc>The value of the parameter to place in JOB class invocations</desc>
+			</token>
+		<token derived="true" desc="" formula="{$job/@name}.input.{$parm/@name}" name="propertyKey"/>
+		<token derived="true" desc="" formula="{translate(upper-case($parm/@propertyKey),&apos;.&apos;,&apos;_&apos;)}" name="constantName"/>
+		<token derived="true" desc="" formula="{lower-case($parm/@constantName)}" name="variableName"/>
+		</group>
+	<group id="132" name="property" parentId="117">
+		<token derived="false" desc="" formula="" name="name">
+			<desc>The name of the property</desc>
+			</token>
+		<token derived="true" desc="" formula="get{uppercaseFirst($property/@name)}" name="getter"/>
+		<token derived="true" desc="" formula="set{uppercaseFirst($property/@name)}" name="setter"/>
+		<token derived="true" desc="" formula="_{$property/@name}" name="varName"/>
+		<token derived="false" desc="" formula="" name="type"/>
+		<token derived="true" desc="" formula="x" name="readMethod"/>
+		<token derived="false" desc="" formula="" name="array">
+			<desc>true|false whether or not the property is an array of values of the given type</desc>
+			</token>
+		<token derived="true" desc="" formula="{$property/@type}" name="dclType"/>
+		<token derived="true" desc="" formula="true" name="isProperty"/>
+		<token derived="true" desc="" formula="scalar" name="dim"/>
+		<token derived="false" desc="" formula="" name="group">
+			<desc>true|false whether this property should be used to group reducer keys; Must be true if sort="true"</desc>
+			</token>
+		<token derived="false" desc="" formula="" name="sort">
+			<desc>either ascending|descending</desc>
+			</token>
+		<token derived="true" desc="" formula="PROPERTY_{upper-case($property/@name)}" name="javaConstant"/>
+		<token derived="true" desc="" formula="x" name="cassandraComparatorType"/>
+		<token derived="true" desc="" formula="x" name="cassandraSerializerType"/>
+		<token derived="true" desc="" formula="x" name="cassandraPersistedType"/>
+		<token derived="true" desc="" formula="{$property/@type}" name="templateFolder"/>
+		<token derived="true" desc="" formula="false" name="isNested"/>
+		<token derived="true" desc="" formula="0" name="index"/>
+		<token derived="true" desc="" formula="ByteBufferSerializer" name="cassandraCompositeSerializerType"/>
+		<token derived="true" desc="" formula="x" name="pigType"/>
+		<token derived="true" desc="" formula="ByterBuffer" name="cassandraCompositeType"/>
+		</group>
+	<group id="133" name="nested" parentId="117">
+		<token derived="false" desc="" formula="" name="name">
+			<desc>The name of the property</desc>
+			</token>
+		<token derived="false" desc="" formula="" name="type">
+			<desc>The type of the ritable</desc>
+			</token>
+		<token derived="true" desc="" formula="set{uppercaseFirst($nested/@name)}" name="setter"/>
+		<token derived="true" desc="" formula="get{uppercaseFirst($nested/@name)}" name="getter"/>
+		<token derived="true" desc="" formula="_{$nested/@name}" name="varName"/>
+		<token derived="false" desc="" formula="" name="array">
+			<desc>true|false whether or not the property is an array of writables of the given type</desc>
+			</token>
+		<token derived="true" desc="" formula="{$nested/@type}" name="dclType"/>
+		<token derived="true" desc="" formula="true" name="isProperty"/>
+		<token derived="true" desc="" formula="scalar" name="dim"/>
+		<token derived="true" desc="" formula="PROPERTY_{upper-case($nested/@name)}" name="javaConstant"/>
+		<token derived="true" desc="" formula="x" name="cassandraComparatorType"/>
+		<token derived="true" desc="" formula="x" name="cassandraSerializerType"/>
+		<token derived="true" desc="" formula="x" name="cassandraPersistedType"/>
+		<token derived="true" desc="" formula="Writable" name="templateFolder"/>
+		<token derived="false" desc="" formula="" name="sort">
+			<desc>ascending|descending </desc>
+			</token>
+		<token derived="true" desc="" formula="true" name="isNested"/>
+		<token derived="true" desc="" formula="0" name="index"/>
+		<token derived="true" desc="" formula="ByteBufferSerializer" name="cassandraCompositeSerializerType"/>
+		<token derived="true" desc="" formula="CompositeType" name="cassandraCompositeType"/>
+		</group>
+	<replacement newString="{$flow/@workflowSh}" oldString="counter"/>
+	<replacement newString="{$writable/@writableJava}" oldString="XlatedWordCount"/>
+	<replacement newString="{$writable/@testJava}" oldString="XlatedWordCountTest"/>
+	<replacement newString="{$mapreduce/@mapperJava}" oldString="CounterMapper"/>
+	<replacement newString="{$mapreduce/@mapperTestJava}" oldString="CounterMapperTest"/>
+	<replacement newString="{$mapreduce/@reducerTestJava}" oldString="CounterReducerTest"/>
+	<replacement newString="{$mapreduce/@reducerJava}" oldString="CounterReducer"/>
+	<replacement newString="{$mapreduce/@jobConfigJava}" oldString="CounterMR"/>
+	<group id="137" name="grouper" parentId="117">
+		<createFile binary="false" changeableName="true" folderExpr="/src/main/java/{$artifact/@writablesDir}" id="135" nameExpr="{$writable/@groupingComparator}.java" oPath="src/main/java/com/gerken/writable/XlatedWordCount.java" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="groupingComparator" purposeAsTokenName="true" replace="true" src="hadoop.flow/refimpl/art000019"/>
+		</group>
+	<group id="138" name="sorter" parentId="117">
+		<createFile binary="false" changeableName="true" folderExpr="/src/main/java/{$artifact/@writablesDir}" id="134" nameExpr="{$writable/@sorterComparator}.java" oPath="src/main/java/com/gerken/writable/XlatedWordCount.java" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="sorterComparator" purposeAsTokenName="true" replace="true" src="hadoop.flow/refimpl/art000019"/>
+		</group>
+	<group id="140" name="artifact" parentId="3">
+		<token derived="false" desc="" formula="" name="artifactID">
+			<desc>The unique internal name for the implementation; also the maven artifact ID </desc>
+			</token>
+		<token derived="false" desc="" formula="" name="version">
+			<desc>The version in the form: version,release.modification.</desc>
+			</token>
+		<token derived="false" desc="" formula="" name="groupID">
+			<desc>Dot-delimited organization name (e.g. "com.mycorp")</desc>
+			</token>
+		<token derived="true" desc="Token representing the new generated name for project hadoop.simple" formula="{$artifact/@artifactID}" id="" name="srcProject">
+		</token>
+		<token derived="true" desc="variable for hadoop" formula="{$artifact/@artifactID}-{$artifact/@version}-SNAPSHOT-jar-with-dependencies.jar" name="jar"/>
+		<token derived="true" formula="{$artifact/@groupID}.writable" name="writablesPkg">
+			<formula>{$flow/@groupID}.writable</formula>
+			</token>
+		<token derived="true" formula="{translate($artifact/@writablesPkg,&apos;.&apos;,&apos;/&apos;)}" name="writablesDir"/>
+		<createProject id="5" locationExpr="" oLocation="" oPath="hadoop.simple" projectExpr="{$artifact/@srcProject}" purpose="src">
+		</createProject>
+		<createFile binary="false" changeableName="false" folderExpr="" id="6" nameExpr=".classpath" oPath=".classpath" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="classpath" purposeAsTokenName="false" replace="false" src="hadoop.flow/refimpl/art000002">
+		</createFile>
+		<createFile binary="false" changeableName="false" folderExpr="" id="7" nameExpr=".project" oPath=".project" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="project" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000003">
+		</createFile>
+		<createFile binary="false" changeableName="false" folderExpr="" id="8" nameExpr="pom.xml" oPath="pom.xml" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="pomXml" purposeAsTokenName="false" replace="false" src="hadoop.flow/refimpl/art000004">
+		</createFile>
+		<createFile binary="false" changeableName="false" folderExpr="/.settings" id="9" nameExpr="org.eclipse.jdt.core.prefs" oPath=".settings/org.eclipse.jdt.core.prefs" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="orgEclipseJdtCorePrefs" purposeAsTokenName="false" replace="false" src="hadoop.flow/refimpl/art000005">
+		</createFile>
+		<createFile binary="false" changeableName="false" folderExpr="/.settings" id="10" nameExpr="org.maven.ide.eclipse.prefs" oPath=".settings/org.maven.ide.eclipse.prefs" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="orgMavenIdeEclipsePrefs" purposeAsTokenName="false" replace="false" src="hadoop.flow/refimpl/art000006">
+		</createFile>
+		<createFile binary="false" changeableName="false" folderExpr="/target/maven-archiver" id="57" nameExpr="pom.properties" oPath="target/maven-archiver/pom.properties" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="pomProperties" purposeAsTokenName="false" replace="false" src="hadoop.flow/refimpl/art000053">
+		</createFile>
+		<token derived="true" desc="" formula="{$artifact/@groupID}.cassandra" name="cassandraPkg"/>
+		<token derived="true" desc="" formula="{translate($artifact/@cassandraPkg,&apos;.&apos;,&apos;/&apos;)}" name="cassandraDir"/>
+		<token derived="true" desc="" formula="{$artifact/@cassandraPkg}.platform" name="cassandraPlatformPkg"/>
+		<token derived="true" desc="" formula="{translate($artifact/@cassandraPlatformPkg,&apos;.&apos;,&apos;/&apos;)}" name="cassandraPlatformDir"/>
+		<token derived="true" desc="" formula="{$artifact/@cassandraPkg}.examples" name="cassandraExamplesPkg"/>
+		<token derived="true" desc="" formula="{translate($artifact/@cassandraExamplesPkg,&apos;.&apos;,&apos;/&apos;)}" name="cassandraExamplesDir"/>
+		<token derived="false" desc="" formula="" name="multipleOutputs">
+			<desc>A true/false value specifying whether a reducer can have multiple outputs</desc>
+			</token>
+		<token derived="true" desc="" formula="{$artifact/@groupID}.hadoop.platform" name="hadoopPlatformPkg"/>
+		<token derived="true" desc="" formula="{translate($artifact/@hadoopPlatformPkg,&apos;.&apos;,&apos;/&apos;)}" name="hadoopPlatformDir"/>
+		<createFile binary="false" changeableName="false" folderExpr="/src/main/java/{$artifact/@hadoopPlatformDir}" id="175" nameExpr="ConcurrentTextOutputFormat.java" oPath="src/main/java/com/gerken/writable/XlatedWordCount.java" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="concurrentTextOutputFormat" purposeAsTokenName="false" replace="false" src="hadoop.flow/refimpl/art000019"/>
+		<createFile binary="false" changeableName="false" folderExpr="/src/main/java/{$artifact/@hadoopPlatformDir}" id="176" nameExpr="ConcurrentFileOutputFormat.java" oPath="src/main/java/com/gerken/writable/XlatedWordCount.java" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="concurrentFileOutputFormat" purposeAsTokenName="false" replace="false" src="hadoop.flow/refimpl/art000019"/>
+		<createFile binary="false" changeableName="false" folderExpr="/src/main/java/{$artifact/@hadoopPlatformDir}" id="177" nameExpr="ConcurrentSequenceFileOutputFormat.java" oPath="src/main/java/com/gerken/writable/XlatedWordCount.java" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="concurrentSequenceFileOutputFormat" purposeAsTokenName="false" replace="false" src="hadoop.flow/refimpl/art000019"/>
+		<createFile binary="false" changeableName="false" folderExpr="/src/main/java/{$artifact/@hadoopPlatformDir}" id="178" nameExpr="ConcurrentColumnFamilyOutputFormat.java" oPath="src/main/java/com/gerken/writable/XlatedWordCount.java" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="concurrentColumnFamilyOutputFormat" purposeAsTokenName="false" replace="false" src="hadoop.flow/refimpl/art000019"/>
+		<token derived="false" desc="" formula="" name="countBaseDir"/>
+		<createFile binary="false" changeableName="false" folderExpr="/src/main/resources" id="180" nameExpr="genGraph.sh" oPath="src/main/java/com/gerken/writable/XlatedWordCount.java" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="flowGraphvizSh" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000019"/>
+		<createFile binary="false" changeableName="false" folderExpr="/src/main/resources" id="181" nameExpr="workflow" oPath="src/main/java/com/gerken/writable/XlatedWordCount.java" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="flowGraphvizSrc" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000019"/>
+		<token derived="true" desc="" formula="Gerken Intellectual Properties, LLC" name="provider" optional="true">
+			<desc>The individual, organization or campany that is providing this JET transform</desc>
+			</token>
+		<token derived="true" desc="" formula="{$artifact/@artifactID}" name="label" optional="true">
+			<desc>A displayable short text describing this artifact's workflow(s)</desc>
+		</token>
+		</group>
+	<group id="141" name="columnFamily" parentId="140">
+		<token derived="false" desc="" formula="" name="name">
+			<desc>The name of the Cassandra column family</desc>
+			</token>
+		<token derived="false" desc="" formula="" name="type">
+			<desc>The name of the Writable that defines, along with the usage attribute, the column names</desc>
+			</token>
+		<token derived="false" desc="" formula="" name="usage">
+			<desc>'static' or 'dynamic'</desc>
+			</token>
+		<token derived="false" desc="" formula="" name="rowKey">
+			<desc>The name of the property that contains the row key value</desc>
+			</token>
+		<token derived="false" desc="" formula="" name="columnKey">
+			<desc>For dynamic usage, the name of the property whose value is the column name</desc>
+			</token>
+		<token derived="true" desc="" formula="{uppercaseFirst($columnFamily/@name)}Access" name="accessJava"/>
+		<token derived="false" desc="" formula="" name="keyspace">
+			<desc>The keyspace in which the column family will reside first</desc>
+			</token>
+		<token derived="false" desc="" formula="" name="port">
+			<desc>For kind='cass"; the Cassandra server port (usually 9160)</desc>
+			</token>
+		<token derived="false" desc="" formula="" name="host">
+			<desc>For kind='cass"; the Cassandra server host name (e.g. 'localhost')</desc>
+			</token>
+		<token derived="true" desc="" formula="{uppercaseFirst($columnFamily/@name)}Storage" name="pigAccessJava"/>
+		<token derived="true" desc="" formula="{uppercaseFirst($columnFamily/@name)}Example" name="exampleJava"/>
+		<token derived="true" desc="" formula="{uppercaseFirst($columnFamily/@name)}ColumnNameSerializer" name="cassandraColumnNameSerializerType"/>
+		</group>
+	<group id="145" name="index" parentId="141">
+		<token derived="false" desc="" formula="" name="property"/>
+		</group>
+	<group id="146" name="static" parentId="141" polymorphicKey="usage" polymorphicSingleton="true">
+		<createFile binary="false" changeableName="true" folderExpr="/src/main/java/{$artifact/@cassandraDir}" id="142" nameExpr="{$columnFamily/@accessJava}.java" oPath="src/main/java/com/gerken/writable/XlatedWordCount.java" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="accessJava" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000019"/>
+		<createFile binary="false" changeableName="true" folderExpr="/src/main/resources/columnFamily" id="149" nameExpr="{$columnFamily/@name}Drop.txt" oPath="src/main/resources/counter.sh" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="dropCmds" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000024"/>
+		<createFile binary="false" changeableName="true" folderExpr="/src/main/resources/columnFamily" id="150" nameExpr="{$columnFamily/@name}Create.txt" oPath="src/main/resources/counter.sh" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="createCmds" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000024"/>
+		<createFile binary="false" changeableName="true" folderExpr="/src/main/java/{$artifact/@cassandraPlatformDir}" id="153" nameExpr="{$columnFamily/@pigAccessJava}.java" oPath="src/main/java/com/gerken/writable/XlatedWordCount.java" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="pigAccessJava" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000019"/>
+		<createFile binary="false" changeableName="true" folderExpr="/src/main/java/{$artifact/@cassandraExamplesDir}" id="159" nameExpr="{$columnFamily/@exampleJava}.java" oPath="src/main/java/com/gerken/writable/XlatedWordCount.java" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="exampleJava" purposeAsTokenName="false" replace="false" src="hadoop.flow/refimpl/art000019"/>
+		</group>
+	<group id="147" name="dynamic" parentId="141" polymorphicKey="usage" polymorphicSingleton="true">
+		<createFile binary="false" changeableName="true" folderExpr="/src/main/java/{$artifact/@cassandraDir}" id="148" nameExpr="{$columnFamily/@accessJava}.java" oPath="src/main/java/com/gerken/writable/XlatedWordCount.java" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="accessJava" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000019"/>
+		<createFile binary="false" changeableName="true" folderExpr="/src/main/resources/columnFamily" id="143" nameExpr="{$columnFamily/@name}Drop.txt" oPath="src/main/resources/counter.sh" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="dropCmds" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000024"/>
+		<createFile binary="false" changeableName="true" folderExpr="/src/main/resources/columnFamily" id="144" nameExpr="{$columnFamily/@name}Create.txt" oPath="src/main/resources/counter.sh" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="createCmds" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000024"/>
+		<createFile binary="false" changeableName="true" folderExpr="/src/main/java/{$artifact/@cassandraPlatformDir}" id="154" nameExpr="{$columnFamily/@pigAccessJava}.java" oPath="src/main/java/com/gerken/writable/XlatedWordCount.java" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="pigAccessJava" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000019"/>
+		<createFile binary="false" changeableName="true" folderExpr="/src/main/java/{$artifact/@cassandraExamplesDir}" id="160" nameExpr="{$columnFamily/@exampleJava}.java" oPath="src/main/java/com/gerken/writable/XlatedWordCount.java" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="exampleJava" purposeAsTokenName="false" replace="false" src="hadoop.flow/refimpl/art000019"/>
+		</group>
+	<group id="151" name="partitioner" parentId="118">
+		<createFile binary="false" changeableName="true" folderExpr="/src/main/java/{$job/@jobDir}" id="152" nameExpr="{$job/@partitionerJava}.java" oPath="src/main/java/com/gerken/demo/counter/CounterMR.java" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="partitionerJava" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000008"/>
+		</group>
+	<group id="163" name="dependency" parentId="118">
+		<token derived="false" desc="" formula="" name="job"/>
+		</group>
+	<group id="164" name="cql" parentId="141" polymorphicKey="usage" polymorphicSingleton="true">
+		<createFile binary="false" changeableName="true" folderExpr="/src/main/java/{$artifact/@cassandraDir}" id="165" nameExpr="{$columnFamily/@accessJava}.java" oPath="src/main/java/com/gerken/writable/XlatedWordCount.java" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="accessJava" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000019"/>
+		<createFile binary="false" changeableName="true" folderExpr="/src/main/resources/columnFamily" id="166" nameExpr="{$columnFamily/@name}Drop.txt" oPath="src/main/resources/counter.sh" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="dropCmds" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000024"/>
+		<createFile binary="false" changeableName="true" folderExpr="/src/main/resources/columnFamily" id="167" nameExpr="{$columnFamily/@name}Create.txt" oPath="src/main/resources/counter.sh" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="createCmds" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000024"/>
+		<createFile binary="false" changeableName="true" folderExpr="/src/main/java/{$artifact/@cassandraPlatformDir}" id="168" nameExpr="{$columnFamily/@pigAccessJava}.java" oPath="src/main/java/com/gerken/writable/XlatedWordCount.java" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="pigAccessJava" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000019"/>
+		<createFile binary="false" changeableName="true" folderExpr="/src/main/java/{$artifact/@cassandraExamplesDir}" id="169" nameExpr="{$columnFamily/@exampleJava}.java" oPath="src/main/java/com/gerken/writable/XlatedWordCount.java" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="exampleJava" purposeAsTokenName="false" replace="false" src="hadoop.flow/refimpl/art000019"/>
+		<createFile binary="false" changeableName="true" folderExpr="/src/main/java/{$artifact/@cassandraPlatformDir}" id="170" nameExpr="{$columnFamily/@cassandraColumnNameSerializerType}.java" oPath="src/main/java/com/gerken/writable/XlatedWordCount.java" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="columnNameSerializer" purposeAsTokenName="true" replace="true" src="hadoop.flow/refimpl/art000019"/>
+		</group>
+	<group id="172" name="clusteringKey" parentId="141">
+		<desc>The  column to be used as a secondary key.  Depending on the persistence pattern chosen, this will be used to build the column name.</desc>
+		<token derived="false" desc="" formula="" name="name"/>
+		</group>
+	<group id="173" name="hiveTable" parentId="140"/>
+	</xform>

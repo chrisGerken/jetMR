@@ -1,0 +1,3 @@
+type=command
+command=hadoop jar tweet.groking-1.0.0-SNAPSHOT-jar-with-dependencies.jar com.gerkenip.trending.Count.CountJob  "file:///home/") "hdfs://localhost:9000/tmp/SocialLinks/Links"	
+ 

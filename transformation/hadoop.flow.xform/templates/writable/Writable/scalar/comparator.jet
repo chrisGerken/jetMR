@@ -1,0 +1,9 @@
+		
+					// Read <c:get select="$property/@dclType" /> <c:get select="$property/@varName" /> properties
+				
+				<c:get select="$property/@type" /> <c:get select="$property/@varName" />1 = new <c:get select="$property/@type" />();
+				<c:get select="$property/@type" /> <c:get select="$property/@varName" />2 = new <c:get select="$property/@type" />();
+				if (in1.readBoolean()) { <c:get select="$property/@varName" />1.readFields(in1); }
+				if (in2.readBoolean()) { <c:get select="$property/@varName" />2.readFields(in2); }
+				result =  <c:get select="$property/@varName" />1.compareTo(<c:get select="$property/@varName" />2);
+				if (result != 0) { return result; }

@@ -1,0 +1,8 @@
+
+		        Path outPath = new Path(<c:get select="$job/output/@parmName" />);
+				<c:get select="$job/output/@outputFormat" />.setOutputPath(jobConf, outPath);
+
+		        FileSystem dfs = FileSystem.get(outPath.toUri(), jobConf);
+		        if (dfs.exists(outPath)) {
+		          dfs.delete(outPath, true);
+		        }

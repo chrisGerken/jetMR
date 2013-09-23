@@ -1,0 +1,1 @@
+			mutator.addInsertion(row.<c:get select="$writable/property[@name=$columnFamily/@rowKey]/@getter" />(), "<c:get select="$columnFamily/@name" />", HFactory.createColumn("<c:get select="$property/@name" />", row.<c:get select="$property/@getter" />(), StringSerializer.get(), CharSerializer.get()));

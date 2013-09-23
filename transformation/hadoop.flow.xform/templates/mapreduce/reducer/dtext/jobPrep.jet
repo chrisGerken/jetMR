@@ -1,0 +1,8 @@
+
+		        outPath = new Path(<c:get select="$job/output/@variableName" />);
+				<c:get select="$job/output/@outputFormat" />.setOutputPath(job, outPath);
+
+		        dfs = FileSystem.get(outPath.toUri(), conf);
+		        if (dfs.exists(outPath)) {
+		          dfs.delete(outPath, true);
+		        }

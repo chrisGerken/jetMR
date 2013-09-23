@@ -1,0 +1,1 @@
+        tuple.set(<c:get select="$property/@index" />, new Integer((int)<c:get select="$property/@getter" />()));

@@ -1,0 +1,157 @@
+
+<root>
+
+    <artifact  artifactID="tweet.groking"  version="1.0.0"  groupID="com.gerkenip" countBaseDir="file" provider="Chris Gerken" label="Groking Trending Tweets">
+
+        <dataloc  name="TweetSource"    	kind="ftext"  default="file:///home/" />
+        
+        <dataloc  name="DatedLinks"  		kind="dseq"   keyType="LinkId"  valueType="UseInfo"  default="file:///home/" />
+        <dataloc  name="DatedTerms"  		kind="dseq"   keyType="TermId"  valueType="UseInfo"  default="file:///home/" />
+        <dataloc  name="DatedHashtags" 		kind="dseq"   keyType="HashtagId"  valueType="UseInfo"  default="file:///home/" />
+        <dataloc  name="Tweets"		 		kind="dseq"   keyType="Text"  valueType="TweetWritable"  default="file:///home/" />
+        
+        <dataloc  name="InterestingTokens"  kind="ftext"  default="file:///home/" />
+        <dataloc  name="InterestingLinks" 	kind="dseq"   keyType="Text"  valueType="InterestingToken"  default="file:///home/" />
+        <dataloc  name="InterestingTerms" 	kind="dseq"   keyType="Text"  valueType="InterestingToken"  default="file:///home/" />
+        <dataloc  name="InterestingHashtags" kind="dseq"   keyType="Text"  valueType="InterestingToken"  default="file:///home/" />
+        
+        <dataloc  name="InterestingTermRefs" kind="dseq"   keyType="ReasonWritable"  valueType="UseInfo"  default="file:///home/" />
+        <dataloc  name="InterestingLinkRefs" kind="dseq"   keyType="ReasonWritable"  valueType="UseInfo"  default="file:///home/" />
+        <dataloc  name="InterestingHashtagRefs" kind="dseq"   keyType="ReasonWritable"  valueType="UseInfo"  default="file:///home/" />
+        
+        <dataloc  name="InterestingTweets" kind="dseq"   keyType="Text"  valueType="TweetWritable"  default="file:///home/" />
+        
+        <dataloc  name="TermCounts"  	kind="dseq"   keyType="Text"  valueType="LongWritable"  default="hdfs://localhost:9000/tmp/SocialLinks/Links" />
+        <dataloc  name="TrendingTerms" 	kind="ftext"  default="hdfs://localhost:9000/tmp/SocialLinks/Links" />
+  
+        <flow  name="Main">
+
+	        <job  name="ReadTweets"  keyType="Text"  valueType="TweetWritable"  desc="">
+	            <input  name="Parse"    		source="TweetSource" />
+	            <output  name="WriteTerms"  	target="DatedLinks" />
+	            <output  name="WriteLinks"  	target="DatedTerms" />
+	            <output  name="WriteHashtags"  	target="DatedHashtags" />
+	            <output  name="WriteTweets"  	target="Tweets" />
+	        </job>
+	
+	        <job  name="FilterByTerm"  keyType="Text"  valueType="InterestingJoinWritable"  desc="">
+	            <input  name="ReadInteresting"  source="InterestingTerms"/>
+	            <input  name="ReadTerms"  		source="DatedTerms"/>
+	            <output name="Write"   			target="InterestingTermRefs" />
+	        </job>
+	
+	        <job  name="FilterByLink"  keyType="Text"  valueType="InterestingJoinWritable"  desc="">
+	            <input  name="ReadInteresting"  source="InterestingLinks"/>
+	            <input  name="ReadLinks"  		source="DatedLinks"/>
+	            <output name="Write"   			target="InterestingLinkRefs" />
+	        </job>
+	
+	        <job  name="FilterByHashtag"  keyType="Text"  valueType="InterestingJoinWritable"  desc="">
+	            <input  name="ReadInteresting"  source="InterestingHashtags"/>
+	            <input  name="ReadHashtags"  		source="DatedHashtags"/>
+	            <output name="Write"   			target="InterestingHashtagRefs" />
+	        </job>
+	
+	        <job  name="Join"  keyType="Text"  valueType="InterestingJoinWritable"  desc="">
+	            <input  name="Links"  			source="InterestingLinkRefs"/>
+	            <input  name="Hashtags"  		source="InterestingHashtagRefs"/>
+	            <input  name="Terms"  			source="InterestingTermRefs"/>
+	            <input  name="Tweets"  			source="Tweets"/>
+	            <output name="Write"   		target="InterestingTweets" />
+	        </job>
+
+        </flow>
+                    
+        <flow  name="LoadInteresting">
+
+	        <job  name="Load"  keyType="Text"  valueType="InterestingWritable"  desc="">
+	            <input  name="Read"    source="InterestingTokens" />
+	            <output  name="writeLinks"   target="InterestingLinks" />
+	            <output  name="writeTerms"   target="InterestingTerms" />
+	            <output  name="writeHashtags"   target="InterestingHashtags" />
+	        </job>
+
+        </flow>
+                    
+        <flow  name="Trending">
+
+	        <job  name="Count"  keyType="Text"  valueType="LongWritable"  desc="">
+	            <input  name="Parse"    source="InterestingTweets" />
+	            <output  name="TermCounts"   target="TermCounts" />
+	        </job>
+
+	        <job  name="Sort"  keyType="Text"  valueType="LongWritable"  desc="">
+	            <input  name="Passthru"    source="TermCounts" />
+	            <output  name="Sort"   target="TrendingTerms" />
+	        </job>
+
+        </flow>
+
+	    <writable  name="Json"  comparable="true">
+	        <property  name="jsonString"	type="String" />
+	    </writable>
+
+	    <writable  name="TweetWritable"  comparable="true">
+	        <property  name="handle"  		type="String" />
+	        <property  name="content"  		type="String" />
+	        <property  name="id"	  		type="String" />
+	        <property  name="retweets"		type="int"   />
+	        <property  name="isRetweet"		type="boolean"  />	
+	        <property  name="urls"			type="String"  />	
+	        <property  name="hashtags"      type="long"  />
+	        <property  name="timestamp"	    type="Date"  />
+	    </writable>
+
+	    <writable  name="LinkId"  comparable="true">
+	        <property  name="link"      	type="String"  />
+	    </writable>
+
+	    <writable  name="TermId"  comparable="true">
+	        <property  name="term"      	type="String"  />
+	    </writable>
+
+	    <writable  name="HashtagId"  comparable="true">
+	        <property  name="hashtag"      	type="String"  />
+	    </writable>
+
+	    <writable  name="UseInfo"  comparable="true">
+	        <property  name="handle"  		type="String" />
+	        <property  name="tweetId"  		type="String" />
+	        <property  name="timestamp"	    type="Date"  />
+	    </writable>
+
+	    <writable  name="InterestingWritable"  comparable="true">
+	        <property  name="token"  		type="String" />
+	        <property  name="weight"	    type="double"  />
+	        <property  name="isLink"	    type="boolean"  />
+	        <property  name="isHashtag"	    type="boolean"  />
+	        <property  name="isTerm"	    type="boolean"  />
+	    </writable>
+
+	    <writable  name="InterestingToken"  comparable="true">
+	        <property  name="token"  		type="String" />
+	        <property  name="weight"	    type="double"  />
+	    </writable>
+
+	    <writable  name="InterestingJoinWritable"  comparable="true">
+	        <property  name="isFromTweet"	type="boolean"  />
+	        <property  name="token"  		type="String" />
+	        <property  name="weight"	    type="double"  />
+	        <property  name="isLink"	    type="boolean"  />
+	        <property  name="isHashtag"	    type="boolean"  />
+	        <property  name="isTerm"	    type="boolean"  />
+	        <property  name="handle"  		type="String" />
+	        <property  name="tweetId"  		type="String" />
+	        <property  name="timestamp"	    type="Date"  />
+	    </writable>
+
+	    <writable  name="ReasonWritable"  comparable="true">
+	        <property  name="term"  		type="String" />
+	        <property  name="isLink"	    type="boolean"  />
+	        <property  name="isHashtag"	    type="boolean"  />
+	        <property  name="isTerm"	    type="boolean"  />
+	    </writable>
+
+    </artifact>
+
+</root>

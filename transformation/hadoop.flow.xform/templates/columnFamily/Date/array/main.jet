@@ -1,0 +1,5 @@
+            <c:set select="$property" name="cassandraComparatorType">BytesType</c:set>
+            <c:set select="$property" name="cassandraSerializerType">ByteBufferSerializer</c:set>
+            <c:set select="$property" name="cassandraPersistedType">ByteBuffer</c:set>
+	        <c:set select="$property" name="pigType">LONG</c:set>
+            

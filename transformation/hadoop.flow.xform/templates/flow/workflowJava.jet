@@ -1,0 +1,21 @@
+<%-- This code copyright Gerken Intellectual Properties LLC --%>
+<c:include template="templates/common/javaHeader.jet"/>
+package <c:get select="$flow/@flowPkg" />;
+
+import java.util.ArrayList;
+
+public class <c:get select="$flow/@workflowClass" /> {
+
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args) {
+
+<c:iterate select="$flow/job" var="job" >
+
+		<c:get select="$job/@jobPkg" />.<c:get select="$job/@jobConfigJava" />.main(args);
+				
+</c:iterate>	
+	}
+
+}

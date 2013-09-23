@@ -1,0 +1,65 @@
+<%-- This code copyright Gerken Intellectual Properties LLC --%>
+<c:include template="templates/common/javaHeader.jet"/>
+package <c:get select="$artifact/@cassandraPlatformPkg" />;
+
+import static me.prettyprint.hector.api.ddl.ComparatorType.BYTESTYPE;
+
+import java.nio.ByteBuffer;
+
+import org.apache.thrift.TBaseHelper;
+
+import <c:get select="$artifact/@writablesPkg" />.<c:get select="$writable/@writableJava" />;
+
+import me.prettyprint.cassandra.serializers.*;
+import me.prettyprint.hector.api.beans.AbstractComposite.ComponentEquality;
+import me.prettyprint.hector.api.beans.Composite;
+import me.prettyprint.hector.api.ddl.ComparatorType;
+
+/**
+ * Converts bytes to <c:get select="$writable/@writableJava" /> and back again
+ * 
+ */
+public final class <c:get select="$writable/@cassandraCompositeSerializerType" /> extends AbstractSerializer<<c:get select="$writable/@writableJava" />> {
+
+  private static final <c:get select="$writable/@cassandraCompositeSerializerType" /> instance = new <c:get select="$writable/@cassandraCompositeSerializerType" />();
+
+  public static <c:get select="$writable/@cassandraCompositeSerializerType" /> get() {
+    return instance;
+  }
+
+  @Override
+  public ByteBuffer toByteBuffer(<c:get select="$writable/@writableJava" /> obj) {
+    if (obj == null) {
+      return null;
+    }
+	Composite composite = new Composite();
+<c:iterate select="$writable/*[@isProperty='true']" var="property" >
+<c:if test="not($property/@array='true')">
+	composite.addComponent(<c:get select="$property/@index" />, obj.<c:get select="$property/@getter" />() , <c:get select="$property/@cassandraCompositeSerializerType" />.get(), "<c:get select="$property/@cassandraComparatorType" />", ComponentEquality.EQUAL);
+</c:if>
+</c:iterate>
+	ByteBuffer byteBuffer = new CompositeSerializer().toByteBuffer(composite);
+	return byteBuffer;
+  }
+
+  @Override
+  public <c:get select="$writable/@writableJava" /> fromByteBuffer(ByteBuffer byteBuffer) {
+    if (byteBuffer == null) {
+      return null;
+    }
+	<c:get select="$writable/@name" /> obj = new <c:get select="$writable/@name" />();
+	Composite decomposed = new CompositeSerializer().fromByteBuffer(TBaseHelper.rightSize(byteBuffer));
+<c:iterate select="$writable/*[@isProperty='true']" var="property" >
+<c:if test="not($property/@array='true')">
+	obj.<c:get select="$property/@setter" />(decomposed.get(<c:get select="$property/@index" />, <c:get select="$property/@cassandraCompositeSerializerType" />.get()));
+</c:if>
+</c:iterate>
+	return obj;
+  }
+
+  @Override
+  public ComparatorType getComparatorType() {
+    return BYTESTYPE;
+  }
+
+}

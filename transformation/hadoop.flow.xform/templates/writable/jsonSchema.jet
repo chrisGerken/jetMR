@@ -1,0 +1,10 @@
+
+Json schema for writable type <c:get select="$writable/@name" />:
+
+<c:setVariable select="$writable" var="w"/>
+<c:include template="templates/writable/jsonSchema0.jet" />
+
+
+
+Note: <Date> values are represented as longs (milliseconds)
+      <short> and <char> values are represented as integers

@@ -1,0 +1,1 @@
+						boundary = Double.parseDouble(nameValue[1]);

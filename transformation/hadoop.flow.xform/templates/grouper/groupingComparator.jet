@@ -1,0 +1,41 @@
+<%-- This code copyright Gerken Intellectual Properties LLC --%>
+<c:include template="templates/common/javaHeader.jet"/>
+package <c:get select="$artifact/@writablesPkg" />;
+
+import java.io.ByteArrayInputStream;
+import java.io.DataInput;
+import java.io.DataInputStream;
+
+import org.apache.hadoop.io.RawComparator;
+import org.apache.hadoop.io.Text;
+
+	/*
+	 * Return a RawComparator that compares just the group=true properties of this Writable.
+	 * This RawComparator will be used to group keys for input to the reducer
+	 */
+	public class <c:get select="$writable/@groupingComparator" /> implements RawComparator<<c:get select="$writable/@writableJava" />> {
+
+		@Override
+		public int compare(<c:get select="$writable/@writableJava" /> arg0, <c:get select="$writable/@writableJava" /> arg1) {
+			return arg0.compareTo(arg1);
+		}
+
+		@Override
+		public int compare(byte[] arg0, int arg1, int arg2, byte[] arg3, int arg4, int arg5) {
+
+			DataInput in1 = new DataInputStream(new ByteArrayInputStream(arg0,arg1,arg2));
+			DataInput in2 = new DataInputStream(new ByteArrayInputStream(arg3,arg4,arg5));
+			
+			int result;
+			
+			try {
+<c:iterate select="$writable/property[@group='true']" var="property">
+<c:include template="templates/writable/{$property/@type}/scalar/comparator.jet" />
+</c:iterate>				
+
+			} catch (Exception e) { }
+			
+			return 0;
+		}
+		
+	}

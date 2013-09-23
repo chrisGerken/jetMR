@@ -1,0 +1,4 @@
+type=command
+dependencies= Count
+command=hadoop jar tweet.groking-1.0.0-SNAPSHOT-jar-with-dependencies.jar com.gerkenip.trending.Sort.SortJob  "hdfs://localhost:9000/tmp/SocialLinks/Links") "hdfs://localhost:9000/tmp/SocialLinks/Links"	
+ 

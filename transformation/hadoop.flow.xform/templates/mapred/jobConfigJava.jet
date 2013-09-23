@@ -1,0 +1,85 @@
+<%-- This code copyright Gerken Intellectual Properties LLC --%>
+<c:include template="templates/common/javaHeader.jet"/>
+package <c:get select="$job/@jobPkg" />;
+
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.*;
+import org.apache.hadoop.mapred.JobClient;
+import org.apache.hadoop.mapred.JobConf;
+import org.apache.hadoop.mapred.Mapper;
+import org.apache.hadoop.mapred.SequenceFileInputFormat;
+import org.apache.hadoop.mapred.SequenceFileOutputFormat;
+import org.apache.hadoop.mapred.TextInputFormat;
+import org.apache.hadoop.mapred.TextOutputFormat;
+import org.apache.hadoop.mapred.lib.InputSampler;
+import org.apache.hadoop.mapred.lib.MultipleInputs;
+import org.apache.hadoop.mapred.lib.TotalOrderPartitioner;
+
+import <c:get select="$artifact/@writablesPkg" />.*;
+
+
+public class <c:get select="$job/@jobConfigJava" /> {
+	
+	@SuppressWarnings("deprecation")
+	public static void main(String[] args) {
+
+		try {
+			if (args.length > 1) {
+				
+				JobConf jobConf = new JobConf();
+
+<c:iterate select="$job/input" var="input">
+				jobConf.set("parm.<c:get select="$input/@propertyName" />",<c:get select="$input/@parmName" />);
+</c:iterate>
+<c:iterate select="$job/output" var="output">
+				jobConf.set("parm.<c:get select="$output/@propertyName" />",<c:get select="$output/@variableName" />);
+</c:iterate>
+<c:iterate select="$job/parm" var="parm">
+				jobConf.set("parm.<c:get select="$parm/@propertyName" />",<c:get select="$parm/@variableName" />);
+</c:iterate>
+<c:iterate select="$job/input" var="input">
+				MultipleInputs.addInputPath(jobConf, new Path(<c:get select="$input/@variableName" />), <c:get select="$input/@inputFormat" />.class, <c:get select="$input/@mapperJava" />.class);
+</c:iterate>
+
+				jobConf.setJarByClass(<c:get select="$job/@jobConfigJava" />.class);
+				jobConf.setReducerClass(<c:get select="$job/output/@reducerJava" />.class);
+
+				jobConf.setMapOutputKeyClass(<c:get select="$job/@keyType" />.class);
+				jobConf.setMapOutputValueClass(<c:get select="$job/@valueType" />.class);
+
+				jobConf.setOutputKeyClass(<c:get select="$job/output/@outKeyType" />.class);
+				jobConf.setOutputValueClass(<c:get select="$job/output/@outValueType" />.class);
+
+				jobConf.setOutputFormat(<c:get select="$job/output/@outputFormat" />.class);
+<c:include template="templates/mapred/reducer/{$artifact/dataloc[@name=$job/output/@target]/@kind}/jobPrep.jet" />				
+
+		        jobConf.setNumReduceTasks(<c:get select="$job/@reducers" />);
+
+<c:if test="$job/@sort" >
+<c:setVariable select="$artifact/writable[@name=$job/@keyType]" var="writable"/>
+				if (jobConf.getNumReduceTasks() > 1) {
+					jobConf.setPartitionerClass(<c:get select="$job/@partitionerJava" />.class);
+				}
+				jobConf.setOutputKeyComparatorClass(<c:get select="$writable/@sorterComparator" />.class);
+				jobConf.setOutputValueGroupingComparator(<c:get select="$writable/@groupingComparator" />.class);
+
+</c:if>
+				JobClient.runJob(jobConf);
+
+			}
+		} catch (Exception e) {
+			System.out.println(e.toString());
+				// Handle Exception...
+		} finally {
+
+		}
+
+	} 
+}

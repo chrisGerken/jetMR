@@ -1,0 +1,10 @@
+	        job.setReducerClass(<c:get select="$job/output/@reducerJava" />.class);
+	        job.setOutputKeyClass(<c:get select="$job/output/@outKeyType" />.class);
+	        job.setOutputValueClass(<c:get select="$job/output/@outValueType" />.class);
+
+			job.setOutputFormatClass(<c:get select="$job/output/@outputFormat" />.class);
+	        
+	        Path outPath;
+	        FileSystem dfs;
+
+<c:include template="templates/mapreduce/reducer/{$artifact/dataloc[@name=$job/output/@target]/@kind}/jobPrep.jet" />				

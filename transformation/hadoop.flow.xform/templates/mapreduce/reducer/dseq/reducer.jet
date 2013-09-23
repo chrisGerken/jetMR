@@ -1,0 +1,15 @@
+
+		try {
+
+			<c:get select="$output/@outKeyType" /> outKey;
+			<c:get select="$output/@outValueType" /> outValue;		
+			
+			for (<c:get select="$job/@valueType" /> value : values) {
+				
+//				context.write(outKey, outValue);
+				
+			}
+
+		} catch (Exception e) {
+			context.getCounter("Exception",e.getMessage()).increment(1);
+		}

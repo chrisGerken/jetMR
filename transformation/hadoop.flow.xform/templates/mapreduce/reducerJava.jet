@@ -1,0 +1,125 @@
+<%-- This code copyright Gerken Intellectual Properties LLC --%>
+<c:include template="templates/common/javaHeader.jet"/>
+package <c:get select="$job/@jobPkg" />;
+
+<c:userRegion>// Begin imports<c:initialCode>
+
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.charset.CharacterCodingException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.SortedMap;
+import java.util.logging.Logger;
+
+import org.apache.cassandra.db.IColumn;
+import org.apache.cassandra.utils.ByteBufferUtil;
+import org.apache.cassandra.thrift.Column;
+import org.apache.cassandra.thrift.ColumnOrSuperColumn;
+import org.apache.cassandra.thrift.Mutation;
+
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.io.*;
+import org.apache.hadoop.mapred.RawKeyValueIterator;
+import org.apache.hadoop.mapreduce.Counter;
+import org.apache.hadoop.mapreduce.InputSplit;
+import org.apache.hadoop.mapreduce.Mapper;
+import org.apache.hadoop.mapreduce.OutputCommitter;
+import org.apache.hadoop.mapreduce.RecordReader;
+import org.apache.hadoop.mapreduce.RecordWriter;
+import org.apache.hadoop.mapreduce.Reducer;
+import org.apache.hadoop.mapreduce.StatusReporter;
+import org.apache.hadoop.mapreduce.TaskAttemptID;
+import org.apache.hadoop.mapreduce.Mapper.Context;
+import org.apache.hadoop.mapreduce.lib.output.MultipleOutputs;
+
+import <c:get select="$artifact/@writablesPkg" />.*;
+
+</c:initialCode>// End imports</c:userRegion>
+
+public class <c:get select="$output/@reducerJava" /> extends Reducer<<c:get select="$job/@keyType" />,<c:get select="$job/@valueType" />, <c:get select="$output/@outKeyType" />, <c:get select="$output/@outValueType" />> {
+
+	<c:userRegion>// Begin declarations <c:initialCode>
+
+	private MultipleOutputs mos;
+	
+<c:iterate select="$job/output" var="output">
+	private String <c:get select="$output/@variableName" />;
+</c:iterate>	
+	
+<c:iterate select="$job/output" var="output">
+	private long	<c:get select="$output/@counterName" /> = 0;
+</c:iterate>	
+
+	</c:initialCode>// End declarations </c:userRegion>
+
+	@Override
+	protected void setup(Reducer<<c:get select="$job/@keyType" />,<c:get select="$job/@valueType" />, <c:get select="$output/@outKeyType" />, <c:get select="$output/@outValueType" />>.Context context)
+			throws java.io.IOException, InterruptedException {
+
+		<c:userRegion>// Begin setup logic<c:initialCode>
+		
+		mos = new MultipleOutputs(context);
+
+		Configuration conf = context.getConfiguration();
+
+<c:iterate select="$job/output" var="output">
+		<c:get select="$output/@variableName" /> = conf.get("<c:get select="$output/@propertyKey" />");
+		if (!<c:get select="$output/@variableName" />.endsWith("/")) {
+			<c:get select="$output/@variableName" /> = <c:get select="$output/@variableName" /> + "/";
+		}
+		<c:get select="$output/@variableName" /> = <c:get select="$output/@variableName" /> + "part";
+</c:iterate>	
+
+		</c:initialCode>// End setup logic</c:userRegion>
+
+	}
+
+	protected void reduce(<c:get select="$job/@keyType" /> key, Iterable<<c:get select="$job/@valueType" />> values,
+			Reducer<<c:get select="$job/@keyType" />,<c:get select="$job/@valueType" />, <c:get select="$output/@outKeyType" />, <c:get select="$output/@outValueType" />>.Context context) throws java.io.IOException, InterruptedException {
+
+		<c:userRegion>// Begin reduce logic <c:initialCode>
+<c:include template="templates/mapreduce/reducer/{$artifact/dataloc[@name=$output/@target]/@kind}/reducer.jet" />
+		</c:initialCode>// End reduce logic </c:userRegion>
+		
+	}
+
+	@Override
+	protected void cleanup(org.apache.hadoop.mapreduce.Reducer.Context context)
+			throws IOException, InterruptedException {
+
+		<c:userRegion>// Begin cleanup logic<c:initialCode>
+
+		mos.close();
+
+<c:iterate select="$job/output" var="output">
+		context.write(new Text("<c:get select="$flow/@name" />\tO\t<c:get select="$job/@name" />\t<c:get select="$output/@name" />\t"+<c:get select="$output/@counterName" />), new Text(""));
+</c:iterate>	
+
+		</c:initialCode>// End cleanup logic</c:userRegion>
+		
+	}
+	
+<c:iterate select="$job/output" var="output">
+<c:include template="templates/mapreduce/reducer/{$artifact/dataloc[@name=$output/@target]/@kind}/multiWrite.jet" />				
+</c:iterate>	
+
+	<c:userRegion>// Begin custom methods <c:initialCode>
+
+	</c:initialCode>// End custom methods</c:userRegion>
+
+/*	public Reducer<<c:get select="$job/@keyType" />,<c:get select="$job/@valueType" />, <c:get select="$output/@outKeyType" />, <c:get select="$output/@outValueType" />>.Context testContext(Configuration conf,TaskAttemptID taid,
+			RawKeyValueIterator rkvi, Counter counter1, Counter counter2, RecordWriter<<c:get select="$output/@outKeyType" />, <c:get select="$output/@outValueType" />> rw, 
+			OutputCommitter oc, StatusReporter sr, RawComparator<<c:get select="$job/@keyType" />> rc, Class<<c:get select="$job/@keyType" />> arg9, Class<<c:get select="$job/@valueType" />> arg10) 
+				throws IOException, InterruptedException {
+	
+		return null;	
+//		return new Context(conf,taid, rkvi, counter1, counter2, rw, oc, sr, rc, arg9, arg10);
+
+	}
+*/
+
+}

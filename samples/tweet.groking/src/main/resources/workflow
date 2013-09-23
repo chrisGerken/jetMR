@@ -1,0 +1,68 @@
+digraph G { 
+rankdir=LR;
+node [style=filled, fillcolor=plum1 ,shape=rectangle, fontsize=20, color=black];
+edge [fontsize=10, color=green4, fontcolor=green4];
+
+Legalese [style=filled, fillcolor=floralwhite ,fontsize=20,color=black,label="Groking Trending Tweets|(c) 2013 Chris Gerken", shape=record];
+
+"job.Main.ReadTweets" [style=filled, fillcolor=mintcream ,fontsize=12,color=forestgreen,label="Flow: Main|Job: ReadTweets|{{<Parse>Parse}|{Key: Text\l|Value: TweetWritable\l|handle\r|content\r|id\r|retweets\r|isRetweet\r|urls\r|hashtags\r|timestamp\r}|{<WriteTerms>WriteTerms|<WriteLinks>WriteLinks|<WriteHashtags>WriteHashtags|<WriteTweets>WriteTweets}}", shape=Mrecord];
+"job.Main.FilterByTerm" [style=filled, fillcolor=mintcream ,fontsize=12,color=forestgreen,label="Flow: Main|Job: FilterByTerm|{{<ReadInteresting>ReadInteresting|<ReadTerms>ReadTerms}|{Key: Text\l|Value: InterestingJoinWritable\l|isFromTweet\r|token\r|weight\r|isLink\r|isHashtag\r|isTerm\r|handle\r|tweetId\r|timestamp\r}|{<Write>Write}}", shape=Mrecord];
+"job.Main.FilterByLink" [style=filled, fillcolor=mintcream ,fontsize=12,color=forestgreen,label="Flow: Main|Job: FilterByLink|{{<ReadInteresting>ReadInteresting|<ReadLinks>ReadLinks}|{Key: Text\l|Value: InterestingJoinWritable\l|isFromTweet\r|token\r|weight\r|isLink\r|isHashtag\r|isTerm\r|handle\r|tweetId\r|timestamp\r}|{<Write>Write}}", shape=Mrecord];
+"job.Main.FilterByHashtag" [style=filled, fillcolor=mintcream ,fontsize=12,color=forestgreen,label="Flow: Main|Job: FilterByHashtag|{{<ReadInteresting>ReadInteresting|<ReadHashtags>ReadHashtags}|{Key: Text\l|Value: InterestingJoinWritable\l|isFromTweet\r|token\r|weight\r|isLink\r|isHashtag\r|isTerm\r|handle\r|tweetId\r|timestamp\r}|{<Write>Write}}", shape=Mrecord];
+"job.Main.Join" [style=filled, fillcolor=mintcream ,fontsize=12,color=forestgreen,label="Flow: Main|Job: Join|{{<Links>Links|<Hashtags>Hashtags|<Terms>Terms|<Tweets>Tweets}|{Key: Text\l|Value: InterestingJoinWritable\l|isFromTweet\r|token\r|weight\r|isLink\r|isHashtag\r|isTerm\r|handle\r|tweetId\r|timestamp\r}|{<Write>Write}}", shape=Mrecord];
+"job.LoadInteresting.Load" [style=filled, fillcolor=mintcream ,fontsize=12,color=darkorchid1,label="Flow: LoadInteresting|Job: Load|{{<Read>Read}|{Key: Text\l|Value: InterestingWritable\l|token\r|weight\r|isLink\r|isHashtag\r|isTerm\r}|{<writeLinks>writeLinks|<writeTerms>writeTerms|<writeHashtags>writeHashtags}}", shape=Mrecord];
+"job.Trending.Count" [style=filled, fillcolor=mintcream ,fontsize=12,color=blue,label="Flow: Trending|Job: Count|{{<Parse>Parse}|{Key: Text\l|Value: LongWritable\l}|{<TermCounts>TermCounts}}", shape=Mrecord];
+"job.Trending.Sort" [style=filled, fillcolor=mintcream ,fontsize=12,color=blue,label="Flow: Trending|Job: Sort|{{<Passthru>Passthru}|{Key: Text\l|Value: LongWritable\l}|{<Sort>Sort}}", shape=Mrecord];
+
+"dataloc.TweetSource" [style=filled, fillcolor=mintcream ,fontsize=12,color=black, fillcolor=lavender,label="Data Loc: TweetSource|Local Text Files", shape=record];
+"dataloc.DatedLinks" [style=filled, fillcolor=mintcream ,fontsize=12,color=black, fillcolor=lavender,label="Data Loc: DatedLinks|HDFS Seq. Files|Key: LinkId\l|link\r|Value: UseInfo\l|handle\r|tweetId\r|timestamp\r", shape=record];
+"dataloc.DatedTerms" [style=filled, fillcolor=mintcream ,fontsize=12,color=black, fillcolor=lavender,label="Data Loc: DatedTerms|HDFS Seq. Files|Key: TermId\l|term\r|Value: UseInfo\l|handle\r|tweetId\r|timestamp\r", shape=record];
+"dataloc.DatedHashtags" [style=filled, fillcolor=mintcream ,fontsize=12,color=black, fillcolor=lavender,label="Data Loc: DatedHashtags|HDFS Seq. Files|Key: HashtagId\l|hashtag\r|Value: UseInfo\l|handle\r|tweetId\r|timestamp\r", shape=record];
+"dataloc.Tweets" [style=filled, fillcolor=mintcream ,fontsize=12,color=black, fillcolor=lavender,label="Data Loc: Tweets|HDFS Seq. Files|Key: Text\l|Value: TweetWritable\l|handle\r|content\r|id\r|retweets\r|isRetweet\r|urls\r|hashtags\r|timestamp\r", shape=record];
+"dataloc.InterestingTokens" [style=filled, fillcolor=mintcream ,fontsize=12,color=black, fillcolor=lavender,label="Data Loc: InterestingTokens|Local Text Files", shape=record];
+"dataloc.InterestingLinks" [style=filled, fillcolor=mintcream ,fontsize=12,color=black, fillcolor=lavender,label="Data Loc: InterestingLinks|HDFS Seq. Files|Key: Text\l|Value: InterestingToken\l|token\r|weight\r", shape=record];
+"dataloc.InterestingTerms" [style=filled, fillcolor=mintcream ,fontsize=12,color=black, fillcolor=lavender,label="Data Loc: InterestingTerms|HDFS Seq. Files|Key: Text\l|Value: InterestingToken\l|token\r|weight\r", shape=record];
+"dataloc.InterestingHashtags" [style=filled, fillcolor=mintcream ,fontsize=12,color=black, fillcolor=lavender,label="Data Loc: InterestingHashtags|HDFS Seq. Files|Key: Text\l|Value: InterestingToken\l|token\r|weight\r", shape=record];
+"dataloc.InterestingTermRefs" [style=filled, fillcolor=mintcream ,fontsize=12,color=black, fillcolor=lavender,label="Data Loc: InterestingTermRefs|HDFS Seq. Files|Key: ReasonWritable\l|term\r|isLink\r|isHashtag\r|isTerm\r|Value: UseInfo\l|handle\r|tweetId\r|timestamp\r", shape=record];
+"dataloc.InterestingLinkRefs" [style=filled, fillcolor=mintcream ,fontsize=12,color=black, fillcolor=lavender,label="Data Loc: InterestingLinkRefs|HDFS Seq. Files|Key: ReasonWritable\l|term\r|isLink\r|isHashtag\r|isTerm\r|Value: UseInfo\l|handle\r|tweetId\r|timestamp\r", shape=record];
+"dataloc.InterestingHashtagRefs" [style=filled, fillcolor=mintcream ,fontsize=12,color=black, fillcolor=lavender,label="Data Loc: InterestingHashtagRefs|HDFS Seq. Files|Key: ReasonWritable\l|term\r|isLink\r|isHashtag\r|isTerm\r|Value: UseInfo\l|handle\r|tweetId\r|timestamp\r", shape=record];
+"dataloc.InterestingTweets" [style=filled, fillcolor=mintcream ,fontsize=12,color=black, fillcolor=lavender,label="Data Loc: InterestingTweets|HDFS Seq. Files|Key: Text\l|Value: TweetWritable\l|handle\r|content\r|id\r|retweets\r|isRetweet\r|urls\r|hashtags\r|timestamp\r", shape=record];
+"dataloc.TermCounts" [style=filled, fillcolor=mintcream ,fontsize=12,color=black, fillcolor=lavender,label="Data Loc: TermCounts|HDFS Seq. Files|Key: Text\l|Value: LongWritable\l", shape=record];
+"dataloc.TrendingTerms" [style=filled, fillcolor=mintcream ,fontsize=12,color=black, fillcolor=lavender,label="Data Loc: TrendingTerms|Local Text Files", shape=record];
+
+"dataloc.TweetSource" -> "job.Main.ReadTweets":Parse  [penwidth=10, color=forestgreen];
+"dataloc.InterestingTerms" -> "job.Main.FilterByTerm":ReadInteresting  [penwidth=10, color=forestgreen];
+"dataloc.DatedTerms" -> "job.Main.FilterByTerm":ReadTerms  [penwidth=10, color=forestgreen];
+"dataloc.InterestingLinks" -> "job.Main.FilterByLink":ReadInteresting  [penwidth=10, color=forestgreen];
+"dataloc.DatedLinks" -> "job.Main.FilterByLink":ReadLinks  [penwidth=10, color=forestgreen];
+"dataloc.InterestingHashtags" -> "job.Main.FilterByHashtag":ReadInteresting  [penwidth=10, color=forestgreen];
+"dataloc.DatedHashtags" -> "job.Main.FilterByHashtag":ReadHashtags  [penwidth=10, color=forestgreen];
+"dataloc.InterestingLinkRefs" -> "job.Main.Join":Links  [penwidth=10, color=forestgreen];
+"dataloc.InterestingHashtagRefs" -> "job.Main.Join":Hashtags  [penwidth=10, color=forestgreen];
+"dataloc.InterestingTermRefs" -> "job.Main.Join":Terms  [penwidth=10, color=forestgreen];
+"dataloc.Tweets" -> "job.Main.Join":Tweets  [penwidth=10, color=forestgreen];
+"dataloc.InterestingTokens" -> "job.LoadInteresting.Load":Read  [penwidth=10, color=darkorchid1];
+"dataloc.InterestingTweets" -> "job.Trending.Count":Parse  [penwidth=10, color=blue];
+"dataloc.TermCounts" -> "job.Trending.Sort":Passthru  [penwidth=10, color=blue];
+
+"job.Main.ReadTweets":WriteTerms -> "dataloc.DatedLinks"  [penwidth=10, color=forestgreen];
+"job.Main.ReadTweets":WriteLinks -> "dataloc.DatedTerms"  [penwidth=10, color=forestgreen];
+"job.Main.ReadTweets":WriteHashtags -> "dataloc.DatedHashtags"  [penwidth=10, color=forestgreen];
+"job.Main.ReadTweets":WriteTweets -> "dataloc.Tweets"  [penwidth=10, color=forestgreen];
+"job.Main.FilterByTerm":Write -> "dataloc.InterestingTermRefs"  [penwidth=10, color=forestgreen];
+"job.Main.FilterByLink":Write -> "dataloc.InterestingLinkRefs"  [penwidth=10, color=forestgreen];
+"job.Main.FilterByHashtag":Write -> "dataloc.InterestingHashtagRefs"  [penwidth=10, color=forestgreen];
+"job.Main.Join":Write -> "dataloc.InterestingTweets"  [penwidth=10, color=forestgreen];
+"job.LoadInteresting.Load":writeLinks -> "dataloc.InterestingLinks"  [penwidth=10, color=darkorchid1];
+"job.LoadInteresting.Load":writeTerms -> "dataloc.InterestingTerms"  [penwidth=10, color=darkorchid1];
+"job.LoadInteresting.Load":writeHashtags -> "dataloc.InterestingHashtags"  [penwidth=10, color=darkorchid1];
+"job.Trending.Count":TermCounts -> "dataloc.TermCounts"  [penwidth=10, color=blue];
+"job.Trending.Sort":Sort -> "dataloc.TrendingTerms"  [penwidth=10, color=blue];
+
+
+
+}
+
+
+
+ 

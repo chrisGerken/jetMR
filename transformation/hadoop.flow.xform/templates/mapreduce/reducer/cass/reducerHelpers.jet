@@ -1,0 +1,15 @@
+
+	private Mutation mutationFrom(String columnName, String columnValue) {
+		
+        Column column = new Column();
+        column.setName(Arrays.copyOf(columnName.getBytes(), columnName.length()));
+	    column.setValue(ByteBufferUtil.bytes(columnValue));
+    	column.setTimestamp(System.currentTimeMillis());
+
+        Mutation mutation = new Mutation();
+        mutation.setColumn_or_supercolumn(new ColumnOrSuperColumn());
+	    mutation.column_or_supercolumn.setColumn(column);
+
+	    return mutation;
+	    
+	}

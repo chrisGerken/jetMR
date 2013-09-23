@@ -1,0 +1,20 @@
+connect <c:get select="$columnFamily/@host" />/<c:get select="$columnFamily/@port" />;
+
+create keyspace <c:get select="$columnFamily/@keyspace" />;
+
+use <c:get select="$columnFamily/@keyspace" />;
+
+<c:if test="$columnProperty/@isNested='false'" >
+create column family <c:get select="$columnFamily/@name" /> 
+        with comparator = <c:get select="$columnProperty/@cassandraComparatorType" />
+</c:if>
+<c:if test="$columnProperty/@isNested='true'" >
+create column family <c:get select="$columnFamily/@name" /> 
+        with comparator = 'CompositeType(<c:iterate select="$keyWritable/*[@isProperty='true']" var="property" delimiter=","><c:get select="$property/@cassandraComparatorType" /></c:iterate>)'      
+</c:if>
+<c:if test="$keyProperty/@isNested='false'" >
+        with key_validation_class = <c:get select="$keyProperty/@cassandraComparatorType" /> ;
+</c:if>
+<c:if test="$keyProperty/@isNested='true'" >
+        with key_validation_class = 'CompositeType(<c:iterate select="$artifact/writable[@name=$keyProperty/@type]/*[@isProperty='true']" var="property" delimiter=","><c:get select="$property/@cassandraComparatorType" /></c:iterate>)' ;
+</c:if>

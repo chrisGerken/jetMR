@@ -1,0 +1,143 @@
+<%-- This code copyright Gerken Intellectual Properties LLC --%>
+<c:include template="templates/common/javaHeader.jet"/>
+package <c:get select="$job/@jobPkg" />;
+
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.*;
+import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.MultipleInputs;
+import org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import org.apache.hadoop.mapreduce.lib.output.MultipleOutputs;
+import org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat;
+import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
+import org.apache.cassandra.hadoop.ColumnFamilyInputFormat;
+import org.apache.cassandra.hadoop.ColumnFamilyOutputFormat;
+import org.apache.cassandra.hadoop.ConfigHelper;
+import org.apache.cassandra.thrift.SlicePredicate;
+import org.apache.cassandra.thrift.SliceRange;
+import org.apache.cassandra.utils.ByteBufferUtil;
+
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+import java.util.SortedMap;
+import org.apache.cassandra.db.IColumn;
+
+import <c:get select="$artifact/@writablesPkg" />.*;
+
+
+public class <c:get select="$job/@jobConfigJava" /> {
+	
+	public static void main(String[] args) {
+
+<c:iterate select="$job/input" var="input">
+		String <c:get select="$input/@variableName" /> = "<c:get select="$artifact/dataloc[@name=$input/@source]/@default" />";
+</c:iterate>
+<c:iterate select="$job/output" var="output">
+		String <c:get select="$output/@variableName" /> = "<c:get select="$artifact/dataloc[@name=$output/@target]/@default" />";
+</c:iterate>
+<c:iterate select="$job/parm" var="parm">
+		String <c:get select="$input/@variableName" /> = "<c:get select="$parm/@default" />";
+</c:iterate>
+
+		String countBase = "<c:get select="$artifact/@countBaseDir" />";
+
+		Properties prop = new Properties();
+		try {
+			if (args.length > 0) {
+				InputStream stream = new FileInputStream(args[0]);
+				prop.loadFromXML(stream);
+<c:iterate select="$job/input" var="input">
+				<c:get select="$input/@variableName" /> = prop.getProperty("<c:get select="$input/@propertyKey" />",<c:get select="$input/@variableName" />);
+</c:iterate>
+<c:iterate select="$job/output" var="output">
+				<c:get select="$output/@variableName" /> = prop.getProperty("<c:get select="$output/@propertyKey" />",<c:get select="$output/@variableName" />);
+</c:iterate>
+<c:iterate select="$job/parm" var="parm">
+				<c:get select="$parm/@variableName" /> = prop.getProperty("<c:get select="$parm/@propertyKey" />",<c:get select="$parm/@variableName" />);
+</c:iterate>
+
+				countBase = prop.getProperty("count.base.dir",countBase);
+
+				prop.list(System.out);
+			}
+		} catch (Exception e) {
+			System.out.println("Properties file not found. Will use default properties instead.");
+		}
+		
+		try {
+			Configuration conf = new Configuration();
+
+<c:iterate select="$job/input" var="input">
+			conf.set("<c:get select="$input/@propertyKey" />",<c:get select="$input/@variableName" />);
+</c:iterate>
+<c:iterate select="$job/output" var="output">
+			conf.set("<c:get select="$output/@propertyKey" />",<c:get select="$output/@variableName" />);
+</c:iterate>
+<c:iterate select="$job/parm" var="parm">
+			conf.set("<c:get select="$parm/@propertyKey" />",<c:get select="$parm/@variableName" />);
+</c:iterate>
+
+			conf.set("count.base.dir",countBase);
+
+<c:userRegion>				// Begin custon config logic<c:initialCode>
+
+</c:initialCode>				// End custon config logic</c:userRegion>
+
+			Job job = new Job(conf, "<c:get select="$job/@jobPkg" />.<c:get select="$job/@jobConfigJava" /> : <c:get select="$job/@desc" />");
+
+			job.setJarByClass(<c:get select="$job/@jobConfigJava" />.class);
+
+			job.setMapOutputKeyClass(<c:get select="$job/@keyType" />.class);
+			job.setMapOutputValueClass(<c:get select="$job/@valueType" />.class);
+<c:iterate select="$job/input" var="input">
+
+				// Configure mapper for input <c:get select="$input/@name" />
+<c:include template="templates/mapreduce/mapper/{$artifact/dataloc[@name=$input/@source]/@kind}/jobPrep.jet" />				
+			MultipleInputs.addInputPath(job, new Path(<c:get select="$typepath"/>), <c:get select="$input/@inputFormat" />.class, <c:get select="$input/@mapperJava" />.class);
+
+</c:iterate>
+<c:if test="$artifact/@multipleOutputs = 'false'" >
+<c:include template="templates/mapreduce/singleOutputsPrep.jet" />				
+</c:if>
+<c:if test="$artifact/@multipleOutputs = 'true'" >
+<c:include template="templates/mapreduce/multipleOutputsPrep.jet" />				
+</c:if>
+	        
+	        outPath = new Path(countBase+"/<c:get select="$flow/@name" />/<c:get select="$job/@name" />");
+			TextOutputFormat.setOutputPath(job, outPath);
+	        dfs = FileSystem.get(outPath.toUri(), conf);
+	        if (dfs.exists(outPath)) {
+	          dfs.delete(outPath, true);
+	        }
+
+	        job.setNumReduceTasks(<c:get select="$job/@reducers" />);
+
+<c:if test="$job/@sort" >
+<c:setVariable select="$artifact/writable[@name=$job/@keyType]" var="writable"/>
+			if (job.getNumReduceTasks() > 1) {
+				job.setPartitionerClass(<c:get select="$job/@partitionerJava" />.class);
+			}
+			job.setSortComparatorClass(<c:get select="$writable/@sorterComparator" />.class);
+			job.setGroupingComparatorClass(<c:get select="$writable/@groupingComparator" />.class);
+
+</c:if>
+			job.waitForCompletion(true);
+
+		} catch (Exception e) {
+			System.out.println(e.toString());
+				// Handle Exception...
+		} finally {
+
+		}
+
+	} 
+}

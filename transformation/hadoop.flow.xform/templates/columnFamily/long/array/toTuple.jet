@@ -1,0 +1,12 @@
+		if (<c:get select="$property/@getter" />() == null) {
+	        tuple.set(<c:get select="$property/@index" />, new DefaultDataBag(new ArrayList<Tuple>()));
+		} else {
+			ArrayList<Tuple> tuples = new ArrayList<Tuple>();
+			for (int i = 0; i < <c:get select="$property/@getter" />().length; i++) {
+				Tuple element = TupleFactory.getInstance().newTuple(2);
+				element.set(0, new Integer(i));
+				element.set(1, new Long(<c:get select="$property/@getter" />()[i]));
+				tuples.add(element);
+			}
+        	tuple.set(<c:get select="$property/@index" />, new DefaultDataBag(tuples));
+		}

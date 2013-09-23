@@ -1,0 +1,10 @@
+		
+			// Read <c:get select="$property/@dclType" /> <c:get select="$property/@varName" />
+		
+		if (in.readBoolean()) {
+			<c:get select="$property/@varName" /> = Text.readString(in);
+		    changeFlag[<c:get select="$property/@javaConstant" />] = true;
+		} else {
+			<c:get select="$property/@varName" /> = null;
+		    changeFlag[<c:get select="$property/@javaConstant" />] = false;
+		}

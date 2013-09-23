@@ -1,0 +1,191 @@
+<%-- This code copyright Gerken Intellectual Properties LLC --%>
+<c:include template="templates/common/javaHeader.jet"/>
+package <c:get select="$artifact/@cassandraPlatformPkg" />;
+
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.util.*;
+
+import me.prettyprint.cassandra.serializers.*;
+
+import org.apache.cassandra.db.IColumn;
+import org.apache.cassandra.hadoop.ColumnFamilyInputFormat;
+import org.apache.cassandra.hadoop.ColumnFamilyOutputFormat;
+import org.apache.cassandra.hadoop.ConfigHelper;
+import org.apache.cassandra.thrift.Mutation;
+import org.apache.cassandra.thrift.SlicePredicate;
+import org.apache.cassandra.utils.ByteBufferUtil;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.mapreduce.InputFormat;
+import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.OutputFormat;
+import org.apache.hadoop.mapreduce.RecordReader;
+import org.apache.hadoop.mapreduce.RecordWriter;
+import org.apache.pig.Expression;
+import org.apache.pig.LoadFunc;
+import org.apache.pig.LoadMetadata;
+import org.apache.pig.ResourceSchema;
+import org.apache.pig.ResourceSchema.ResourceFieldSchema;
+import org.apache.pig.ResourceStatistics;
+import org.apache.pig.StoreFuncInterface;
+import org.apache.pig.backend.hadoop.executionengine.mapReduceLayer.PigSplit;
+import org.apache.pig.data.Tuple;
+
+import <c:get select="$artifact/@cassandraPkg" />.<c:get select="$columnFamily/@accessJava" />;
+import <c:get select="$artifact/@writablesPkg" />.*;
+
+public class <c:get select="$columnFamily/@pigAccessJava" /> extends LoadFunc implements StoreFuncInterface, LoadMetadata {
+
+	private String		keyspace 		= "<c:get select="$columnFamily/@keyspace" />";
+	private String 		columnFamily 	= "<c:get select="$columnFamily/@name" />";
+	private String		port			= "<c:get select="$columnFamily/@port" />";
+	private String		host 			= "<c:get select="$columnFamily/@host" />";
+	
+	private <c:get select="$keyProperty/@cassandraPersistedType" /> 	rowStart = null;
+	private <c:get select="$keyProperty/@cassandraPersistedType" /> 	rowEnd = null;
+		
+	private RecordReader<ByteBuffer, SortedMap<ByteBuffer, IColumn>> 	recordReader;
+	private RecordWriter<ByteBuffer, List<Mutation>> 					recordWriter;
+	
+	private	String		signature;
+	
+	public <c:get select="$columnFamily/@pigAccessJava" />() {
+		super();
+	}
+
+	public String relToAbsPathForStoreLocation(String location, Path curDir) throws IOException {
+		return location;
+	}
+
+	public OutputFormat getOutputFormat() throws IOException {
+		return new ColumnFamilyOutputFormat();
+	}
+
+	public void setStoreLocation(String location, Job job) throws IOException {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void checkSchema(ResourceSchema s) throws IOException {
+
+	}
+
+	public void prepareToWrite(RecordWriter writer) throws IOException {
+		recordWriter = writer;
+	}
+
+	public void putNext(Tuple t) throws IOException {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void setStoreFuncUDFContextSignature(String signature) {
+		this.signature = signature;
+	}
+
+	public void cleanupOnFailure(String location, Job job) throws IOException {
+
+	}
+
+	public void setLocation(String location, Job job) throws IOException {
+		
+		String parts[] = location.split("\\?");
+		if (parts.length > 1) {
+			String[] parm = parts[1].split("&");
+			for (int i = 0; i < parm.length; i++) {
+				String nameValue[] = parm[i].split("=");
+				if ("keyspace".equalsIgnoreCase(nameValue[0])) {
+					keyspace = nameValue[1];
+				} else if ("columnFamily".equalsIgnoreCase(nameValue[0])) {
+					columnFamily = nameValue[1];
+				} else if ("host".equalsIgnoreCase(nameValue[0])) {
+					host = nameValue[1];
+				} else if ("port".equalsIgnoreCase(nameValue[0])) {
+					port = nameValue[1];
+<c:if test=" false " >
+				} else if ("rowStart".equalsIgnoreCase(nameValue[0])) {
+					<c:get select="$keyProperty/@cassandraPersistedType" /> boundary;
+					try {
+<c:include template="templates/columnFamily/{$keyProperty/@templateFolder}/scalar/pigBoundary.jet" />
+						rowStart = boundary;
+					} catch (Throwable t) {}
+				} else if ("rowEnd".equalsIgnoreCase(nameValue[0])) {
+					<c:get select="$keyProperty/@cassandraPersistedType" /> boundary;
+					try {
+<c:include template="templates/columnFamily/{$keyProperty/@templateFolder}/scalar/pigBoundary.jet" />
+						rowEnd = boundary;
+					} catch (Throwable t) {}
+</c:if>
+				} 
+			}
+		}
+
+<c:setVariable select="$artifact/writable[@name=$columnFamily/@type]" var="writable" />
+
+				ConfigHelper.setInputColumnFamily(job.getConfiguration(), keyspace, columnFamily);
+	            ConfigHelper.setInputRpcPort(job.getConfiguration(), port);
+    	        ConfigHelper.setInputInitialAddress(job.getConfiguration(), host);
+        	    ConfigHelper.setInputPartitioner(job.getConfiguration(), "org.apache.cassandra.dht.RandomPartitioner");
+
+<c:if test=" false " >
+				ByteBuffer start = ByteBufferUtil.EMPTY_BYTE_BUFFER;
+				if (rowStart != null) {
+					start = <c:get select="$keyProperty/@cassandraCompositeSerializerType" />.get().toByteBuffer(rowStart); 
+				}
+				ByteBuffer end = ByteBufferUtil.EMPTY_BYTE_BUFFER;
+				if (rowEnd != null) {
+					end = <c:get select="$keyProperty/@cassandraCompositeSerializerType" />.get().toByteBuffer(rowEnd); 
+				}
+				
+</c:if>
+            	ArrayList<ByteBuffer> colNames = new ArrayList<ByteBuffer>();
+				SlicePredicate predicate = new SlicePredicate();
+<c:iterate select="$writable/*[@isProperty='true']" var="property">
+            	colNames.add(ByteBuffer.wrap("<c:get select="$property/@name" />".getBytes()));
+</c:iterate>
+            	predicate.setColumn_names(colNames);
+
+            	ConfigHelper.setInputSlicePredicate(job.getConfiguration(), predicate);
+	}
+
+	public InputFormat getInputFormat() throws IOException {
+		return new ColumnFamilyInputFormat();
+	}
+
+	public void prepareToRead(RecordReader reader, PigSplit split)
+			throws IOException {
+		recordReader = reader;
+	}
+
+	public Tuple getNext() throws IOException {
+        try {
+
+            if (!recordReader.nextKeyValue()) {
+                return null;
+            }
+
+            <c:get select="$writable/@writableJava" /> writable = <c:get select="$columnFamily/@accessJava" />.from((ByteBuffer)recordReader.getCurrentKey(), (SortedMap<ByteBuffer,IColumn>)recordReader.getCurrentValue());
+            return writable.asTuple();
+
+        } catch (InterruptedException e) {
+            throw new IOException(e.getMessage());
+        }
+	}
+
+	public ResourceSchema getSchema(String location, Job job) throws IOException {
+		return <c:get select="$writable/@writableJava" />.getPigSchema();
+	}
+
+	public ResourceStatistics getStatistics(String location, Job job) throws IOException {
+		return null;
+	}
+
+	public String[] getPartitionKeys(String location, Job job) throws IOException {
+		return null;
+	}
+
+	public void setPartitionFilter(Expression partitionFilter) throws IOException {
+		
+	}
+
+}

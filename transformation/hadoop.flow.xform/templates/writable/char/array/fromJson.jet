@@ -1,0 +1,7 @@
+			if (jsonObj.has("<c:get select="$property/@name" />")) {
+				JSONArray jsonArray = jsonObj.getJSONArray("<c:get select="$property/@name" />");
+				obj.<c:get select="$property/@setter" />(new char[jsonArray.length()]);
+				for (int i = 0; i < jsonArray.length(); i++) {
+					obj.<c:get select="$property/@getter" />()[i] = (char)jsonArray.getInt(i);
+				}
+			}

@@ -1,0 +1,24 @@
+
+		try {
+
+			String rowKey = ByteBufferUtil.string(key);
+			
+			Iterator<ByteBuffer> iter = value.keySet().iterator();
+			while (iter.hasNext()) {
+			
+				IColumn column = value.get(iter.next());
+				String columnName = ByteBufferUtil.string(column.name());
+				String columnValue = ByteBufferUtil.string(column.value());  // Use other methods for other types
+	
+					// map columnName and value to outKey and outValue
+					
+				<c:get select="$job/@keyType" /> outKey;
+				<c:get select="$job/@valueType" /> outValue;
+			
+//				context.write(outKey, outValue);
+			
+			}		
+			
+		} catch (Exception e) {
+			context.getCounter("Exception",e.getMessage()).increment(1);
+		}

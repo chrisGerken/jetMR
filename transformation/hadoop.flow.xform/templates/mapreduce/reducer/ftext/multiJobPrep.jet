@@ -1,0 +1,9 @@
+
+	        outPath = new Path(<c:get select="$output/@variableName" />);
+			<c:get select="$output/@outputFormat" />.setOutputPath(job, outPath);
+	        dfs = FileSystem.get(outPath.toUri(), conf);
+	        if (dfs.exists(outPath)) {
+	          dfs.delete(outPath, true);
+	        }
+            new <c:get select="$output/@concurrentOutputFormatJava" />().configure(job.getConfiguration());
+            MultipleOutputs.addNamedOutput(job, "<c:get select="$output/@name" />", <c:get select="$output/@concurrentOutputFormatJava" />.class, <c:get select="$output/@outKeyType" />.class, <c:get select="$output/@outValueType" />.class);

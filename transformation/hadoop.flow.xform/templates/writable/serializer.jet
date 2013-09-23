@@ -1,0 +1,53 @@
+<%-- This code copyright Gerken Intellectual Properties LLC --%>
+<c:include template="templates/common/javaHeader.jet"/>
+package <c:get select="$artifact/@cassandraPlatformPkg" />;
+
+import static me.prettyprint.hector.api.ddl.ComparatorType.BYTESTYPE;
+
+import java.nio.ByteBuffer;
+
+import org.apache.thrift.TBaseHelper;
+
+import <c:get select="$artifact/@writablesPkg" />.<c:get select="$writable/@writableJava" />;
+
+import me.prettyprint.cassandra.serializers.AbstractSerializer;
+import me.prettyprint.hector.api.ddl.ComparatorType;
+
+/**
+ * Converts bytes to <c:get select="$writable/@writableJava" /> and back again
+ * 
+ */
+public final class <c:get select="$writable/@cassandraSerializerType" /> extends AbstractSerializer<<c:get select="$writable/@writableJava" />> {
+
+  private static final <c:get select="$writable/@cassandraSerializerType" /> instance = new <c:get select="$writable/@cassandraSerializerType" />();
+
+  public static <c:get select="$writable/@cassandraSerializerType" /> get() {
+    return instance;
+  }
+
+  @Override
+  public ByteBuffer toByteBuffer(<c:get select="$writable/@writableJava" /> obj) {
+    if (obj == null) {
+      return null;
+    }
+    try { 
+    	return ByteBuffer.wrap(obj.getBytes());
+    } catch (Exception e) {
+    	return null;
+    }
+  }
+
+  @Override
+  public <c:get select="$writable/@writableJava" /> fromByteBuffer(ByteBuffer byteBuffer) {
+    if ((byteBuffer == null) || (byteBuffer.remaining() < 8)) {
+      return null;
+    }
+    return new <c:get select="$writable/@writableJava" />(TBaseHelper.rightSize(byteBuffer).array());
+  }
+
+  @Override
+  public ComparatorType getComparatorType() {
+    return BYTESTYPE;
+  }
+
+}

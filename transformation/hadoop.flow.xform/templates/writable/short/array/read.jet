@@ -1,0 +1,14 @@
+		
+			// Read <c:get select="$property/@dclType" /> <c:get select="$property/@varName" />
+		
+		if (in.readBoolean()) {
+			len = in.readInt();
+			<c:get select="$property/@varName" /> = new short[len];
+			for (int i = 0; i < len; i++) {
+				<c:get select="$property/@varName" />[i] = in.readShort();
+		    changeFlag[<c:get select="$property/@javaConstant" />] = true;
+			}
+		} else {
+			<c:get select="$property/@varName" /> = null;
+		    changeFlag[<c:get select="$property/@javaConstant" />] = false;
+		}

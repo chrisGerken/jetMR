@@ -1,0 +1,7 @@
+            <c:set select="$property" name="cassandraComparatorType">DateType</c:set>
+            <c:set select="$property" name="cassandraSerializerType">DateSerializer</c:set>
+            <c:set select="$property" name="cassandraPersistedType">Date</c:set>
+	        <c:set select="$property" name="cassandraCompositeSerializerType"><c:get select="$property/@cassandraSerializerType" /></c:set>
+	        <c:set select="$property" name="cassandraCompositeType"><c:get select="$property/@type" /></c:set>
+ 	        <c:set select="$property" name="pigType">LONG</c:set>
+            

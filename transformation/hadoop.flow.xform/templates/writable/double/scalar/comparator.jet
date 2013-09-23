@@ -1,0 +1,7 @@
+		
+					// Read <c:get select="$property/@dclType" /> <c:get select="$property/@varName" /> properties
+				
+				<c:get select="$property/@type" /> <c:get select="$property/@varName" />1 = in1.readDouble();
+				<c:get select="$property/@type" /> <c:get select="$property/@varName" />2 = in2.readDouble();
+				if (<c:get select="$property/@varName" />1 < <c:get select="$property/@varName" />2) { return -1; }
+				if (<c:get select="$property/@varName" />1 > <c:get select="$property/@varName" />2) { return  1; }

@@ -1,0 +1,26 @@
+
+		try {
+		
+			String rowKey = "set this from the reduce arguments";
+			
+			ByteBuffer outKey = ByteBufferUtil.bytes(rowKey);
+			
+			
+			ArrayList<Mutation> mutations = new ArrayList<Mutation>();		
+			
+			for (<c:get select="$job/@valueType" /> value : values) {
+
+				Mutation mutation;
+				
+//				mutation = mutationFrom("columnName","columnValue");
+//				mutations.add(mutation);				
+				
+			}
+
+			if (!mutations.isEmpty()) {
+				context.write(outKey, mutations);
+			}
+			
+		} catch (Exception e) {
+			context.getCounter("Exception",e.getMessage()).increment(1);
+		}

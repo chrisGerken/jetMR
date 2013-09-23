@@ -1,0 +1,15 @@
+package <c:get select="$job/@jobPkg" />;
+
+import org.apache.hadoop.io.Text;
+
+import <c:get select="$artifact/@hadoopPlatformPkg" />.*;
+import <c:get select="$artifact/@writablesPkg" />.*;
+
+public class <c:get select="$output/@concurrentOutputFormatJava" /> extends <c:get select="$output/@outputFormatExtends" /><c:if test="$output/@outputExtendsTemplate = 'true'"><<c:get select="$output/@outKeyType" />, <c:get select="$output/@outKeyType" />></c:if> {
+
+	@Override
+	public String getMultiOutputName() {
+		return "<c:get select="$output/@name" />";
+	}
+
+}

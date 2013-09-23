@@ -1,0 +1,180 @@
+
+<root>
+
+    <!--  artifactID : The unique internal name for the implementation; also the maven artifact ID  -->
+    <!--  version : The version in the form: version,release.modification. -->
+    <!--  groupID : Dot-delimited organization name (e.g. "com.mycorp") -->
+    <!--  multipleOutputs : A true/false value specifying whether a reducer can have multiple outputs -->
+    <!--  countBaseDir :  -->
+    <!--  provider : The individual, organization or campany that is providing this JET transform -->
+    <!--  label : A displayable short text describing this artifact's workflow(s) -->
+    <artifact  artifactID=""  version=""  groupID=""  multipleOutputs=""  countBaseDir="">
+
+        <!--  name : Single-token, human-readable name of the overall hadoop flow -->
+        <flow  name="">
+
+            <!--  name : The unique, single-token name of this hadoop job -->
+            <!--  keyType : The type of the keys passed from mapper(s) to reducer(s) in this job -->
+            <!--  valueType : The type of the values passed from mapper(s) to reducer(s) in this job -->
+            <!--  desc : Short description of what this job does -->
+            <!--  useGrouper : true|false whether the custom grouping comparators for the internal key should be used by this job -->
+            <!--  useSorter : true|false whether custom sorting comparator for the internal value should be used by this job -->
+            <!--  reducers : The number of reducers to be used by this job -->
+            <!--  sort : One of 'none', 'bytes' or 'writable' -->
+            <job  name=""  keyType=""  valueType=""  desc=""  useGrouper=""  useSorter=""  reducers=""  sort="">
+
+                <!--  name : A single-token name describing the behavior of the mapper; unique to all mappers in the job -->
+                <!--  source : The name of the data location whose data is read by this input/mapper -->
+                <input  name=""  source="">
+
+                    <mapred>
+
+                    </mapred>
+
+                    <mapreduce>
+
+                    </mapreduce>
+
+                    <!--  name : One-token name for the testcase; unique within the input mapper -->
+                    <!--  desc : A short description of the condition the testcase checks -->
+                    <testcase  name=""  desc="">
+
+                    </testcase>
+
+                </input>
+
+                <!--  name : A single-token name describing the behavior of the reducer -->
+                <!--  target : The name of the data store to which this output/reducer writes -->
+                <output  name=""  target="">
+
+                    <mapred>
+
+                    </mapred>
+
+                    <mapreduce>
+
+                    </mapreduce>
+
+                    <!--  name : One-token name for the testcase; unique within the output reducer -->
+                    <!--  desc : A short description of the condition the testcase checks -->
+                    <testcase  name=""  desc="">
+
+                    </testcase>
+
+                </output>
+
+                <mapred>
+
+                </mapred>
+
+                <mapreduce>
+
+                </mapreduce>
+
+                <!--  name : The single-token name of the parameter; follows java variable naming requirements -->
+                <!--  default : The value of the parameter to place in JOB class invocations -->
+                <parm  name=""  default="">
+
+                </parm>
+
+                <partitioner>
+
+                </partitioner>
+
+                <!--  job :  -->
+                <dependency  job="">
+
+                </dependency>
+
+            </job>
+
+        </flow>
+
+        <!--  name : The Java class name of the Writable -->
+        <!--  comparable : true|false whether or not this writable implements WritableComparable -->
+        <writable  name=""  comparable="">
+
+            <!--  name : One-token name for the testcase; unique within the writable -->
+            <!--  desc : A short description of the condition the testcase checks -->
+            <testcase  name=""  desc="">
+
+            </testcase>
+
+            <!--  name : The name of the property -->
+            <!--  type :  -->
+            <!--  array : true|false whether or not the property is an array of values of the given type -->
+            <!--  group : true|false whether this property should be used to group reducer keys; Must be true if sort="true" -->
+            <!--  sort : either ascending|descending -->
+            <property  name=""  type=""  array=""  group=""  sort="">
+
+            </property>
+
+            <!--  name : The name of the property -->
+            <!--  type : The type of the ritable -->
+            <!--  array : true|false whether or not the property is an array of writables of the given type -->
+            <!--  sort : ascending|descending  -->
+            <nested  name=""  type=""  array=""  sort="">
+
+            </nested>
+
+            <grouper>
+
+            </grouper>
+
+            <sorter>
+
+            </sorter>
+
+        </writable>
+
+        <!--  name : Name of the data location -->
+        <!--  kind : The kind of data location: ftext = text files in a directory; dtext = hdfs text files in a folder; dseq = hdfs sequence files in a folder; cass=ColumnFamily in Cassandra; hive=Table in Hive -->
+        <!--  keyType : For kind="dseq" only; The type of the keys stored in this location -->
+        <!--  valueType : For kind="dseq" only; The type of the values stored in this location -->
+        <!--  default : The default name for this location -->
+        <!--  columnFamily : For kind='cass"; the Cassandra column family name -->
+        <dataloc  name=""  kind=""  keyType=""  valueType=""  default=""  columnFamily="">
+
+        </dataloc>
+
+        <!--  name : The name of the Cassandra column family -->
+        <!--  type : The name of the Writable that defines, along with the usage attribute, the column names -->
+        <!--  usage : 'static' or 'dynamic' -->
+        <!--  rowKey : The name of the property that contains the row key value -->
+        <!--  columnKey : For dynamic usage, the name of the property whose value is the column name -->
+        <!--  keyspace : The keyspace in which the column family will reside first -->
+        <!--  port : For kind='cass"; the Cassandra server port (usually 9160) -->
+        <!--  host : For kind='cass"; the Cassandra server host name (e.g. 'localhost') -->
+        <columnFamily  name=""  type=""  usage=""  rowKey=""  columnKey=""  keyspace=""  port=""  host="">
+
+            <!--  property :  -->
+            <index  property="">
+
+            </index>
+
+            <static>
+
+            </static>
+
+            <dynamic>
+
+            </dynamic>
+
+            <cql>
+
+            </cql>
+
+            <!--  name :  -->
+            <clusteringKey  name="">
+
+            </clusteringKey>
+
+        </columnFamily>
+
+        <hiveTable>
+
+        </hiveTable>
+
+    </artifact>
+
+</root>

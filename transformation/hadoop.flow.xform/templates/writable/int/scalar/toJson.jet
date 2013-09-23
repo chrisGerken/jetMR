@@ -1,0 +1,1 @@
+			jsonObj.put("<c:get select="$property/@name" />", <c:get select="$property/@getter" />());

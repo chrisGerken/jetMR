@@ -1,0 +1,1 @@
+(<c:iterate select="$writable/*[@isProperty='true']" var="property" delimiter=", "><c:get select="$property/@name" />: <c:get select="$property/@pigType" /></c:iterate>)

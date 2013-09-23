@@ -1,0 +1,1 @@
+<c:include template="templates/partitioner/partitionerJava_{$job/@version}.jet"/>

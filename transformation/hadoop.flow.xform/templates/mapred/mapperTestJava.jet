@@ -1,0 +1,108 @@
+<%-- This code copyright Gerken Intellectual Properties LLC --%>
+<c:include template="templates/common/javaHeader.jet"/>
+package <c:get select="$job/@jobPkg" />;
+
+<c:userRegion>// Begin imports <c:initialCode>
+
+import java.io.IOException;
+import java.util.ArrayList;
+
+import junit.framework.TestCase;
+
+import org.apache.hadoop.io.*;
+import org.apache.hadoop.mapred.Counters;
+import org.apache.hadoop.mapred.Counters.Counter;
+import org.apache.hadoop.mapred.InputSplit;
+import org.apache.hadoop.mapred.JobConf;
+import org.apache.hadoop.mapred.OutputCollector;
+import org.apache.hadoop.mapred.Reporter;
+import org.junit.Test;
+
+import <c:get select="$artifact/@writablesPkg" />.*;
+
+</c:initialCode>// End imports </c:userRegion>
+
+public class <c:get select="$input/@mapperTestJava" /> extends TestCase {
+
+		<c:userRegion>// Begin custom methods<c:initialCode>
+
+	@Test
+	public void noopTest() {
+				
+	}
+
+		</c:initialCode>// End custom methods</c:userRegion>
+
+<c:iterate select="$input/testcase" var="testcase">
+	@Test
+	public void <c:get select="$testcase/@testMethod" />() {
+		
+		try {
+
+			<c:userRegion>// Begin test logic<c:initialCode>
+			
+			fail("<c:get select="$job/@jobPkg" />.<c:get select="$input/@mapperTestJava" /> (testcase <c:get select="$testcase/@name" />) : Test not implemented, yet");
+			
+			<c:get select="$input/@mapperJava" /> mapper = new <c:get select="$input/@mapperJava" />();
+			
+			JobConf job = new JobConf();
+			TestOutputCollector collector = new TestOutputCollector();
+			TestReporter reporter = new TestReporter();
+			
+			mapper.configure(job);
+
+			<c:get select="$input/@inKeyType" /> key = null;
+			<c:get select="$input/@inValueType" /> value = null;
+			
+			mapper.map(key, value, collector, reporter);
+			
+			mapper.close();
+
+			</c:initialCode>// End test logic</c:userRegion>
+			
+		} catch (IOException e) {
+			fail("<c:get select="$job/@jobPkg" />.CountersMapperTest (testcase <c:get select="$testcase/@name" />) : Exception thrown: "+e.getMessage());
+		}
+		
+	}
+	
+</c:iterate>
+	final class TestOutputCollector implements OutputCollector<<c:get select="$job/@keyType" />, <c:get select="$job/@valueType" />> {
+		ArrayList<<c:get select="$job/@keyType" />> keys = new ArrayList<<c:get select="$job/@keyType" />>();
+		ArrayList<<c:get select="$job/@valueType" />> values = new ArrayList<<c:get select="$job/@valueType" />>();
+		public void collect(<c:get select="$job/@keyType" /> key, <c:get select="$job/@valueType" /> value) throws IOException {
+			keys.add(key);
+			values.add(value);
+		}
+		public <c:get select="$job/@keyType" />[] getKeys() {
+			<c:get select="$job/@keyType" /> result[] = new <c:get select="$job/@keyType" />[keys.size()];
+			keys.toArray(result);
+			return result;
+		}
+		public <c:get select="$job/@valueType" />[] getValues() {
+			<c:get select="$job/@valueType" />[] result = new <c:get select="$job/@valueType" />[values.size()];
+			values.toArray(result);
+			return result;
+		}
+	}
+	
+	final class TestReporter implements Reporter {
+		private Counters counters = new Counters();
+		public void progress() { }
+		public Counter getCounter(Enum<?> arg0) {
+			return null;
+		}
+		public Counter getCounter(String arg0, String arg1) {
+			return counters.getGroup(arg0).getCounterForName(arg1);
+		}
+		public InputSplit getInputSplit() throws UnsupportedOperationException {
+			return null;
+		}
+		public void incrCounter(Enum<?> arg0, long arg1) {}
+		public void incrCounter(String arg0, String arg1, long arg2) {
+			getCounter(arg0,arg1).increment(arg2);
+		}
+		public void setStatus(String arg0) {}
+	}
+	
+}

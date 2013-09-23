@@ -1,0 +1,172 @@
+<%-- This code copyright Gerken Intellectual Properties LLC --%>
+<c:include template="templates/common/javaHeader.jet"/>
+package <c:get select="$job/@jobPkg" />;
+
+<c:userRegion>// Begin imports <c:initialCode>
+
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.SortedMap;
+
+import org.apache.cassandra.db.IColumn;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.io.*;
+import org.apache.hadoop.mapreduce.Counters;
+import org.apache.hadoop.mapreduce.Mapper;
+import org.apache.hadoop.mapreduce.Mapper.Context;
+import org.apache.hadoop.mapreduce.Counter;
+import org.apache.hadoop.mapreduce.InputSplit;
+import org.apache.hadoop.mapreduce.JobContext;
+import org.apache.hadoop.mapreduce.OutputCommitter;
+import org.apache.hadoop.mapreduce.RecordReader;
+import org.apache.hadoop.mapreduce.RecordWriter;
+import org.apache.hadoop.mapreduce.StatusReporter;
+import org.apache.hadoop.mapreduce.TaskAttemptContext;
+import org.apache.hadoop.mapreduce.TaskAttemptID;
+import org.junit.Test;
+
+import <c:get select="$artifact/@writablesPkg" />.*;
+
+import junit.framework.TestCase;
+
+</c:initialCode>// End imports </c:userRegion>
+
+public class <c:get select="$input/@mapperTestJava" /> extends TestCase {
+
+		<c:userRegion>// Begin custom methods<c:initialCode>
+
+	@Test
+	public void noopTest() {
+				
+	}
+
+		</c:initialCode>// End custom methods</c:userRegion>
+<c:iterate select="$input/testcase" var="testcase">
+
+	@Test
+	public void <c:get select="$testcase/@testMethod" />() {
+
+		TestRecordWriter 	recordWriter 	= new TestRecordWriter();
+		TestRecordReader 	recordReader 	= new TestRecordReader();
+		TestOutputCommitter outputCommitter = new TestOutputCommitter();
+		TestStatusReporter 	statusReporter 	= new TestStatusReporter();
+		TestInputSplit 		inputSplit 		= new TestInputSplit();
+
+		try {
+
+				<c:userRegion>// Begin test logic<c:initialCode>
+
+				// Remove this line or the test will fail
+			fail("<c:get select="$flow/@flowPkg" />:<c:get select="$input/@mapperTestJava" />.<c:get select="$testcase/@testMethod" />() - Not yet implemented");
+
+				// Get an instance of the mapper to be tested and a context instance
+			<c:get select="$input/@mapperJava" /> mapper = new <c:get select="$input/@mapperJava" />();
+
+			Mapper<<c:get select="$input/@inKeyType" />,<c:get select="$input/@inValueType" />,<c:get select="$job/@keyType" />,<c:get select="$job/@valueType" />>.Context context = 
+				mapper.testContext(new Configuration(), new TaskAttemptID(),recordReader,recordWriter,outputCommitter,statusReporter,inputSplit);
+
+				// Invoke the setup, map and cleanup methods
+			mapper.setup(context);
+
+			<c:get select="$input/@inKeyType" /> key = null;
+			<c:get select="$input/@inValueType" /> value = null;
+
+			mapper.map(key, value, context);
+
+			mapper.cleanup(context);
+			
+				// Validation:
+				//
+				// recordWriter.getKeys() returns the keys written to the context by the mapper
+				// recordWriter.getValues() returns the values written to the context by the mapper
+				// statusReporter returns the most recent status and any counters set by the mapper
+				//
+
+				</c:initialCode>// End test logic</c:userRegion>
+				
+		} catch (Exception e) {
+			fail("<c:get select="$flow/@flowPkg" />:<c:get select="$input/@mapperTestJava" />.<c:get select="$testcase/@testMethod" />() - Exception thrown: "+e.getMessage());
+		}
+
+	}
+</c:iterate>
+		
+	final class TestRecordWriter extends RecordWriter<<c:get select="$job/@keyType" />, <c:get select="$job/@valueType" />> {
+		ArrayList<<c:get select="$job/@keyType" />> keys = new ArrayList<<c:get select="$job/@keyType" />>();
+		ArrayList<<c:get select="$job/@valueType" />> values = new ArrayList<<c:get select="$job/@valueType" />>();
+		public void close(TaskAttemptContext arg0) throws IOException, InterruptedException { }
+		public void write(<c:get select="$job/@keyType" /> key, <c:get select="$job/@valueType" /> value) throws IOException, InterruptedException {
+			keys.add(key);
+			values.add(value);
+		}
+		public <c:get select="$job/@keyType" />[] getKeys() {
+			<c:get select="$job/@keyType" /> result[] = new <c:get select="$job/@keyType" />[keys.size()];
+			keys.toArray(result);
+			return result;
+		}
+		public <c:get select="$job/@valueType" />[] getValues() {
+			<c:get select="$job/@valueType" />[] result = new <c:get select="$job/@valueType" />[values.size()];
+			values.toArray(result);
+			return result;
+		}
+	};	
+	
+	final class TestRecordReader extends RecordReader<<c:get select="$input/@inKeyType" />, <c:get select="$input/@inValueType" />> {
+		public void close() throws IOException { }
+		public <c:get select="$input/@inKeyType" /> getCurrentKey() throws IOException, InterruptedException {
+			throw new RuntimeException("Tried to call RecordReader:getCurrentKey()");
+		}
+		public <c:get select="$input/@inValueType" /> getCurrentValue() throws IOException, InterruptedException {
+			throw new RuntimeException("Tried to call RecordReader:getCurrentValue()");
+		}
+		public float getProgress() throws IOException, InterruptedException {
+			throw new RuntimeException("Tried to call RecordReader:getProgress()");
+		}
+		public void initialize(InputSplit arg0, TaskAttemptContext arg1) throws IOException, InterruptedException { }
+		public boolean nextKeyValue() throws IOException, InterruptedException {
+			return false;
+		}
+	};
+	
+	final class TestStatusReporter extends StatusReporter {
+		private Counters counters = new Counters();
+		private String status = null;
+		public void setStatus(String arg0) {
+			status = arg0;
+		}
+		public String getStatus() {
+			return status;
+		}
+		public void progress() { }
+		public Counter getCounter(String arg0, String arg1) {
+			return counters.getGroup(arg0).findCounter(arg1);
+		}
+		public Counter getCounter(Enum<?> arg0) {
+			return null;
+		}
+	};
+	
+	final class TestInputSplit extends InputSplit {
+		public String[] getLocations() throws IOException, InterruptedException {
+			return null;
+		}
+		public long getLength() throws IOException, InterruptedException {
+			return 0;
+		}
+	};
+	
+	final class TestOutputCommitter extends OutputCommitter {
+		public void setupTask(TaskAttemptContext arg0) throws IOException { }
+		public void setupJob(JobContext arg0) throws IOException { }
+		public boolean needsTaskCommit(TaskAttemptContext arg0) throws IOException {
+			return false;
+		}
+		public void commitTask(TaskAttemptContext arg0) throws IOException { }
+		public void cleanupJob(JobContext arg0) throws IOException { }
+		public void abortTask(TaskAttemptContext arg0) throws IOException { }
+	};
+
+}

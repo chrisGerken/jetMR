@@ -1,0 +1,7 @@
+            <c:set select="$property" name="cassandraComparatorType">UTF8Type</c:set>
+            <c:set select="$property" name="cassandraSerializerType">StringSerializer</c:set>
+            <c:set select="$property" name="cassandraPersistedType">String</c:set>
+	        <c:set select="$property" name="cassandraCompositeSerializerType"><c:get select="$property/@cassandraSerializerType" /></c:set>
+	        <c:set select="$property" name="cassandraCompositeType"><c:get select="$property/@type" /></c:set>
+	        <c:set select="$property" name="pigType">CHARARRAY</c:set>
+            

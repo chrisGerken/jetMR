@@ -1,0 +1,352 @@
+<%-- This code copyright Gerken Intellectual Properties LLC --%>
+<c:include template="templates/common/javaHeader.jet"/>
+package <c:get select="$artifact/@writablesPkg" />;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInput;
+import java.io.DataInputStream;
+import java.io.DataOutput;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.util.*;
+import com.eaio.uuid.UUID;
+import org.apache.hadoop.io.*;
+import org.apache.pig.ResourceSchema;
+import org.apache.pig.ResourceSchema.ResourceFieldSchema;
+import org.apache.pig.backend.executionengine.ExecException;
+import org.apache.pig.data.DataBag;
+import org.apache.pig.data.DataType;
+import org.apache.pig.data.DefaultDataBag;
+import org.apache.pig.data.Tuple;
+import org.apache.pig.data.TupleFactory;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+<c:if test="$writable[@comparable='true']" >
+@SuppressWarnings("rawtypes")
+</c:if>
+public class <c:get select="$writable/@writableJava" /> implements Writable<c:if test="$writable[@comparable='true']"> , WritableComparable</c:if> {
+
+<c:setVariable select="0" var="index" />   
+<c:iterate select="$writable/*[@isProperty='true']" var="property">
+  public static int	<c:get select="$property/@javaConstant" /> = <c:get select="$index"/>;
+<c:setVariable select="$index + 1" var="index" />   
+</c:iterate>
+   
+  private boolean[] changeFlag = new boolean[<c:get select="count($writable/*[@isProperty='true'])" />];
+   
+<c:iterate select="$writable/*[@isProperty='true']" var="property">
+<c:if test="$property/desc">
+
+	/**
+	 * <c:get select="$property/desc" />
+	 */
+</c:if>
+  private <c:get select="$property/@dclType" />	<c:get select="$property/@varName" />;
+</c:iterate>
+
+  public <c:get select="$writable/@writableJava" />() {
+    resetChangeFlags();
+  }
+
+  public <c:get select="$writable/@writableJava" />(<c:iterate select="$writable/*[@isProperty='true']" var="property" delimiter=", "><c:get select="$property/@dclType" /> <c:get select="$property/@varName" /></c:iterate>) {
+    resetChangeFlags();
+<c:iterate select="$writable/*[@isProperty='true']" var="property">
+	<c:get select="$property/@setter" />(<c:get select="$property/@varName" />);  
+</c:iterate>
+  }
+
+  public <c:get select="$writable/@writableJava" />(<c:get select="$writable/@writableJava" /> original) {
+    resetChangeFlags();
+<c:iterate select="$writable/*[@isProperty='true']" var="property">
+<c:if test="$property/@isNested='true'" >
+	if (original.<c:get select="$property/@getter" />() != null) {
+		<c:get select="$property/@setter" />(new <c:get select="$property/@type" />(original.<c:get select="$property/@getter" />()));  
+	} else {
+		<c:get select="$property/@setter" />(null);  
+	}
+</c:if>
+<c:if test="$property/@isNested='false'" >
+	<c:get select="$property/@setter" />(original.<c:get select="$property/@getter" />());  
+</c:if>
+</c:iterate>
+  }
+  
+  public <c:get select="$writable/@writableJava" />(byte[] bytes) {
+	ByteArrayInputStream is = new ByteArrayInputStream(bytes);
+	DataInput in = new DataInputStream(is);
+	try { readFields(in); } catch (IOException e) { }
+	resetChangeFlags();
+  }
+  
+<%--  
+  
+  public <c:get select="$writable/@writableJava" />(Tuple tuple) throws ExecException {
+
+	  DataBag values = (DataBag) tuple.get(1);
+	  Iterator<Tuple> tuples = values.iterator();
+	  while (tuples.hasNext()) {
+		  Tuple pair = tuples.next();
+		  String name = (String) pair.get(0);
+<c:iterate select="$writable/*[@isProperty='true']" var="property">
+<c:if test="$property/@isNested='false'">
+		  if ("<c:get select="$property/@name" />".equals(name)) {
+			  <c:get select="$property/@setter" />((<c:get select="$property/@cassandraPersistedType" />) pair.get(1));
+		  }
+</c:if>
+<c:if test="$property/@isNested='true'">
+		  if ("<c:get select="$property/@name" />".equals(name)) {
+			  <c:get select="$property/@setter" />(new <c:get select="$property/@type" />((Tuple) pair.get(1)));
+		  }
+</c:if>
+</c:iterate>        
+	  }
+  }
+
+--%>
+
+ <c:iterate select="$writable/*[@isProperty='true']" var="property">
+   
+<c:if test="$property/desc">
+
+	/**
+	 * Get <c:get select="$property/desc" />
+	 */
+</c:if>
+  public <c:get select="$property/@dclType" /> <c:get select="$property/@getter" />() {
+    return <c:get select="$property/@varName" />;
+  }
+  
+<c:if test="$property/desc">
+
+	/**
+	 * Set <c:get select="$property/desc" />
+	 */
+</c:if>
+  public void <c:get select="$property/@setter" />(<c:get select="$property/@dclType" /> value) {
+    <c:get select="$property/@varName" /> = value;
+    changeFlag[<c:get select="$property/@javaConstant" />] = true;
+  }  
+</c:iterate>
+  
+  public void readFields(DataInput in) throws IOException {
+<c:if test="$writable/*[@isProperty='true'][@array='true']" > 
+      
+      int len;
+</c:if> 
+<c:iterate select="$writable/*[@isProperty='true']" var="property">
+<c:include template="templates/writable/{$property/@templateFolder}/{$property/@dim}/read.jet" />
+</c:iterate>
+  }
+  
+  public void write(DataOutput out) throws IOException {
+<c:iterate select="$writable/*[@isProperty='true']" var="property">
+<c:include template="templates/writable/{$property/@templateFolder}/{$property/@dim}/write.jet" />
+</c:iterate>
+  }
+  
+  public byte[] getBytes() throws IOException {
+	  ByteArrayOutputStream os = new ByteArrayOutputStream();
+	  DataOutputStream out = new DataOutputStream(os);
+	  write(out);
+	  out.flush();
+	  out.close();
+	  return os.toByteArray();
+  }
+
+  public void resetChangeFlags() {
+<c:iterate select="$writable/*[@isProperty='true']" var="property">
+    changeFlag[<c:get select="$property/@javaConstant" />] = false;
+</c:iterate>   
+  }
+  
+  public boolean getChangeFlag(int i) {
+  	return changeFlag[i];
+  }
+
+<c:iterate select="$writable/*[@isProperty='true']" var="property">
+  
+   public byte[] <c:get select="$property/@getter" />AsBytes() throws IOException {
+	  ByteArrayOutputStream os = new ByteArrayOutputStream();
+	  DataOutputStream out = new DataOutputStream(os);
+<c:include template="templates/writable/{$property/@templateFolder}/{$property/@dim}/write.jet" />
+
+	  out.flush();
+	  out.close();
+	  return os.toByteArray();
+   }
+</c:iterate>
+
+<c:iterate select="$writable/*[@isProperty='true']" var="property">
+  
+   public void <c:get select="$property/@setter" />FromBytes(byte[] b) throws IOException {
+	  ByteArrayInputStream is = new ByteArrayInputStream(b);
+	  DataInput in = new DataInputStream(is);
+	  int len;
+<c:include template="templates/writable/{$property/@templateFolder}/{$property/@dim}/read.jet" />
+
+   }
+</c:iterate>
+	
+	public Tuple asTuple() throws ExecException {
+		
+        Tuple tuple = TupleFactory.getInstance().newTuple(<c:get select="count($writable/*[@isProperty='true'])" />);
+
+<c:iterate select="$writable/*[@isProperty='true']" var="property">
+<c:include template="templates/columnFamily/{$property/@templateFolder}/{$property/@dim}/toTuple.jet" />			
+</c:iterate>        
+
+        return tuple;
+	}
+
+<c:if test="$writable[@comparable='true']" >
+	/*
+	 * Returns:
+	 *   a negative integer if this object is less than the other object,
+	 *   zero if this object "is equal to" the other object, or
+	 *   a positive integer if this object "is greater than" the other object. 
+	 */ 
+	public int compareTo(Object obj) {
+
+			<c:userRegion>// Begin comparable logic<c:initialCode>
+		
+		if (obj instanceof <c:get select="$writable/@writableJava" />) { 
+	
+			<c:get select="$writable/@writableJava" /> other = (<c:get select="$writable/@writableJava" />) obj;
+			int test = 0;
+
+<c:iterate select="$writable/*[@isProperty='true'][@sort]" var="property">
+<c:include template="templates/writable/{$property/@templateFolder}/scalar/compareTo.jet" />
+</c:iterate>				
+	
+			return 0;
+		
+		}
+	
+		return 0;
+	
+			</c:initialCode>// End comparable logic</c:userRegion>
+	}
+
+</c:if>
+    public static ResourceSchema getPigSchema() throws IOException {
+
+    	ResourceSchema schema = new ResourceSchema();
+    	ResourceFieldSchema fieldSchema[] = new ResourceFieldSchema[<c:get select="count($writable/*[@isProperty='true'])" />];
+    	ResourceSchema bagSchema;
+    	ResourceFieldSchema bagField[];
+<c:iterate select="$writable/*[@isProperty='true']" var="property">
+
+		fieldSchema[<c:get select="$property/@index" />] = new ResourceFieldSchema();
+		fieldSchema[<c:get select="$property/@index" />].setName("<c:get select="$property/@name" />");
+<c:if test="$property/@dim='scalar'" >
+<c:if test="$property/@isNested='false'" >
+		fieldSchema[<c:get select="$property/@index" />].setType(DataType.<c:get select="$property/@pigType" />);
+</c:if>
+<c:if test="$property/@isNested='true'" >
+		fieldSchema[<c:get select="$property/@index" />].setType(DataType.TUPLE);
+		fieldSchema[<c:get select="$property/@index" />].setSchema(<c:get select="$property/@type" />.getPigSchema());
+</c:if>
+</c:if>
+<c:if test="$property/@dim='array'" >
+		fieldSchema[<c:get select="$property/@index" />].setType(DataType.BAG);
+    	bagField = new ResourceFieldSchema[2];
+		bagField[0] = new ResourceFieldSchema();
+		bagField[0].setName("index");
+		bagField[0].setType(DataType.INTEGER); 	
+		bagField[1] = new ResourceFieldSchema();
+		bagField[1].setName("element");
+<c:if test="$property/@isNested='false'" >
+		bagField[1].setType(DataType.<c:get select="$property/@pigType" />);
+</c:if>
+<c:if test="$property/@isNested='true'" >
+		bagField[1].setType(DataType.INTEGER); 	
+		bagField[1].setSchema(<c:get select="$property/@type" />.getPigSchema());
+</c:if>
+		bagSchema = new ResourceSchema();
+		bagSchema.setFields(bagField);
+		fieldSchema[<c:get select="$property/@index" />].setSchema(bagSchema);
+</c:if>
+</c:iterate>        
+    	
+    	schema.setFields(fieldSchema);
+    	return schema;
+    	
+    }
+
+	public static <c:get select="$writable/@writableJava" /> fromJson(String source) {
+	
+		<c:get select="$writable/@writableJava" /> obj = null;
+
+		try {
+			JSONObject jsonObj = new JSONObject(source);
+			obj = fromJson(jsonObj);
+		} catch (JSONException e) {
+			System.out.println(e.toString());
+		}
+
+		return obj;	
+	}
+
+	public static <c:get select="$writable/@writableJava" /> fromJson(JSONObject jsonObj) {
+	
+		<c:get select="$writable/@writableJava" /> obj = new <c:get select="$writable/@writableJava" />();
+
+		try {
+<c:iterate select="$writable/*[@isProperty='true']" var="property">
+
+<c:include template="templates/writable/{$property/@templateFolder}/{$property/@dim}/fromJson.jet" />
+
+</c:iterate>			
+
+		} catch (JSONException e) {
+			System.out.println(e.toString());
+			obj = null;
+		}
+
+		return obj;	
+	}
+
+	public JSONObject toJson() {
+	
+		try {
+			JSONObject jsonObj = new JSONObject();
+			JSONArray jsonArray;
+<c:iterate select="$writable/*[@isProperty='true']" var="property">
+
+<c:include template="templates/writable/{$property/@templateFolder}/{$property/@dim}/toJson.jet" />
+</c:iterate>		
+
+			return jsonObj;	
+		} catch (JSONException e) { }
+
+		return null;	
+	}
+
+	public String toJsonString() {
+	
+		return toJson().toString();	
+
+	}
+
+	public String toTSV() {
+	
+		StringBuffer sb = new StringBuffer();
+<c:setVariable select=" 'true' " var="first" />		
+<c:iterate select="$writable/*[@isProperty='true']" var="property">
+
+<c:if test="$first='false'">
+        sb.append("\t");
+</c:if>
+<c:setVariable select=" 'false' " var="first" />		
+<c:include template="templates/writable/{$property/@templateFolder}/{$property/@dim}/toTSV.jet" />
+</c:iterate>		
+
+		return sb.toString();	
+	}
+
+
+}

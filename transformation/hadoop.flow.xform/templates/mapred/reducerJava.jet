@@ -1,0 +1,63 @@
+<%-- This code copyright Gerken Intellectual Properties LLC --%>
+<c:include template="templates/common/javaHeader.jet"/>
+package <c:get select="$job/@jobPkg" />;
+
+<c:userRegion>// Begin imports<c:initialCode>
+
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.logging.Logger;
+
+import org.apache.hadoop.io.*;
+import org.apache.hadoop.mapred.JobConf;
+import org.apache.hadoop.mapred.MapReduceBase;
+import org.apache.hadoop.mapred.OutputCollector;
+import org.apache.hadoop.mapred.Reducer;
+import org.apache.hadoop.mapred.Reporter;
+
+import <c:get select="$artifact/@writablesPkg" />.*;
+
+</c:initialCode>// End imports</c:userRegion>
+
+@SuppressWarnings("deprecation")
+public class <c:get select="$output/@reducerJava" /> extends  MapReduceBase implements Reducer<<c:get select="$job/@keyType" />,<c:get select="$job/@valueType" />, <c:get select="$job/output/@outKeyType" />, <c:get select="$job/output/@outValueType" />> {
+
+	<c:userRegion>// Begin declarations <c:initialCode>
+
+
+	</c:initialCode>// End declarations </c:userRegion>
+
+	@Override
+	public void reduce(<c:get select="$job/@keyType" /> key, Iterator<<c:get select="$job/@valueType" />> values, OutputCollector<<c:get select="$job/output/@outKeyType" />, <c:get select="$job/output/@outValueType" />> collector, Reporter reporter) throws IOException {
+
+		<c:userRegion>// Begin reduce logic <c:initialCode>
+<c:include template="templates/mapred/reducer/{$artifact/dataloc[@name=$output/@target]/@kind}/reducer.jet" />
+		</c:initialCode>// End reduce logic </c:userRegion>
+				
+	}
+
+	@Override
+	public void close() throws IOException {
+
+		<c:userRegion>// Begin cleanup logic<c:initialCode>
+
+
+		</c:initialCode>// End cleanup logic</c:userRegion>
+		
+	}
+
+	@Override
+	public void configure(JobConf job) {
+
+		<c:userRegion>// Begin setup logic<c:initialCode>
+		
+
+		</c:initialCode>// End setup logic</c:userRegion>
+
+	}
+
+	<c:userRegion>// Begin custom methods <c:initialCode>
+
+	</c:initialCode>// End custom methods</c:userRegion>
+
+}

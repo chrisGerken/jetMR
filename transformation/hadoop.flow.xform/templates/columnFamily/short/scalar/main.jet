@@ -1,0 +1,7 @@
+            <c:set select="$property" name="cassandraComparatorType">IntegerType</c:set>
+            <c:set select="$property" name="cassandraSerializerType">ShortSerializer</c:set>
+            <c:set select="$property" name="cassandraPersistedType">Short</c:set>
+	        <c:set select="$property" name="cassandraCompositeSerializerType"><c:get select="$property/@cassandraSerializerType" /></c:set>
+	        <c:set select="$property" name="cassandraCompositeType"><c:get select="$property/@type" /></c:set>
+	        <c:set select="$property" name="pigType">INTEGER</c:set>
+            

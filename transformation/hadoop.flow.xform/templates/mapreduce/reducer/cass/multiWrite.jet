@@ -1,0 +1,17 @@
+<c:setVariable select="$artifact/dataloc[@name=$output/@target]" var="dataloc" />
+<c:setVariable select="$artifact/columnFamily[@name=$dataloc/@columnFamily]" var="columnFamily" />
+<c:setVariable select="$artifact/writable[@name=$columnFamily/@type]" var="writable" />
+<c:setVariable select="$writable/*[@name=$columnFamily/@rowKey]" var="keyProperty" />
+
+	private void write<c:get select="$output/@name" />(<c:get select="$writable/@writableJava" /> obj) throws IOException, InterruptedException {
+	
+		ByteBuffer outKey = <c:get select="$keyProperty/@cassandraCompositeSerializerType" />.get().toByteBuffer(obj.<c:get select="$property/@getter" />);
+			
+		ArrayList<Mutation> mutations = new ArrayList<Mutation>(<c:get select="$columnFamily/@accessJava" />.mutationsFor(obj));		
+			
+		if (!mutations.isEmpty()) {
+		    mos.write("<c:get select="$output/@name" />", outKey, mutations, <c:get select="$output/@variableName" />);
+		    <c:get select="$output/@counterName" />++;
+		}
+		
+	}

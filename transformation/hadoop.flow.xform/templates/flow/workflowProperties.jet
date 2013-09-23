@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment><c:get select="$flow/@workflowClass" /> Properties File</comment>
+
+<entry key="count.base.dir"><c:get select="$artifact/@countBaseDir" /></entry>
+
+<c:iterate select="$flow/job" var="job" >
+<c:iterate select="$job/input" var="input">
+<entry key="<c:get select="$input/@propertyKey" />"><c:get select="$artifact/dataloc[@name=$input/@source]/@default" /></entry>
+</c:iterate>
+<c:iterate select="$job/output" var="output">
+<entry key="<c:get select="$output/@propertyKey" />"><c:get select="$artifact/dataloc[@name=$output/@target]/@default" /></entry>
+</c:iterate>
+<c:iterate select="$job/parm" var="parm">
+<entry key="<c:get select="$parm/@propertyKey" />"><c:get select="$parm/@default" /></entry>
+</c:iterate>
+	
+</c:iterate>	
+
+<c:userRegion><comment>Begin Custom Properties</comment><c:initialCode>
+
+</c:initialCode><comment>End Custom Properties</comment></c:userRegion>
+
+</properties>

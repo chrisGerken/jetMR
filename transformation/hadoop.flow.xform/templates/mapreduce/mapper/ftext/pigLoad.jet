@@ -1,0 +1,4 @@
+--
+-- Load from text files in <c:get select="$dataloc/@default" />
+--
+<c:get select="$input/@source" /> = LOAD '<c:get select="$dataloc/@default" />' ;

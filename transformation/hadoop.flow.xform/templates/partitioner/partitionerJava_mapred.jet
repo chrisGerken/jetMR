@@ -1,0 +1,58 @@
+<%-- This code copyright Gerken Intellectual Properties LLC --%>
+<c:include template="templates/common/javaHeader.jet"/>
+package <c:get select="$job/@jobPkg" />;
+
+import java.util.Arrays;
+
+import org.apache.hadoop.io.*;
+import org.apache.hadoop.mapred.JobConf;
+import org.apache.hadoop.mapred.Partitioner;
+
+import <c:get select="$artifact/@writablesPkg" />.*;
+
+public class <c:get select="$job/@partitionerJava" /> implements Partitioner<<c:get select="$job/@keyType" />, <c:get select="$job/@valueType" />> {
+
+	<c:get select="$job/@keyType" /> splits[]; 
+	<c:get select="$artifact/writable[@name=$job/@keyType]/@groupingComparator" /> comparator = new <c:get select="$artifact/writable[@name=$job/@keyType]/@groupingComparator" />();
+	
+	public <c:get select="$job/@partitionerJava" />() {
+	}
+
+	public void loadSplits(int partitions) {
+		splits = new <c:get select="$job/@keyType" />[partitions-1];
+		
+			<c:userRegion>// Begin loadSplits logic<c:initialCode>
+			
+		splits = new <c:get select="$job/@keyType" />[partitions];
+		for (int i = 0; i < partitions; i++) {
+			splits[i] = new <c:get select="$job/@keyType" />();
+		}
+			
+			</c:initialCode>// End loadSplits logic</c:userRegion>
+		
+	}
+	
+	@Override
+	public int getPartition(<c:get select="$job/@keyType" /> key, <c:get select="$job/@valueType" /> value, int partitions) {
+		
+			<c:userRegion>// Begin getPartition logic<c:initialCode>
+			
+		if (splits == null) {
+			loadSplits(partitions);
+		}
+		 
+		final int pos = Arrays.binarySearch(splits, key, comparator);		
+		
+		return (pos < 0) ? -pos : pos;
+			
+			</c:initialCode>// End getPartition logic</c:userRegion>
+		
+	}
+
+	@Override
+	public void configure(JobConf arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+}

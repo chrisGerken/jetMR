@@ -1,0 +1,173 @@
+<%-- This code copyright Gerken Intellectual Properties LLC --%>
+<c:include template="templates/common/javaHeader.jet"/>
+package <c:get select="$job/@jobPkg" />;
+
+<c:userRegion>// Begin imports <c:initialCode>
+
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.SortedMap;
+
+import org.apache.cassandra.db.IColumn;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.io.*;
+import org.apache.hadoop.mapred.RawKeyValueIterator;
+import org.apache.hadoop.mapreduce.Counters;
+import org.apache.hadoop.mapreduce.Mapper;
+import org.apache.hadoop.mapreduce.Mapper.Context;
+import org.apache.hadoop.mapreduce.Counter;
+import org.apache.hadoop.mapreduce.InputSplit;
+import org.apache.hadoop.mapreduce.JobContext;
+import org.apache.hadoop.mapreduce.OutputCommitter;
+import org.apache.hadoop.mapreduce.RecordReader;
+import org.apache.hadoop.mapreduce.RecordWriter;
+import org.apache.hadoop.mapreduce.Reducer;
+import org.apache.hadoop.mapreduce.StatusReporter;
+import org.apache.hadoop.mapreduce.TaskAttemptContext;
+import org.apache.hadoop.mapreduce.TaskAttemptID;
+import org.apache.hadoop.util.Progress;
+import org.junit.Test;
+
+import <c:get select="$artifact/@writablesPkg" />.*;
+
+import <c:get select="$artifact/@writablesPkg" />.*;
+
+import junit.framework.TestCase;
+
+</c:initialCode>// End imports </c:userRegion>
+
+public class <c:get select="$output/@reducerTestJava" /> extends TestCase {
+
+		<c:userRegion>// Begin custom methods<c:initialCode>
+
+	@Test
+	public void noopTest() {
+				
+	}
+
+		</c:initialCode>// End custom methods</c:userRegion>
+<c:iterate select="$output/testcase" var="testcase">
+
+	@Test
+	public void <c:get select="$testcase/@testMethod" />() {
+
+		TestRecordWriter 	recordWriter 	= new TestRecordWriter();
+		TestRawKeyValueIterator trkvi		= new TestRawKeyValueIterator();
+		TestOutputCommitter outputCommitter = new TestOutputCommitter();
+		TestStatusReporter 	statusReporter 	= new TestStatusReporter();
+		TestRawComparator   rawComparator	= new TestRawComparator();
+		try {
+
+			<c:userRegion>// Begin <c:get select="$testcase/@testMethod" /> logic<c:initialCode>
+
+				// Remove this line or the test will fail
+			fail("<c:get select="$flow/@flowPkg" />:<c:get select="$output/@reducerTestJava" />.<c:get select="$testcase/@testMethod" />() - Not yet implemented");
+
+				// Get an instance of the reducer to be tested and a context instance
+			<c:get select="$output/@reducerJava" /> reducer = new <c:get select="$output/@reducerJava" />();
+
+			Counter c1 = statusReporter.getCounter("_CRTG_","_CRTC1_");
+			Counter c2 = statusReporter.getCounter("_CRTG_","_CRTC1_");
+			Reducer<<c:get select="$job/@keyType" />,<c:get select="$job/@valueType" />, <c:get select="$output/@outKeyType" />, <c:get select="$output/@outValueType" />>.Context context = 
+				reducer.testContext(new Configuration(), new TaskAttemptID(),trkvi,c1,c2,recordWriter,
+						            outputCommitter,statusReporter,rawComparator,<c:get select="$job/@keyType" />.class,<c:get select="$job/@valueType" />.class);
+			
+				// Invoke the setup, reduce and cleanup methods
+			reducer.setup(context);
+
+			<c:get select="$job/@keyType" /> key = null;
+
+			ArrayList<<c:get select="$job/@valueType" />> values = new ArrayList<<c:get select="$job/@valueType" />>();
+
+			reducer.reduce(key,values,context);
+
+			reducer.cleanup(context);
+			
+				// Validation:
+				//
+				// recordWriter.getKeys() returns the keys written to the context by the reducer
+				// recordWriter.getValues() returns the values written to the context by the reducer
+				// statusReporter returns the most recent status and any counters set by the reducer
+				//
+
+			</c:initialCode>// End <c:get select="$testcase/@testMethod" /> logic</c:userRegion>
+			
+		} catch (Exception e) {
+			fail("<c:get select="$flow/@flowPkg" />:<c:get select="$output/@reducerTestJava" />.<c:get select="$testcase/@testMethod" />() - Exception thrown: "+e.getMessage());
+		}
+
+	}
+</c:iterate>
+		
+	final class TestRecordWriter extends RecordWriter<<c:get select="$output/@outKeyType" />, <c:get select="$output/@outValueType" />> {
+		ArrayList<<c:get select="$output/@outKeyType" />> keys = new ArrayList<<c:get select="$output/@outKeyType" />>();
+		ArrayList<<c:get select="$output/@outValueType" />> values = new ArrayList<<c:get select="$output/@outValueType" />>();
+		public void close(TaskAttemptContext arg0) throws IOException, InterruptedException { }
+		public void write(<c:get select="$output/@outKeyType" /> arg0, <c:get select="$output/@outValueType" /> arg1) throws IOException, InterruptedException {
+			keys.add(arg0);
+			values.add(arg1);
+		}
+		public <c:get select="$output/@outKeyType" />[] getKeys() {
+			<c:get select="$output/@outKeyType" /> result[] = new <c:get select="$output/@outKeyType" />[keys.size()];
+			keys.toArray(result);
+			return result;
+		}
+		public <c:get select="$output/@outValueType" />[] getValues() {
+			<c:get select="$output/@outValueType" />[] result = new <c:get select="$output/@outValueType" />[values.size()];
+			values.toArray(result);
+			return result;
+		}
+	};	
+
+	final class TestRawKeyValueIterator implements RawKeyValueIterator {
+		public void close() throws IOException { }
+		public DataInputBuffer getKey() throws IOException {
+			return null;
+		}
+		public Progress getProgress() {
+			return null;
+		}
+		public DataInputBuffer getValue() throws IOException {
+			return null;
+		}
+		public boolean next() throws IOException {
+			return false;
+		}
+	}
+	
+	final class TestStatusReporter extends StatusReporter {
+		private Counters counters = new Counters();
+		public void setStatus(String arg0) { }
+		public void progress() { }
+		public Counter getCounter(String arg0, String arg1) {
+			return counters.findCounter(arg0, arg1);
+		}
+		public Counter getCounter(Enum<?> arg0) {
+			return null;
+		}
+	};
+	
+	final class TestRawComparator implements RawComparator<<c:get select="$job/@keyType" />> {
+		public int compare(<c:get select="$job/@keyType" /> arg0, <c:get select="$job/@keyType" /> arg1) {
+			return 0;
+		}
+		public int compare(byte[] arg0, int arg1, int arg2, byte[] arg3,
+				int arg4, int arg5) {
+			return 0;
+		}};
+	
+	final class TestOutputCommitter extends OutputCommitter {
+		public void setupTask(TaskAttemptContext arg0) throws IOException { }
+		public void setupJob(JobContext arg0) throws IOException { }
+		public boolean needsTaskCommit(TaskAttemptContext arg0) throws IOException {
+			return false;
+		}
+		public void commitTask(TaskAttemptContext arg0) throws IOException { }
+		public void cleanupJob(JobContext arg0) throws IOException { }
+		public void abortTask(TaskAttemptContext arg0) throws IOException { }
+	};
+
+}

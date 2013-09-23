@@ -1,0 +1,8 @@
+
+Json schema for writable type TweetWritable:
+
+{handle:  <String> , content:  <String> , id:  <String> , retweets:  <int> , isRetweet:  <boolean> , urls:  <String> , hashtags:  <long> , timestamp:  <Date> }
+
+
+Note: <Date> values are represented as longs (milliseconds)
+      <short> and <char> values are represented as integers

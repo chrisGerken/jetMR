@@ -1,0 +1,7 @@
+<c:setVariable select="$artifact/columnFamily[@name=$dataloc/@columnFamily]" var="columnFamily" />
+--
+-- Load from Cassandra CF <c:get select="$columnFamily/@name" /> in keyspace <c:get select="$columnFamily/@keyspace" />
+--
+<c:get select="$input/@source" /> = LOAD 'cassandra://<c:get select="$columnFamily/@keyspace" />?host=<c:get select="$columnFamily/@host" />&port=<c:get select="$columnFamily/@port" />&keyspace=<c:get select="$columnFamily/@keyspace" />&columnFamily=<c:get select="$columnFamily/@name" />' USING <c:get select="$artifact/@cassandraPlatformPkg" />.<c:get select="$columnFamily/@pigAccessJava" />(); 
+
+DUMP <c:get select="$input/@source" />;

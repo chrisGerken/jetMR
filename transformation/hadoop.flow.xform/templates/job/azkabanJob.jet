@@ -1,0 +1,6 @@
+type=command
+<c:if test="$job/dependency" >
+dependencies=<c:iterate select="$job/dependency" var="dependency"> <c:get select="$dependency/@job" /></c:iterate>
+</c:if>
+command=hadoop jar <c:get select="$artifact/@jar" /> <c:get select="$job/@jobPkg" />.<c:get select="$job/@jobConfigJava" /> <c:iterate select="$job/input" var="input"> "<c:get select="$artifact/dataloc[@name=$input/@source]/@default" />")</c:iterate><c:iterate select="$job/output" var="output"> "<c:get select="$artifact/dataloc[@name=$output/@target]/@default" />"</c:iterate><c:iterate select="$job/parm" var="parm"> "<c:get select="$parm/@default" />"</c:iterate>	
+ 

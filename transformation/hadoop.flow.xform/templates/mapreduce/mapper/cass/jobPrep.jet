@@ -1,0 +1,27 @@
+<c:setVariable select="$input/@variableName" var="typepath" />
+<c:setVariable select="$artifact/dataloc[@name=$input/@source]" var="dataloc" />
+<c:setVariable select="$artifact/columnFamily[@name=$dataloc/@columnFamily]" var="columnFamily" />
+<c:setVariable select="$artifact/writable[@name=$columnFamily/@type]" var="writable" />
+
+        		<c:setVariable select="$writable/property[@name=$columnFamily/@columnKey]" var="columnProperty" />
+
+				ConfigHelper.setInputColumnFamily(job.getConfiguration(), "<c:get select="$columnFamily/@keyspace" />", "<c:get select="$artifact/dataloc[@name=$input/@source]/@columnFamily" />");
+	            ConfigHelper.setInputRpcPort(job.getConfiguration(), "<c:get select="$columnFamily/@port" />");
+    	        ConfigHelper.setInputInitialAddress(job.getConfiguration(), "<c:get select="$columnFamily/@host" />");
+        	    ConfigHelper.setInputPartitioner(job.getConfiguration(), "org.apache.cassandra.dht.RandomPartitioner");
+
+<c:if test="$columnFamily/@usage='static'" >
+            	ArrayList<ByteBuffer> colNames = new ArrayList<ByteBuffer>();
+				SlicePredicate predicate = new SlicePredicate();
+<c:iterate select="$writable/*[@isProperty='true']" var="property">
+            	colNames.add(ByteBuffer.wrap("<c:get select="$property/@name" />".getBytes()));
+</c:iterate>
+            	predicate.setColumn_names(colNames);
+</c:if>
+<c:if test="$columnFamily/@usage='dynamic'" >
+        	    SliceRange sliceRange = new SliceRange(ByteBufferUtil.EMPTY_BYTE_BUFFER,ByteBufferUtil.EMPTY_BYTE_BUFFER,false,1000000);
+				SlicePredicate predicate = new SlicePredicate();
+            	predicate.setSlice_range(sliceRange);
+</c:if>
+             	 
+            	ConfigHelper.setInputSlicePredicate(job.getConfiguration(), predicate);

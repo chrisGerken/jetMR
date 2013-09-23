@@ -1,0 +1,283 @@
+"getter" snippets for defined tokens (input and calculated)
+
+
+Tokens for flow
+
+	<c:get select="$flow/@name" />
+	<c:get select="$flow/@workflowSh" />
+	<c:get select="$flow/@flowPkg" />
+	<c:get select="$flow/@flowDir" />
+	<c:get select="$flow/@pigDir" />
+	<c:get select="$flow/@workflowClass" />
+
+
+Tokens for root
+
+
+
+Tokens for writable
+
+	<c:get select="$writable/@writableJava" />
+	<c:get select="$writable/@testJava" />
+	<c:get select="$writable/@name" />
+	<c:get select="$writable/@comparable" />
+	<c:get select="$writable/@sorterComparator" />
+	<c:get select="$writable/@groupingComparator" />
+	<c:get select="$writable/@cassandraCompositeSerializerType" />
+	<c:get select="$writable/@cassandraSerializerType" />
+
+
+Tokens for job
+
+	<c:get select="$job/@version" />
+	<c:get select="$job/@jobConfigJava" />
+	<c:get select="$job/@jobPkg" />
+	<c:get select="$job/@jobDir" />
+	<c:get select="$job/@name" />
+	<c:get select="$job/@keyType" />
+	<c:get select="$job/@valueType" />
+	<c:get select="$job/@argsArray" />
+	<c:get select="$job/@desc" />
+	<c:get select="$job/@useGrouper" />
+	<c:get select="$job/@useSorter" />
+	<c:get select="$job/@reducers" />
+	<c:get select="$job/@sort" />
+	<c:get select="$job/@partitionerJava" />
+	<c:get select="$job/@pigScript" />
+	<c:get select="$job/@pigCallerJava" />
+	<c:get select="$job/@workflowLabel" />
+	<c:get select="$job/@workflowId" />
+
+
+Tokens for input
+
+	<c:get select="$input/@version" />
+	<c:get select="$input/@name" />
+	<c:get select="$input/@mapperJava" />
+	<c:get select="$input/@mapperTestJava" />
+	<c:get select="$input/@source" />
+	<c:get select="$input/@inKeyType" />
+	<c:get select="$input/@inValueType" />
+	<c:get select="$input/@inputFormat" />
+	<c:get select="$input/@parmName" />
+	<c:get select="$input/@propertyKey" />
+	<c:get select="$input/@constantName" />
+	<c:get select="$input/@variableName" />
+
+
+Tokens for output
+
+	<c:get select="$output/@version" />
+	<c:get select="$output/@name" />
+	<c:get select="$output/@reducerJava" />
+	<c:get select="$output/@reducerTestJava" />
+	<c:get select="$output/@target" />
+	<c:get select="$output/@outKeyType" />
+	<c:get select="$output/@outValueType" />
+	<c:get select="$output/@outputFormat" />
+	<c:get select="$output/@parmName" />
+	<c:get select="$output/@propertyKey" />
+	<c:get select="$output/@constantName" />
+	<c:get select="$output/@variableName" />
+	<c:get select="$output/@concurrentOutputFormatJava" />
+	<c:get select="$output/@counterName" />
+
+
+Tokens for mapred
+
+
+
+Tokens for mapred
+
+
+
+Tokens for mapreduce
+
+
+
+Tokens for mapred
+
+
+
+Tokens for mapreduce
+
+
+
+Tokens for mapreduce
+
+	<c:get select="$mapreduce/@jobConfigJava" />
+
+
+Tokens for testcase
+
+	<c:get select="$testcase/@name" />
+	<c:get select="$testcase/@desc" />
+	<c:get select="$testcase/@testMethod" />
+
+
+Tokens for testcase
+
+	<c:get select="$testcase/@name" />
+	<c:get select="$testcase/@desc" />
+	<c:get select="$testcase/@testMethod" />
+
+
+Tokens for testcase
+
+	<c:get select="$testcase/@name" />
+	<c:get select="$testcase/@desc" />
+	<c:get select="$testcase/@testMethod" />
+	<c:get select="$testcase/@isProperty" />
+
+
+Tokens for dataloc
+
+	<c:get select="$dataloc/@name" />
+	<c:get select="$dataloc/@kind" />
+	<c:get select="$dataloc/@keyType" />
+	<c:get select="$dataloc/@valueType" />
+	<c:get select="$dataloc/@default" />
+	<c:get select="$dataloc/@columnFamily" />
+	<c:get select="$dataloc/@workflowId" />
+	<c:get select="$dataloc/@workflowLabel" />
+
+
+Tokens for parm
+
+	<c:get select="$parm/@name" />
+	<c:get select="$parm/@default" />
+	<c:get select="$parm/@propertyKey" />
+	<c:get select="$parm/@constantName" />
+	<c:get select="$parm/@variableName" />
+
+
+Tokens for property
+
+	<c:get select="$property/@name" />
+	<c:get select="$property/@getter" />
+	<c:get select="$property/@setter" />
+	<c:get select="$property/@varName" />
+	<c:get select="$property/@type" />
+	<c:get select="$property/@readMethod" />
+	<c:get select="$property/@array" />
+	<c:get select="$property/@dclType" />
+	<c:get select="$property/@isProperty" />
+	<c:get select="$property/@dim" />
+	<c:get select="$property/@group" />
+	<c:get select="$property/@sort" />
+	<c:get select="$property/@javaConstant" />
+	<c:get select="$property/@cassandraComparatorType" />
+	<c:get select="$property/@cassandraSerializerType" />
+	<c:get select="$property/@cassandraPersistedType" />
+	<c:get select="$property/@templateFolder" />
+	<c:get select="$property/@isNested" />
+	<c:get select="$property/@index" />
+	<c:get select="$property/@cassandraCompositeSerializerType" />
+	<c:get select="$property/@pigType" />
+	<c:get select="$property/@cassandraCompositeType" />
+
+
+Tokens for nested
+
+	<c:get select="$nested/@name" />
+	<c:get select="$nested/@type" />
+	<c:get select="$nested/@setter" />
+	<c:get select="$nested/@getter" />
+	<c:get select="$nested/@varName" />
+	<c:get select="$nested/@array" />
+	<c:get select="$nested/@dclType" />
+	<c:get select="$nested/@isProperty" />
+	<c:get select="$nested/@dim" />
+	<c:get select="$nested/@javaConstant" />
+	<c:get select="$nested/@cassandraComparatorType" />
+	<c:get select="$nested/@cassandraSerializerType" />
+	<c:get select="$nested/@cassandraPersistedType" />
+	<c:get select="$nested/@templateFolder" />
+	<c:get select="$nested/@sort" />
+	<c:get select="$nested/@isNested" />
+	<c:get select="$nested/@index" />
+	<c:get select="$nested/@cassandraCompositeSerializerType" />
+	<c:get select="$nested/@cassandraCompositeType" />
+
+
+Tokens for grouper
+
+
+
+Tokens for sorter
+
+
+
+Tokens for artifact
+
+	<c:get select="$artifact/@artifactID" />
+	<c:get select="$artifact/@version" />
+	<c:get select="$artifact/@groupID" />
+	<c:get select="$artifact/@srcProject" />
+	<c:get select="$artifact/@jar" />
+	<c:get select="$artifact/@writablesPkg" />
+	<c:get select="$artifact/@writablesDir" />
+	<c:get select="$artifact/@cassandraPkg" />
+	<c:get select="$artifact/@cassandraDir" />
+	<c:get select="$artifact/@cassandraPlatformPkg" />
+	<c:get select="$artifact/@cassandraPlatformDir" />
+	<c:get select="$artifact/@cassandraExamplesPkg" />
+	<c:get select="$artifact/@cassandraExamplesDir" />
+	<c:get select="$artifact/@multipleOutputs" />
+	<c:get select="$artifact/@hadoopPlatformPkg" />
+	<c:get select="$artifact/@hadoopPlatformDir" />
+	<c:get select="$artifact/@countBaseDir" />
+	<c:get select="$artifact/@provider" />
+	<c:get select="$artifact/@label" />
+
+
+Tokens for columnFamily
+
+	<c:get select="$columnFamily/@name" />
+	<c:get select="$columnFamily/@type" />
+	<c:get select="$columnFamily/@usage" />
+	<c:get select="$columnFamily/@rowKey" />
+	<c:get select="$columnFamily/@columnKey" />
+	<c:get select="$columnFamily/@accessJava" />
+	<c:get select="$columnFamily/@keyspace" />
+	<c:get select="$columnFamily/@port" />
+	<c:get select="$columnFamily/@host" />
+	<c:get select="$columnFamily/@pigAccessJava" />
+	<c:get select="$columnFamily/@exampleJava" />
+	<c:get select="$columnFamily/@cassandraColumnNameSerializerType" />
+
+
+Tokens for index
+
+	<c:get select="$index/@property" />
+
+
+Tokens for static
+
+
+
+Tokens for dynamic
+
+
+
+Tokens for partitioner
+
+
+
+Tokens for dependency
+
+	<c:get select="$dependency/@job" />
+
+
+Tokens for cql
+
+
+
+Tokens for clusteringKey
+
+	<c:get select="$clusteringKey/@name" />
+
+
+Tokens for hiveTable
+
+

@@ -1,0 +1,6 @@
+            <c:set select="$property" name="cassandraComparatorType">BytesType</c:set>
+            <c:set select="$property" name="cassandraSerializerType"><c:get select="$property/@type" />Serializer</c:set>
+            <c:set select="$property" name="cassandraPersistedType"><c:get select="$property/@type"/></c:set>
+	        <c:set select="$property" name="cassandraCompositeSerializerType"><c:get select="$property/@type"/>CompositeSerializer</c:set>
+	        <c:set select="$property" name="cassandraCompositeType">CompositeType</c:set>
+            

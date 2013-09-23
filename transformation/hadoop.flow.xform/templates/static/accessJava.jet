@@ -1,0 +1,243 @@
+<%-- This code copyright Gerken Intellectual Properties LLC --%>
+<c:include template="templates/common/javaHeader.jet"/>
+package <c:get select="$artifact/@cassandraPkg" />;
+
+import java.nio.ByteBuffer;
+import java.nio.charset.CharacterCodingException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.SortedMap;
+
+import org.apache.cassandra.db.IColumn;
+import org.apache.cassandra.thrift.Column;
+import org.apache.cassandra.thrift.ColumnOrSuperColumn;
+import org.apache.cassandra.thrift.Mutation;
+import org.apache.cassandra.utils.ByteBufferUtil;
+
+import <c:get select="$artifact/@writablesPkg" />.*;
+import <c:get select="$artifact/@cassandraPlatformPkg" />.*;
+
+import me.prettyprint.cassandra.serializers.*;
+import me.prettyprint.cassandra.service.KeyIterator;
+import me.prettyprint.hector.api.Cluster;
+import me.prettyprint.hector.api.Keyspace;
+import me.prettyprint.hector.api.Serializer;
+import me.prettyprint.hector.api.beans.ColumnSlice;
+import me.prettyprint.hector.api.beans.HColumn;
+import me.prettyprint.hector.api.factory.HFactory;
+import me.prettyprint.hector.api.mutation.Mutator;
+import me.prettyprint.hector.api.query.ColumnQuery;
+import me.prettyprint.hector.api.query.SliceQuery;
+
+
+public class <c:get select="$columnFamily/@accessJava" /> {
+
+	private String host;
+	private String clusterName;
+	private String keyspaceName;
+	
+	private Cluster cluster = null;
+	private Keyspace keyspace = null;
+	
+	public <c:get select="$columnFamily/@accessJava" />(String host, String clusterName, String keyspaceName) {
+			// ex: "cassandra1:9160"
+		this.host = host;
+			// ex: "Test Cluster"
+		this.clusterName = clusterName;
+		this.keyspaceName = keyspaceName;
+	}
+
+	/*
+	 *   Insert or update a row into ColumnFamily <c:get select="$columnFamily/@name" />
+	 *   using the values in <c:get select="$writable/@writableJava" /> row. 
+	 *   If force=false, only write data for columns that have changed
+	 */
+	public void insert(<c:get select="$writable/@writableJava" /> row, boolean force) {
+		
+		if (row == null) { return; }
+		
+			// Create the mutator.  Serializer choice depends on type of column family key
+		Mutator<<c:get select="$keyProperty/@type" />> mutator = HFactory.createMutator(getKeyspace(), <c:get select="$keyProperty/@cassandraCompositeSerializerType" />.get());
+<c:iterate select="$writable/*[@isProperty='true'][not(@name=$columnFamily/@rowKey)]" var="property" >
+			
+		if (force | row.getChangeFlag(<c:get select="$writable/@writableJava" />.<c:get select="$property/@javaConstant" />)) {
+<c:include template="templates/columnFamily/{$property/@templateFolder}/{$property/@dim}/insertMutation.jet" />	
+		}
+</c:iterate>
+		
+		mutator.execute();		
+
+			// Serializers include String-, ByteBuffer-, Boolean-, Char-, Date-, Double-, Float-, Integer- , Long-, Short- , TimeUUID-, UUID-, Object-
+	}
+
+	/*
+	 *   Delete a row with the specified key from ColumnFamily <c:get select="$columnFamily/@name" />
+	 */
+	public void delete(<c:get select="$keyProperty/@type" /> key) {
+		
+			// Create the mutator.  Serializer choice depends on type of column family key
+		Mutator<<c:get select="$keyProperty/@type" />> mutator = HFactory.createMutator(getKeyspace(), <c:get select="$keyProperty/@cassandraCompositeSerializerType" />.get());
+		mutator.addDeletion(key, "<c:get select="$columnFamily/@name" />");
+		mutator.execute();		
+
+	}
+
+	/*
+	 *   Retrieve the row in ColumnFamily <c:get select="$columnFamily/@name" />
+	 *   whose key value equals the value of parameter <c:get select="$keyProperty/@name" />. 
+	 */
+	public <c:get select="$writable/@writableJava" /> get(<c:get select="$keyProperty/@type" /> <c:get select="$keyProperty/@name" />) {
+
+		Serializer<String> stringSerializer = StringSerializer.get();
+		
+		SliceQuery<<c:get select="$keyProperty/@type" />, String, String> sliceQuery = HFactory.createSliceQuery(getKeyspace(), <c:get select="$keyProperty/@cassandraCompositeSerializerType" />.get(), stringSerializer, stringSerializer);
+		sliceQuery.setColumnFamily("<c:get select="$columnFamily/@name" />");
+		sliceQuery.setKey(<c:get select="$keyProperty/@name" />);
+		sliceQuery.setRange("","",false, 100000);
+		
+		return buildRow(<c:get select="$keyProperty/@name" />,sliceQuery.execute().get().getColumns());
+	}
+
+	private <c:get select="$writable/@writableJava" /> buildRow(<c:get select="$keyProperty/@type" /> <c:get select="$keyProperty/@name" />, List cols) {
+		
+		<c:get select="$writable/@writableJava" /> row = new <c:get select="$writable/@writableJava" />();
+		row.<c:get select="$keyProperty/@setter" />(<c:get select="$keyProperty/@name" />);
+
+		Iterator<HColumn> iter = cols.iterator();
+		
+		while (iter.hasNext()) {
+			HColumn col = iter.next();
+			ByteBuffer _colname = col.getNameBytes();  // always a string in static usage
+			ByteBuffer _value = col.getValueBytes();
+			update(row,_colname,_value);
+		}
+
+		row.resetChangeFlags();
+		return row;
+	}
+	
+	public static void update(<c:get select="$writable/@writableJava" /> row, ByteBuffer name, ByteBuffer buffer) {
+		String columnName = StringSerializer.get().fromByteBuffer(name);
+<c:iterate select="$writable/*[@isProperty='true']" var="property">
+
+		if ("<c:get select="$property/@name" />".equals(columnName)) {
+			row.<c:get select="$property/@setter" />(<c:get select="$property/@cassandraCompositeSerializerType" />.get().fromByteBuffer(buffer));
+<%--  <x:include template="templates/columnFamily/{$property/@templateFolder}/{$property/@dim}/readHcol.jet" />  --%>
+			return;
+		}
+</c:iterate>
+		
+	}
+	
+	public static <c:get select="$writable/@writableJava" /> from(ByteBuffer key, SortedMap<ByteBuffer, IColumn> columns) {
+		
+		<c:get select="$writable/@writableJava" /> row = new <c:get select="$writable/@writableJava" />();
+		row.<c:get select="$keyProperty/@setter" />(<c:get select="$keyProperty/@cassandraCompositeSerializerType" />.get().fromByteBuffer(key));
+		
+		Iterator<ByteBuffer> iter = columns.keySet().iterator();
+		while (iter.hasNext()) {
+			IColumn col = columns.get(iter.next());
+			ByteBuffer _colname = col.name();
+			ByteBuffer _value = col.value();
+			update(row,_colname,_value);
+		}		
+
+		row.resetChangeFlags();		
+		return row;
+	}
+	
+	public static List<Mutation> mutationsFor(<c:get select="$writable/@writableJava" /> row, boolean force) {
+
+		ArrayList<Mutation> mutations = new ArrayList<Mutation>();
+<c:iterate select="$writable/*[@isProperty='true'][not(@name=$columnFamily/@rowKey)]" var="property" >
+			
+		if (force | row.getChangeFlag(<c:get select="$writable/@writableJava" />.<c:get select="$property/@javaConstant" />)) {
+	
+			try {
+ 	       		Column column = new Column();
+    		    column.setName(Arrays.copyOf("<c:get select="$property/@name" />".getBytes(), "<c:get select="$property/@name" />".length()));
+		    	column.setValue(<c:get select="$property/@cassandraCompositeSerializerType" />.get().toByteBuffer(row.<c:get select="$property/@getter" />()));   
+	    		column.setTimestamp(System.currentTimeMillis());
+
+	        	Mutation mutation = new Mutation();
+    		    mutation.setColumn_or_supercolumn(new ColumnOrSuperColumn());
+		    	mutation.column_or_supercolumn.setColumn(column);
+				mutations.add(mutation);
+			} catch (RuntimeException e) { }
+
+		}
+</c:iterate>
+
+		return mutations;	
+	}
+
+	public static List<Mutation> mutationsFor(Iterable<<c:get select="$writable/@writableJava" />> values, boolean force) {
+		ArrayList<Mutation> mutations = new ArrayList<Mutation>();  		
+		for (<c:get select="$writable/@writableJava" /> value : values) {
+			mutations.addAll(mutationsFor(value,force));  	
+		}
+		return mutations;
+	}
+
+	public static ByteBuffer keyFor(<c:get select="$writable/@writableJava" /> writable) {
+		return byteBufferFrom(writable.<c:get select="$keyProperty/@getter" />());
+	}
+
+	public static ByteBuffer byteBufferFrom(<c:get select="$keyProperty/@type" /> key) {
+		return <c:get select="$keyProperty/@cassandraCompositeSerializerType" />.get().toByteBuffer(key);
+	}
+
+	/*
+	 *   Retrieve an array of rows in ColumnFamily <c:get select="$columnFamily/@name" /> that have columns whose  
+	 *   values match the non-null values in parameter filterValues. 
+	 */
+	public <c:get select="$writable/@writableJava" />[] getMatching(<c:get select="$writable/@writableJava" /> filterValues) {
+		
+		return new <c:get select="$writable/@writableJava" />[0];
+
+	}
+
+	/*
+	 *   Retrieve an array of rows in ColumnFamily <c:get select="$columnFamily/@name" /> that have columns whose  
+	 *   values match the null arguments. 
+	 */
+	public <c:get select="$writable/@writableJava" />[] getMatching(String genre) {
+		
+		return new <c:get select="$writable/@writableJava" />[0];
+
+	}
+
+	/*
+	 *   Remove all rows in ColumnFamily <c:get select="$columnFamily/@name" /> that have columns whose  
+	 *   values match the non-null values in parameter filterValues. 
+	 */
+	public <c:get select="$writable/@writableJava" />[] removeMatching(<c:get select="$writable/@writableJava" /> filterValues) {
+		
+		return new <c:get select="$writable/@writableJava" />[0];
+
+	}
+	
+	public Iterator<<c:get select="$keyProperty/@type" />> getKeys() {
+		return new KeyIterator<<c:get select="$keyProperty/@type" />>(getKeyspace(), "<c:get select="$columnFamily/@name" />", <c:get select="$keyProperty/@cassandraCompositeSerializerType" />.get()).iterator(); 
+	}
+	
+	private Cluster getCluster() {
+		if (cluster == null) {
+			cluster = HFactory.getOrCreateCluster(clusterName, host);
+		}
+		return cluster;
+	}
+	
+	private Keyspace getKeyspace() {
+		if (keyspace == null) {
+			keyspace = HFactory.createKeyspace(keyspaceName, getCluster());
+		}
+		return keyspace;
+	}
+
+}

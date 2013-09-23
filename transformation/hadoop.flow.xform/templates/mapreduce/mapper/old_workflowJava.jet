@@ -1,0 +1,44 @@
+<%-- This code copyright Gerken Intellectual Properties LLC --%>
+<c:include template="templates/common/javaHeader.jet"/>
+package <c:get select="$flow/@flowPkg" />;
+
+import java.util.ArrayList;
+
+public class <c:get select="$flow/@workflowClass" /> {
+
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args) {
+
+		ArrayList<String> list;
+		
+<c:iterate select="$flow/job" var="job" >
+		list = new ArrayList<String>();
+
+<c:setVariable select="0" var="index"/>
+<c:iterate select="$job/input" var="input">
+			// Input source <c:get select="$artifact/dataloc[@name=$input/@source]/@name" /> 
+		list.add("<c:get select="$artifact/dataloc[@name=$input/@source]/@default" />");
+<c:setVariable select="$index + 1" var="index"/>
+</c:iterate>
+<c:iterate select="$job/output" var="output">
+			// Output target <c:get select="$artifact/dataloc[@name=$output/@target]/@name" /> 
+		list.add("<c:get select="$artifact/dataloc[@name=$output/@target]/@default" />");
+<c:setVariable select="$index + 1" var="index"/>
+</c:iterate>
+<c:iterate select="$job/parm" var="parm">
+			// Job-specific parm <c:get select="$parm/@name" />
+		list.add("<c:get select="$parm/@default" />");
+<c:setVariable select="$index + 1" var="index"/>
+</c:iterate>	
+
+		String <c:get select="$job/@argsArray" />[] = new String[list.size()];
+		list.toArray(<c:get select="$job/@argsArray" />);
+		<c:get select="$job/@jobPkg" />.<c:get select="$job/@jobConfigJava" />.main(<c:get select="$job/@argsArray" />);
+		
+		
+</c:iterate>	
+	}
+
+}

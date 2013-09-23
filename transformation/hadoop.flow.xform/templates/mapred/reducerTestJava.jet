@@ -1,0 +1,110 @@
+<%-- This code copyright Gerken Intellectual Properties LLC --%>
+<c:include template="templates/common/javaHeader.jet"/>
+package <c:get select="$job/@jobPkg" />;
+
+<c:userRegion>// Begin imports <c:initialCode>
+
+import java.io.IOException;
+import java.util.ArrayList;
+
+import junit.framework.TestCase;
+
+import org.apache.hadoop.io.*;
+import org.apache.hadoop.mapred.Counters;
+import org.apache.hadoop.mapred.Counters.Counter;
+import org.apache.hadoop.mapred.InputSplit;
+import org.apache.hadoop.mapred.JobConf;
+import org.apache.hadoop.mapred.OutputCollector;
+import org.apache.hadoop.mapred.Reporter;
+import org.junit.Test;
+
+import <c:get select="$artifact/@writablesPkg" />.*;
+
+</c:initialCode>// End imports </c:userRegion>
+
+public class <c:get select="$output/@reducerTestJava" /> extends TestCase {
+
+		<c:userRegion>// Begin custom methods<c:initialCode>
+
+	@Test
+	public void noopTest() {
+				
+	}
+
+		</c:initialCode>// End custom methods</c:userRegion>
+
+<c:iterate select="$output/testcase" var="testcase" >	
+	@Test
+	public void <c:get select="$testcase/@testMethod" />() {
+		
+		try {
+
+			<c:userRegion>// Begin <c:get select="$testcase/@testMethod" /> logic<c:initialCode>
+			
+			fail("<c:get select="$job/@jobPkg" />.<c:get select="$output/@reducerTestJava" /> (testcase <c:get select="$testcase/@name" />) : Test not implemented, yet");
+			
+				// Get an instance of the reducer to be tested along with other framework objects required by the test
+			<c:get select="$output/@reducerJava" /> reducer = new <c:get select="$output/@reducerJava" />();
+			
+				// Invoke the setup, reduce and cleanup methods
+			JobConf job = new JobConf();
+			TestOutputCollector collector = new TestOutputCollector();
+			TestReporter reporter = new TestReporter();
+			
+			reducer.configure(job);
+
+			<c:get select="$job/@keyType" /> key = null;
+			ArrayList<<c:get select="$job/@valueType" />> values = new ArrayList<<c:get select="$job/@valueType" />>();
+			
+			reducer.reduce(key, values.iterator(), collector, reporter);
+			
+			reducer.close();
+
+			</c:initialCode>// End <c:get select="$testcase/@testMethod" /> logic</c:userRegion>
+			
+		} catch (IOException e) {
+			fail("<c:get select="$job/@jobPkg" />.<c:get select="$output/@reducerTestJava" /> (testcase <c:get select="$testcase/@name" />) : Exception thrown: "+e.getMessage());
+		}
+		
+	}
+
+</c:iterate>
+	final class TestOutputCollector implements OutputCollector<<c:get select="$job/output/@outKeyType" />, <c:get select="$job/output/@outValueType" />> {
+		ArrayList<<c:get select="$job/output/@outKeyType" />> keys = new ArrayList<<c:get select="$job/output/@outKeyType" />>();
+		ArrayList<<c:get select="$job/output/@outValueType" />> values = new ArrayList<<c:get select="$job/output/@outValueType" />>();
+		public void collect(<c:get select="$job/output/@outKeyType" /> key, <c:get select="$job/output/@outValueType" /> value) throws IOException {
+			keys.add(key);
+			values.add(value);
+		}
+		public <c:get select="$job/output/@outKeyType" />[] getKeys() {
+			<c:get select="$job/output/@outKeyType" /> result[] = new <c:get select="$job/output/@outKeyType" />[keys.size()];
+			keys.toArray(result);
+			return result;
+		}
+		public <c:get select="$job/output/@outValueType" />[] getValues() {
+			<c:get select="$job/output/@outValueType" />[] result = new <c:get select="$job/output/@outValueType" />[values.size()];
+			values.toArray(result);
+			return result;
+		}
+	}
+	
+	final class TestReporter implements Reporter {
+		private Counters <c:get select="$flow/@workflowSh" />s = new Counters();
+		public void progress() { }
+		public Counter getCounter(Enum<?> arg0) {
+			return null;
+		}
+		public Counter getCounter(String arg0, String arg1) {
+			return <c:get select="$flow/@workflowSh" />s.getGroup(arg0).getCounterForName(arg1);
+		}
+		public InputSplit getInputSplit() throws UnsupportedOperationException {
+			return null;
+		}
+		public void incrCounter(Enum<?> arg0, long arg1) {}
+		public void incrCounter(String arg0, String arg1, long arg2) {
+			getCounter(arg0,arg1).increment(arg2);
+		}
+		public void setStatus(String arg0) {}
+	}
+	
+}

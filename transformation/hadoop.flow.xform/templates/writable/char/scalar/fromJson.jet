@@ -1,0 +1,3 @@
+			if (jsonObj.has("<c:get select="$property/@name" />")) {
+				obj.<c:get select="$property/@setter" />((char)jsonObj.getInt("<c:get select="$property/@name" />"));
+			}

@@ -1,0 +1,9 @@
+		
+			// Write <c:get select="$property/@dclType" /> <c:get select="$property/@varName" />
+
+	  if (<c:get select="$property/@varName" /> == null) {
+	  		out.writeBoolean(false);
+	  } else {
+	  		out.writeBoolean(true);
+			<c:get select="$property/@varName" />.write(out);
+	  }

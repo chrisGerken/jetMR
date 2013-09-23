@@ -1,0 +1,9 @@
+<c:setVariable select="$artifact/dataloc[@name=$job/output/@target]" var="dataloc" />
+<c:setVariable select="$artifact/columnFamily[@name=$dataloc/@columnFamily]" var="columnFamily" />
+<c:setVariable select="$artifact/writable[@name=$columnFamily/@type]" var="writable" />
+
+				ConfigHelper.setOutputColumnFamily(job.getConfiguration(), "<c:get select="$columnFamily/@keyspace" />", "<c:get select="$artifact/dataloc[@name=$job/output/@target]/@columnFamily" />");
+	            ConfigHelper.setOutputRpcPort(job.getConfiguration(), "<c:get select="$columnFamily/@port" />");
+    	        ConfigHelper.setOutputInitialAddress(job.getConfiguration(), "<c:get select="$columnFamily/@host" />");
+        	    ConfigHelper.setOutputPartitioner(job.getConfiguration(), "org.apache.cassandra.dht.RandomPartitioner");
+           	

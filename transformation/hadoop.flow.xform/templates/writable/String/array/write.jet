@@ -1,0 +1,17 @@
+		
+			// Write <c:get select="$property/@dclType" /> <c:get select="$property/@varName" />
+		
+	  if (<c:get select="$property/@varName" /> == null) {
+	  		out.writeBoolean(false);
+	  } else {
+	  		out.writeBoolean(true);
+			out.writeInt(<c:get select="$property/@varName" />.length);
+			for (int i = 0; i < <c:get select="$property/@varName" />.length; i++) {
+			    if (<c:get select="$property/@varName" />[i] == null) {
+					out.writeBoolean(false);
+				} else {
+					out.writeBoolean(true);
+					Text.writeString(out,<c:get select="$property/@varName" />[i]);
+				}
+			}
+	  }

@@ -1,0 +1,3 @@
+			ByteBuffer buffer = ByteBuffer.wrap(new byte[0]);
+			try { buffer = ByteBuffer.wrap(row.<c:get select="$property/@getter" />AsBytes()); } catch (Exception e) {}
+			mutator.addInsertion(row.<c:get select="$writable/property[@name=$columnFamily/@rowKey]/@getter" />(), "<c:get select="$columnFamily/@name" />", HFactory.createColumn("<c:get select="$property/@name" />", buffer, StringSerializer.get(), ByteBufferSerializer.get()));

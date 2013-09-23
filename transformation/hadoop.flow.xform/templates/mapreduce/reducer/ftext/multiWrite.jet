@@ -1,0 +1,7 @@
+
+	private void write<c:get select="$output/@name" />(String line) throws IOException, InterruptedException {
+	
+		mos.write("<c:get select="$output/@name" />", new Text(line), null, <c:get select="$output/@variableName" />);
+		<c:get select="$output/@counterName" />++;
+		
+	}

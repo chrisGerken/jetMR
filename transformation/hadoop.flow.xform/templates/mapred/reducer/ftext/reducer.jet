@@ -1,0 +1,19 @@
+
+		try {
+			
+			while (values.hasNext()) {
+				
+				<c:get select="$job/@valueType" /> value = values.next();
+				
+				String line = "This gets written to the output text file.";
+
+				Text outKey = new Text("");
+				Text outValue = new Text(line);
+				
+//				collector.collect(outKey, outValue);
+				
+			}
+
+		} catch (Exception e) {
+			reporter.getCounter("Error", e.getClass().getName()).increment(1);
+		}

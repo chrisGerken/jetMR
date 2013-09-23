@@ -1,0 +1,4 @@
+		
+			// Write <c:get select="$property/@dclType" /> <c:get select="$property/@varName" />
+		
+	  out.writeChar(<c:get select="$property/@varName" />);

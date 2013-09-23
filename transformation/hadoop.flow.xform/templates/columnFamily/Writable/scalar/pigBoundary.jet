@@ -1,0 +1,1 @@
+						boundary = <c:get select="$keyProperty/@cassandraPersistedType" />.fromJson(nameValue[1]);

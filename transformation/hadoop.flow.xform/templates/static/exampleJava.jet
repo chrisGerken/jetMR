@@ -1,0 +1,30 @@
+package <c:get select="$artifact/@cassandraExamplesPkg" />;
+
+import java.util.*;
+
+import <c:get select="$artifact/@cassandraPkg" />.*;
+import <c:get select="$artifact/@writablesPkg" />.*;
+
+public class <c:get select="$columnFamily/@exampleJava" /> {
+
+	public static void main(String[] args) {
+
+		<c:get select="$columnFamily/@accessJava" /> access = new <c:get select="$columnFamily/@accessJava" />("<c:get select="$columnFamily/@host" />:<c:get select="$columnFamily/@port" />","Test Cluster","<c:get select="$columnFamily/@keyspace" />");	
+	
+		access.insert( new <c:get select="$columnFamily/@type" />(), true );
+		access.insert( new <c:get select="$columnFamily/@type" />(), true );
+		access.insert( new <c:get select="$columnFamily/@type" />(), true );
+
+		// Iterate over all of the keys in the column family
+		
+		Iterator<<c:get select="$keyProperty/@cassandraPersistedType" />> keys = access.getKeys();
+		while (keys.hasNext()) {
+			<c:get select="$keyProperty/@cassandraPersistedType" /> key = keys.next();
+
+			<c:get select="$columnFamily/@type" /> obj = access.get(key);
+		
+			// Do something with the object obj
+
+		}
+	}
+}

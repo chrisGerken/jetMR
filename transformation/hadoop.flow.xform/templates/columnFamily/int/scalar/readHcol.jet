@@ -1,0 +1,1 @@
+			row.<c:get select="$property/@setter" />(IntegerSerializer.get().fromByteBuffer(buffer).intValue());

@@ -1,0 +1,8 @@
+
+Json schema for writable type HashtagId:
+
+{hashtag:  <String> }
+
+
+Note: <Date> values are represented as longs (milliseconds)
+      <short> and <char> values are represented as integers
