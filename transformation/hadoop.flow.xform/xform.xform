@@ -84,8 +84,6 @@
 			</token>
 		<token derived="true" desc="" formula="{uppercaseFirst($job/@name)}Partitioner" name="partitionerJava"/>
 		<token derived="true" desc="" formula="{lower-case($job/@name)}.pig" name="pigScript"/>
-		<createFile binary="false" changeableName="true" folderExpr="/src/main/resources/{$flow/@pigDir}" id="157" nameExpr="{$job/@pigScript}" oPath="src/main/java/com/gerken/demo/report/CountsMapper.java" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="pigScript" purposeAsTokenName="false" replace="false" src="hadoop.flow/refimpl/art000011"/>
-		<createFile binary="false" changeableName="true" folderExpr="/src/main/java/{$job/@jobDir}" id="158" nameExpr="{$job/@pigCallerJava}.java" oPath="src/main/java/com/gerken/demo/counter/CounterReducer.java" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="pigCaller" purposeAsTokenName="true" replace="true" src="hadoop.flow/refimpl/art000010"/>
 		<token derived="true" desc="" formula="{$job/@name}Pig" name="pigCallerJava"/>
 		<createFile binary="false" changeableName="true" folderExpr="/src/main/resources/azkaban/{$flow/@name}" id="162" nameExpr="{$job/@name}.job" oPath="src/main/java/com/gerken/demo/counter/CounterReducer.java" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="azkabanJob" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000010"/>
 		<token derived="true" desc="" formula="{$job/@name}" name="workflowLabel"/>
@@ -287,6 +285,8 @@
 		<token derived="true" desc="" formula="{$writable/@name}" name="jsonSchema"/>
 		<token derived="false" desc="" formula="" name="tokenName"/>
 		<token derived="false" desc="" formula="" name="workflowLabel"/>
+		<createFile binary="false" changeableName="true" folderExpr="/src/main/resources/{$flow/@pigDir}" id="157" nameExpr="{$job/@pigScript}" oPath="src/main/java/com/gerken/demo/report/CountsMapper.java" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="pigScript" purposeAsTokenName="false" replace="false" src="hadoop.flow/refimpl/art000011"/>
+		<createFile binary="false" changeableName="true" folderExpr="/src/main/java/{$job/@jobDir}" id="158" nameExpr="{$job/@pigCallerJava}.java" oPath="src/main/java/com/gerken/demo/counter/CounterReducer.java" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="pigCaller" purposeAsTokenName="true" replace="true" src="hadoop.flow/refimpl/art000010"/>
 		</ignored>
 	<group id="119" name="input" parentId="118">
 		<token derived="true" desc="" formula="{$job/@version}" name="version"/>
@@ -586,7 +586,7 @@
 			</token>
 		<token derived="true" desc="" formula="{$artifact/@artifactID}" name="label" optional="true">
 			<desc>A displayable short text describing this artifact's workflow(s)</desc>
-		</token>
+			</token>
 		</group>
 	<group id="141" name="columnFamily" parentId="140">
 		<token derived="false" desc="" formula="" name="name">
@@ -653,5 +653,4 @@
 		<desc>The  column to be used as a secondary key.  Depending on the persistence pattern chosen, this will be used to build the column name.</desc>
 		<token derived="false" desc="" formula="" name="name"/>
 		</group>
-	<group id="173" name="hiveTable" parentId="140"/>
 	</xform>

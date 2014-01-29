@@ -277,7 +277,3 @@ Tokens for clusteringKey
 
 	<c:get select="$clusteringKey/@name" />
 
-
-Tokens for hiveTable
-
-

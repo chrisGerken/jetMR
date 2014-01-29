@@ -171,10 +171,6 @@
 
         </columnFamily>
 
-        <hiveTable>
-
-        </hiveTable>
-
     </artifact>
 
 </root>

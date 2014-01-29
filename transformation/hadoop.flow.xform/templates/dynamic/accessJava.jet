@@ -259,12 +259,10 @@ public class <c:get select="$columnFamily/@accessJava" /> {
 			this.<c:get select="$keyProperty/@name" /> = <c:get select="$keyProperty/@name" />;
 		}
 		
-		@Override
 		public boolean hasNext() {
 			return iter.hasNext();
 		}
 
-		@Override
 		public <c:get select="$writable/@writableJava" /> next() {
 			HColumn<<c:get select="$columnProperty/@cassandraPersistedType" />, <c:get select="$writable/@writableJava" />> col = iter.next();
 			<c:get select="$writable/@writableJava" /> row = col.getValue();
@@ -272,7 +270,6 @@ public class <c:get select="$columnFamily/@accessJava" /> {
 			return row;
 		}
 
-		@Override
 		public void remove() {
 			// Does nothing
 		}
@@ -294,12 +291,10 @@ public class <c:get select="$columnFamily/@accessJava" /> {
 
 		}
 		
-		@Override
 		public boolean hasNext() {
 			return iter.hasNext();
 		}
 
-		@Override
 		public <c:get select="$writable/@writableJava" /> next() {
 
 			IColumn col = columns.get(iter.next());	
@@ -309,7 +304,6 @@ public class <c:get select="$columnFamily/@accessJava" /> {
 			
 		}
 
-		@Override
 		public void remove() {
 			// Do nothing
 		}

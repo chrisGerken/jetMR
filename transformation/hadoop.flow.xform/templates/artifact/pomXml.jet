@@ -17,37 +17,15 @@
 		</plugins>
 	</build>
   <dependencies>
-  	<dependency>
-  		<groupId>org.apache.hadoop</groupId>
-  		<artifactId>hadoop-core</artifactId>
-  		<version><c:get select="$artifact/@hadoopVersion" /></version>
-  		<type>jar</type>
-  		<scope>compile</scope>
-  		<exclusions>
-  			<exclusion>
-  				<artifactId>jackson-mapper-asl</artifactId>
-  				<groupId>org.codehaus.jackson</groupId>
-  			</exclusion>
-  		</exclusions>
-  	</dependency>
-  	<dependency>
-  		<groupId>org.codehaus.jackson</groupId>
-  		<artifactId>jackson-mapper-asl</artifactId>
-  		<version>1.4.2</version>
-  		<type>jar</type>
-  		<scope>compile</scope>
-  	</dependency>
+	<dependency>
+		<groupId>org.apache.hadoop</groupId>
+		<artifactId>hadoop-client</artifactId>
+		<version>2.2.0</version>
+	</dependency>
   	<dependency>
   		<groupId>org.apache.cassandra</groupId>
   		<artifactId>cassandra-all</artifactId>
   		<version><c:get select="$artifact/@cassandraVersion" /></version>
-  		<type>jar</type>
-  		<scope>compile</scope>
-  	</dependency>
-  	<dependency>
-  		<groupId>org.apache.pig</groupId>
-  		<artifactId>pig</artifactId>
-  		<version><c:get select="$artifact/@pigVersion" /></version>
   		<type>jar</type>
   		<scope>compile</scope>
   	</dependency>

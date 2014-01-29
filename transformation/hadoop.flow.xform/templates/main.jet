@@ -43,6 +43,7 @@
 	<kind name="dtext"  desc="Dist. Text Files" />
 	<kind name="dseq"   desc="HDFS Seq. Files" />
 	<kind name="cass"   desc="Cassandra CF" />
+	<kind name="hbase"   desc="HBase Store" />
 </datalocKinds>
 </c:loadContent>
 
@@ -715,20 +716,6 @@
 
     </c:iterate> 
 
-    <c:iterate select="$artifact/hiveTable" var="hiveTable">
-
-        *** Begin custom model updates for hiveTable (173)
-
-        *** End custom model updates for hiveTable (173)
-
-
-        *** Begin custom model post updates for hiveTable (173)
-
-        *** End custom model post updates for hiveTable (173)
-
-
-    </c:iterate> 
-
     *** Begin custom model post updates for artifact (140)
 	<c:if test="not($artifact/javaHeader)">
 <c:addTextElement select="$artifact" name="javaHeader">/*
@@ -838,10 +825,6 @@
             *** Begin custom pre-generation actions for job (118)
 
             *** End custom pre-generation actions for job (118)
-
-            <ws:file path="{$artifact/@srcProject}/src/main/resources/{$flow/@pigDir}/{$job/@pigScript}" template="templates/job/pigScript.jet" replace="false" />
-
-            <ws:file path="{$artifact/@srcProject}/src/main/java/{$job/@jobDir}/{$job/@pigCallerJava}.java" template="templates/job/pigCaller.jet" replace="true" />
 
             <ws:file path="{$artifact/@srcProject}/src/main/resources/azkaban/{$flow/@name}/{$job/@name}.job" template="templates/job/azkabanJob.jet" replace="true" />
 
@@ -1288,19 +1271,6 @@
             *** End custom generation updates for clusteringKey (172)
 
         </c:iterate> 
-    </c:iterate> 
-
-    <c:iterate select="$artifact/hiveTable" var="hiveTable">
-
-        *** Begin custom pre-generation actions for hiveTable (173)
-
-        *** End custom pre-generation actions for hiveTable (173)
-
-
-        *** Begin custom generation updates for hiveTable (173)
-
-        *** End custom generation updates for hiveTable (173)
-
     </c:iterate> 
 </c:iterate> 
 
