@@ -13,14 +13,6 @@ import java.nio.ByteBuffer;
 import java.util.*;
 import com.eaio.uuid.UUID;
 import org.apache.hadoop.io.*;
-import org.apache.pig.ResourceSchema;
-import org.apache.pig.ResourceSchema.ResourceFieldSchema;
-import org.apache.pig.backend.executionengine.ExecException;
-import org.apache.pig.data.DataBag;
-import org.apache.pig.data.DataType;
-import org.apache.pig.data.DefaultDataBag;
-import org.apache.pig.data.Tuple;
-import org.apache.pig.data.TupleFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -107,8 +99,7 @@ public class <c:get select="$writable/@writableJava" /> implements Writable<c:if
   }
 
 --%>
-
- <c:iterate select="$writable/*[@isProperty='true']" var="property">
+<c:iterate select="$writable/*[@isProperty='true']" var="property">
    
 <c:if test="$property/desc">
 
@@ -191,6 +182,7 @@ public class <c:get select="$writable/@writableJava" /> implements Writable<c:if
    }
 </c:iterate>
 	
+<%--
 	public Tuple asTuple() throws ExecException {
 		
         Tuple tuple = TupleFactory.getInstance().newTuple(<c:get select="count($writable/*[@isProperty='true'])" />);
@@ -201,6 +193,7 @@ public class <c:get select="$writable/@writableJava" /> implements Writable<c:if
 
         return tuple;
 	}
+--%>
 
 <c:if test="$writable[@comparable='true']" >
 	/*
@@ -232,6 +225,7 @@ public class <c:get select="$writable/@writableJava" /> implements Writable<c:if
 	}
 
 </c:if>
+<%--
     public static ResourceSchema getPigSchema() throws IOException {
 
     	ResourceSchema schema = new ResourceSchema();
@@ -276,6 +270,7 @@ public class <c:get select="$writable/@writableJava" /> implements Writable<c:if
     	return schema;
     	
     }
+--%>
 
 	public static <c:get select="$writable/@writableJava" /> fromJson(String source) {
 	

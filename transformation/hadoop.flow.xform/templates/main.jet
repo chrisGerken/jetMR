@@ -1194,8 +1194,6 @@
 
             <ws:file path="{$artifact/@srcProject}/src/main/resources/columnFamily/{$columnFamily/@name}Create.txt" template="templates/static/createCmds.jet" replace="true" />
 
-            <ws:file path="{$artifact/@srcProject}/src/main/java/{$artifact/@cassandraPlatformDir}/{$columnFamily/@pigAccessJava}.java" template="templates/static/pigAccessJava.jet" replace="true" />
-
             <ws:file path="{$artifact/@srcProject}/src/main/java/{$artifact/@cassandraExamplesDir}/{$columnFamily/@exampleJava}.java" template="templates/static/exampleJava.jet" replace="false" />
 
 
@@ -1222,8 +1220,6 @@
             <ws:file path="{$artifact/@srcProject}/src/main/resources/columnFamily/{$columnFamily/@name}Drop.txt" template="templates/dynamic/dropCmds.jet" replace="true" />
 
             <ws:file path="{$artifact/@srcProject}/src/main/resources/columnFamily/{$columnFamily/@name}Create.txt" template="templates/dynamic/createCmds.jet" replace="true" />
-
-            <ws:file path="{$artifact/@srcProject}/src/main/java/{$artifact/@cassandraPlatformDir}/{$columnFamily/@pigAccessJava}.java" template="templates/dynamic/pigAccessJava.jet" replace="true" />
 
             <ws:file path="{$artifact/@srcProject}/src/main/java/{$artifact/@cassandraExamplesDir}/{$columnFamily/@exampleJava}.java" template="templates/dynamic/exampleJava.jet" replace="false" />
 
