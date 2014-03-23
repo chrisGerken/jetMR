@@ -1,4 +1,4 @@
-	        job.setReducerClass(<c:get select="$job/output/@reducerJava" />.class);
+	        job.setReducerClass(<c:get select="$job/@reducerJava" />.class);
 	        job.setOutputKeyClass(Text.class);
 	        job.setOutputValueClass(Text.class);
 	        job.setOutputFormatClass(TextOutputFormat.class);

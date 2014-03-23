@@ -1,8 +1,8 @@
 
 		try {
 
-			<c:get select="$output/@outKeyType" /> outKey;
-			<c:get select="$output/@outValueType" /> outValue;		
+			<c:get select="$job/output/@outKeyType" /> outKey;
+			<c:get select="$job/output/@outValueType" /> outValue;		
 			
 			for (<c:get select="$job/@valueType" /> value : values) {
 				

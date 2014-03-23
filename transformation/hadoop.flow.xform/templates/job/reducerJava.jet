@@ -40,7 +40,7 @@ import <c:get select="$artifact/@writablesPkg" />.*;
 
 </c:initialCode>// End imports</c:userRegion>
 
-public class <c:get select="$output/@reducerJava" /> extends Reducer<<c:get select="$job/@keyType" />,<c:get select="$job/@valueType" />, <c:get select="$output/@outKeyType" />, <c:get select="$output/@outValueType" />> {
+public class <c:get select="$job/@reducerJava" /> extends Reducer<<c:get select="$job/@keyType" />,<c:get select="$job/@valueType" />, <c:get select="$job/output/@outKeyType" />, <c:get select="$job/output/@outValueType" />> {
 
 	<c:userRegion>// Begin declarations <c:initialCode>
 
@@ -57,7 +57,7 @@ public class <c:get select="$output/@reducerJava" /> extends Reducer<<c:get sele
 	</c:initialCode>// End declarations </c:userRegion>
 
 	@Override
-	protected void setup(Reducer<<c:get select="$job/@keyType" />,<c:get select="$job/@valueType" />, <c:get select="$output/@outKeyType" />, <c:get select="$output/@outValueType" />>.Context context)
+	protected void setup(Reducer<<c:get select="$job/@keyType" />,<c:get select="$job/@valueType" />, <c:get select="$job/output/@outKeyType" />, <c:get select="$job/output/@outValueType" />>.Context context)
 			throws java.io.IOException, InterruptedException {
 
 		<c:userRegion>// Begin setup logic<c:initialCode>
@@ -79,10 +79,10 @@ public class <c:get select="$output/@reducerJava" /> extends Reducer<<c:get sele
 	}
 
 	protected void reduce(<c:get select="$job/@keyType" /> key, Iterable<<c:get select="$job/@valueType" />> values,
-			Reducer<<c:get select="$job/@keyType" />,<c:get select="$job/@valueType" />, <c:get select="$output/@outKeyType" />, <c:get select="$output/@outValueType" />>.Context context) throws java.io.IOException, InterruptedException {
+			Reducer<<c:get select="$job/@keyType" />,<c:get select="$job/@valueType" />, <c:get select="$job/output/@outKeyType" />, <c:get select="$job/output/@outValueType" />>.Context context) throws java.io.IOException, InterruptedException {
 
 		<c:userRegion>// Begin reduce logic <c:initialCode>
-<c:include template="templates/mapreduce/reducer/{$artifact/dataloc[@name=$output/@target]/@kind}/reducer.jet" />
+<c:include template="templates/mapreduce/reducer/{$artifact/dataloc[@name=$job/output/@target]/@kind}/reducer.jet" />
 		</c:initialCode>// End reduce logic </c:userRegion>
 		
 	}
@@ -111,8 +111,8 @@ public class <c:get select="$output/@reducerJava" /> extends Reducer<<c:get sele
 
 	</c:initialCode>// End custom methods</c:userRegion>
 
-/*	public Reducer<<c:get select="$job/@keyType" />,<c:get select="$job/@valueType" />, <c:get select="$output/@outKeyType" />, <c:get select="$output/@outValueType" />>.Context testContext(Configuration conf,TaskAttemptID taid,
-			RawKeyValueIterator rkvi, Counter counter1, Counter counter2, RecordWriter<<c:get select="$output/@outKeyType" />, <c:get select="$output/@outValueType" />> rw, 
+/*	public Reducer<<c:get select="$job/@keyType" />,<c:get select="$job/@valueType" />, <c:get select="$job/output/@outKeyType" />, <c:get select="$job/output/@outValueType" />>.Context testContext(Configuration conf,TaskAttemptID taid,
+			RawKeyValueIterator rkvi, Counter counter1, Counter counter2, RecordWriter<<c:get select="$job/output/@outKeyType" />, <c:get select="$job/output/@outValueType" />> rw, 
 			OutputCommitter oc, StatusReporter sr, RawComparator<<c:get select="$job/@keyType" />> rc, Class<<c:get select="$job/@keyType" />> arg9, Class<<c:get select="$job/@valueType" />> arg10) 
 				throws IOException, InterruptedException {
 	

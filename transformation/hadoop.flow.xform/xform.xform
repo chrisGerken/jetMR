@@ -88,6 +88,12 @@
 		<createFile binary="false" changeableName="true" folderExpr="/src/main/resources/azkaban/{$flow/@name}" id="162" nameExpr="{$job/@name}.job" oPath="src/main/java/com/gerken/demo/counter/CounterReducer.java" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="azkabanJob" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000010"/>
 		<token derived="true" desc="" formula="{$job/@name}" name="workflowLabel"/>
 		<token derived="true" desc="" formula="job.{$flow/@name}.{$job/@name}" name="workflowId" optional="false"/>
+		<createFile binary="false" changeableName="true" folderExpr="/src/main/java/{$job/@jobDir}" id="14" nameExpr="{$job/@reducerJava}.java" oPath="src/main/java/com/gerken/demo/counter/CounterReducer.java" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="reducerJava" purposeAsTokenName="true" replace="true" src="hadoop.flow/refimpl/art000010">
+			<javaPkg name="com.gerken.demo.counter" purpose="counterSrcMainJavaSrc">
+		</javaPkg>
+			<nameExpr>{$job/@reducerJava}.java</nameExpr>
+			</createFile>
+		<token derived="true" desc="variable for CounterReducer" formula="{$job/@name}Reducer" name="reducerJava"/>
 		</group>
 	<ignored>
 		<createFile binary="false" changeableName="true" folderExpr="target/surefire" id="58" nameExpr="surefire104346517909708710tmp" oPath="target/surefire/surefire104346517909708710tmp" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="surefire104346517909708710tmp" purposeAsTokenName="false" replace="true" src="hadoop.flow/refimpl/art000054">
@@ -313,7 +319,6 @@
 		<token derived="false" desc="" formula="" name="name">
 			<desc>A single-token name describing the behavior of the reducer</desc>
 			</token>
-		<token derived="true" desc="variable for CounterReducer" formula="{$output/@name}Reducer" name="reducerJava"/>
 		<token derived="true" desc="variable for CounterReducerTest" formula="{$output/@name}ReducerTest" name="reducerTestJava"/>
 		<token derived="false" desc="" formula="" name="target">
 			<desc>The name of the data store to which this output/reducer writes</desc>
@@ -361,11 +366,7 @@
 			</createFile>
 		</group>
 	<group id="125" name="mapreduce" parentId="120" polymorphicKey="version" polymorphicSingleton="true">
-		<createFile binary="false" changeableName="true" folderExpr="/src/main/java/{$job/@jobDir}" id="14" nameExpr="{$output/@reducerJava}.java" oPath="src/main/java/com/gerken/demo/counter/CounterReducer.java" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="reducerJava" purposeAsTokenName="true" replace="true" src="hadoop.flow/refimpl/art000010">
-			<javaPkg name="com.gerken.demo.counter" purpose="counterSrcMainJavaSrc">
-		</javaPkg>
-			<nameExpr>{$job/@reducerJava}.java</nameExpr>
-			</createFile>
+		
 		</group>
 	<group id="126" name="mapreduce" parentId="118" polymorphicKey="version">
 		<createFile binary="false" changeableName="true" folderExpr="/src/main/java/{$job/@jobDir}" id="12" nameExpr="{$job/@jobConfigJava}.java" oPath="src/main/java/com/gerken/demo/counter/CounterMR.java" projectExpr="{$artifact/@srcProject}" projectId="5" purpose="jobConfigJava" purposeAsTokenName="true" replace="true" src="hadoop.flow/refimpl/art000008">

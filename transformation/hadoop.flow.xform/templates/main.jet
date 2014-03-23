@@ -121,6 +121,7 @@
             <c:set select="$job" name="pigCallerJava"><c:get select="$job/@name" />Pig</c:set>
             <c:set select="$job" name="workflowLabel"><c:get select="$job/@name" /></c:set>
             <c:set select="$job" name="workflowId">job.<c:get select="$flow/@name" />.<c:get select="$job/@name" /></c:set>
+            <c:set select="$job" name="reducerJava"><c:get select="$job/@name" />Reducer</c:set>
 
             *** Begin custom model updates for job (118)
 
@@ -241,7 +242,6 @@
 
             <c:iterate select="$job/output" var="output">
                 <c:set select="$output" name="version"><c:get select="$job/@version" /></c:set>
-                <c:set select="$output" name="reducerJava"><c:get select="$output/@name" />Reducer</c:set>
                 <c:set select="$output" name="reducerTestJava"><c:get select="$output/@name" />ReducerTest</c:set>
                 <c:set select="$output" name="outKeyType">Text</c:set>
                 <c:set select="$output" name="outValueType">Text</c:set>
@@ -828,6 +828,8 @@
 
             <ws:file path="{$artifact/@srcProject}/src/main/resources/azkaban/{$flow/@name}/{$job/@name}.job" template="templates/job/azkabanJob.jet" replace="true" />
 
+            <ws:file path="{$artifact/@srcProject}/src/main/java/{$job/@jobDir}/{$job/@reducerJava}.java" template="templates/job/reducerJava.jet" replace="true" />
+
 
             *** Begin custom generation updates for job (118)
 
@@ -942,8 +944,6 @@
                     *** Begin custom pre-generation actions for mapreduce (125)
 
                     *** End custom pre-generation actions for mapreduce (125)
-
-                    <ws:file path="{$artifact/@srcProject}/src/main/java/{$job/@jobDir}/{$output/@reducerJava}.java" template="templates/mapreduce/reducerJava.jet" replace="true" />
 
 
                     *** Begin custom generation updates for mapreduce (125)

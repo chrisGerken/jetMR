@@ -47,6 +47,7 @@ Tokens for job
 	<c:get select="$job/@pigCallerJava" />
 	<c:get select="$job/@workflowLabel" />
 	<c:get select="$job/@workflowId" />
+	<c:get select="$job/@reducerJava" />
 
 
 Tokens for input
@@ -69,7 +70,6 @@ Tokens for output
 
 	<c:get select="$output/@version" />
 	<c:get select="$output/@name" />
-	<c:get select="$output/@reducerJava" />
 	<c:get select="$output/@reducerTestJava" />
 	<c:get select="$output/@target" />
 	<c:get select="$output/@outKeyType" />
