@@ -5,6 +5,7 @@ package <c:get select="$artifact/@writablesPkg" />;
 import java.io.ByteArrayInputStream;
 import java.io.DataInput;
 import java.io.DataInputStream;
+import java.io.IOException;
 
 import org.apache.hadoop.io.RawComparator;
 import org.apache.hadoop.io.Text;
@@ -15,13 +16,49 @@ import org.apache.hadoop.io.Text;
 	 */
 	public class <c:get select="$writable/@groupingComparator" /> implements RawComparator<<c:get select="$writable/@writableJava" />> {
 
-		@Override
 		public int compare(<c:get select="$writable/@writableJava" /> arg0, <c:get select="$writable/@writableJava" /> arg1) {
-			return arg0.compareTo(arg1);
+
+			<c:userRegion>// Begin object compare logic<c:initialCode>
+
+ 			return arg0.compareTo(arg1);
+
+			</c:initialCode>// End object compare logic</c:userRegion>		
+
 		}
 
-		@Override
 		public int compare(byte[] arg0, int arg1, int arg2, byte[] arg3, int arg4, int arg5) {
+
+			<c:userRegion>// Begin byte array compare logic<c:initialCode>
+	
+//          return defaultCompare(arg0, arg1, arg2, arg3, arg4, arg5);
+		
+            return optimizedCompare(arg0, arg1, arg2, arg3, arg4, arg5);
+
+			</c:initialCode>// End byte array compare logic</c:userRegion>		
+
+		}
+
+		public int defaultCompare(byte[] arg0, int arg1, int arg2, byte[] arg3, int arg4, int arg5) {
+
+			<c:userRegion>// Begin default array compare logic<c:initialCode>
+	
+			DataInput in1 = new DataInputStream(new ByteArrayInputStream(arg0,arg1,arg2));
+			<c:get select="$writable/@writableJava" /> obj1 = new <c:get select="$writable/@writableJava" />();
+			try { obj1.readFields(in1); } catch(IOException e) { return 0;};
+			
+			DataInput in2 = new DataInputStream(new ByteArrayInputStream(arg3,arg4,arg5));
+			<c:get select="$writable/@writableJava" /> obj2 = new <c:get select="$writable/@writableJava" />();
+			try { obj2.readFields(in1); } catch(IOException e) { return 0;};
+
+			return compare(obj1,obj2);	
+
+			</c:initialCode>// End default array compare logic</c:userRegion>		
+
+		}
+
+		private int optimizedCompare(byte[] arg0, int arg1, int arg2, byte[] arg3, int arg4, int arg5) {
+	
+			<c:userRegion>// Begin optimized compare logic<c:initialCode>
 
 			DataInput in1 = new DataInputStream(new ByteArrayInputStream(arg0,arg1,arg2));
 			DataInput in2 = new DataInputStream(new ByteArrayInputStream(arg3,arg4,arg5));
@@ -36,6 +73,9 @@ import org.apache.hadoop.io.Text;
 			} catch (Exception e) { }
 			
 			return 0;
+
+			</c:initialCode>// End optimized compare logic</c:userRegion>		
+
 		}
 		
 	}
